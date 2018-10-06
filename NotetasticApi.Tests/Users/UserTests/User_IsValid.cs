@@ -1,7 +1,7 @@
 using NotetasticApi.Users;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users.UserRecord
+namespace NotetasticApi.Tests.Users.UserTests
 {
 	public class User_IsValid
 	{
