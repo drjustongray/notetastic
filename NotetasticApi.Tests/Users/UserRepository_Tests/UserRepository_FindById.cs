@@ -1,4 +1,5 @@
 using System;
+using NotetasticApi.Tests.Common;
 using Xunit;
 
 namespace NotetasticApi.Tests.Users.UserRepository_Tests

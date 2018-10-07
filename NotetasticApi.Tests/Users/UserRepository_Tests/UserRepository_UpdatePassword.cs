@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using NotetasticApi.Common;
+using NotetasticApi.Tests.Common;
 using Xunit;
 
 namespace NotetasticApi.Tests.Users.UserRepository_Tests

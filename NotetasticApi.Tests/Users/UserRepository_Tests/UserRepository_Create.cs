@@ -1,5 +1,6 @@
 using System;
 using NotetasticApi.Common;
+using NotetasticApi.Tests.Common;
 using NotetasticApi.Users;
 using Xunit;
 
