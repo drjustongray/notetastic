@@ -4,11 +4,11 @@ using NotetasticApi.Common;
 using NotetasticApi.Tests.Common;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users.UserRepository_Tests
+namespace NotetasticApi.Tests.Users.UserRepositoryTests
 {
-	public class UserRepository_UpdateUserName : UserRepository_Base
+	public class UserRepository_UpdatePassword : UserRepository_Base
 	{
-		public UserRepository_UpdateUserName(DatabaseFixture fixture) : base(fixture)
+		public UserRepository_UpdatePassword(DatabaseFixture fixture) : base(fixture)
 		{
 		}
 
@@ -16,7 +16,7 @@ namespace NotetasticApi.Tests.Users.UserRepository_Tests
 		public async void ShouldThrowIfIdNull()
 		{
 			await Assert.ThrowsAsync<ArgumentNullException>(
-				() => _repo.UpdateUserName(null, "asdf@gasd")
+				() => _repo.UpdatePasswordHash(null, "asdf@gasd")
 			);
 			AssertCollectionEquals();
 		}
@@ -25,7 +25,7 @@ namespace NotetasticApi.Tests.Users.UserRepository_Tests
 		public async void ShouldThrowIfUserNameNull()
 		{
 			await Assert.ThrowsAsync<ArgumentNullException>(
-				() => _repo.UpdateUserName("asdfds", null)
+				() => _repo.UpdatePasswordHash("asdfds", null)
 			);
 			AssertCollectionEquals();
 		}
@@ -37,9 +37,9 @@ namespace NotetasticApi.Tests.Users.UserRepository_Tests
 		{
 			var user = _expectedUsers.First(_ => _.UserName == username);
 			_expectedUsers.Remove(user);
-			user.UserName = username + "123";
+			user.PasswordHash = "12zxvxcvdg3";
 			_expectedUsers.Add(user);
-			await _repo.UpdateUserName(user.Id, user.UserName);
+			await _repo.UpdatePasswordHash(user.Id, user.PasswordHash);
 			AssertCollectionEquals();
 
 		}
@@ -49,8 +49,8 @@ namespace NotetasticApi.Tests.Users.UserRepository_Tests
 		{
 			foreach (var aUser in _expectedUsers)
 			{
-				aUser.UserName = aUser.UserName + "n";
-				var user = await _repo.UpdateUserName(aUser.Id, aUser.UserName);
+				aUser.PasswordHash = "12zxvxcvdg3";
+				var user = await _repo.UpdatePasswordHash(aUser.Id, aUser.PasswordHash);
 				Assert.Equal(aUser, user);
 			}
 		}
@@ -59,21 +59,7 @@ namespace NotetasticApi.Tests.Users.UserRepository_Tests
 		public async void ThrowsIfUserDoesNotExist()
 		{
 			await Assert.ThrowsAsync<DocumentNotFoundException>(
-				() => _repo.UpdateUserName("asdf", "asdfld")
-			);
-			AssertCollectionEquals();
-		}
-
-		[Fact]
-		public async void ThrowsIfUserNameInUse()
-		{
-			var user1 = _existing;
-			var user2 = _otherExisting;
-			await Assert.ThrowsAsync<DocumentConflictException>(
-				() => _repo.UpdateUserName(user1.Id, user2.UserName)
-			);
-			await Assert.ThrowsAsync<DocumentConflictException>(
-				() => _repo.UpdateUserName(user2.Id, user1.UserName)
+				() => _repo.UpdatePasswordHash("asdf", "asdfld")
 			);
 			AssertCollectionEquals();
 		}

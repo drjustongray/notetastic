@@ -3,7 +3,7 @@ using System.Linq;
 using NotetasticApi.Tests.Common;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users.UserRepository_Tests
+namespace NotetasticApi.Tests.Users.UserRepositoryTests
 {
 	public class UserRepository_FindByUserName : UserRepository_Base
 	{

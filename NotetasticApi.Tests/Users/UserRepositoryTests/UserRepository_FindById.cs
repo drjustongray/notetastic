@@ -2,7 +2,7 @@ using System;
 using NotetasticApi.Tests.Common;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users.UserRepository_Tests
+namespace NotetasticApi.Tests.Users.UserRepositoryTests
 {
 	public class UserRepository_FindById : UserRepository_Base
 	{

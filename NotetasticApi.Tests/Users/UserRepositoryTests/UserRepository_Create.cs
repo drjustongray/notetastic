@@ -4,7 +4,7 @@ using NotetasticApi.Tests.Common;
 using NotetasticApi.Users;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users.UserRepository_Tests
+namespace NotetasticApi.Tests.Users.UserRepositoryTests
 {
 	public class UserRepository_Create : UserRepository_Base
 	{
