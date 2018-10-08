@@ -30,6 +30,9 @@ namespace NotetasticApi.Users
 					Unique = true
 				}
 			));
+			_tokens.Indexes.CreateOne(new CreateIndexModel<AuthToken>(
+				Builders<AuthToken>.IndexKeys.Ascending(_ => _.UID)
+			));
 		}
 
 		public async Task<AuthToken> Create(AuthToken token)
