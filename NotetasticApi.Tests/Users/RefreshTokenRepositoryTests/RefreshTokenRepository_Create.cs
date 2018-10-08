@@ -4,11 +4,11 @@ using NotetasticApi.Tests.Common;
 using NotetasticApi.Users;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
+namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 {
-	public class AuthTokenRepository_Create : AuthTokenRepository_Base
+	public class RefreshTokenRepository_Create : RefreshTokenRepository_Base
 	{
-		public AuthTokenRepository_Create(DatabaseFixture fixture) : base(fixture)
+		public RefreshTokenRepository_Create(DatabaseFixture fixture) : base(fixture)
 		{
 		}
 
@@ -26,7 +26,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
 		public async void ShouldThrowIfTokenInvalid()
 		{
 			await Assert.ThrowsAsync<ArgumentException>(
-				() => _repo.Create(new AuthToken())
+				() => _repo.Create(new RefreshToken())
 			);
 			AssertCollectionEquals();
 		}
@@ -38,7 +38,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
 		public async void ShouldThrowIfIdNonNull(string value)
 		{
 			await Assert.ThrowsAsync<ArgumentException>(
-				() => _repo.Create(new AuthToken { UID = "f@gd", Token = "value", Id = value, ExpiresAt = DateTimeOffset.Now })
+				() => _repo.Create(new RefreshToken { UID = "f@gd", Token = "value", Id = value, ExpiresAt = DateTimeOffset.Now })
 			);
 			AssertCollectionEquals();
 		}
@@ -49,7 +49,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
 		public async void ShouldThrowIfTokenInUse(string token)
 		{
 			await Assert.ThrowsAsync<DocumentConflictException>(
-				() => _repo.Create(new AuthToken { Token = token, UID = "uid3", ExpiresAt = DateTimeOffset.Now.AddMinutes(3) })
+				() => _repo.Create(new RefreshToken { Token = token, UID = "uid3", ExpiresAt = DateTimeOffset.Now.AddMinutes(3) })
 			);
 			AssertCollectionEquals();
 		}
@@ -59,7 +59,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
 		[InlineData("ad089708", "uid2")]
 		public async void ShouldAddDocToDB(string token, string uid)
 		{
-			var authToken = new AuthToken { Token = token, UID = uid, ExpiresAt = DateTimeOffset.Now.AddMinutes(3) };
+			var authToken = new RefreshToken { Token = token, UID = uid, ExpiresAt = DateTimeOffset.Now.AddMinutes(3) };
 			await _repo.Create(authToken);
 
 			_expectedTokens.Add(authToken);
@@ -71,7 +71,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
 		[InlineData("ad089708", "uid2")]
 		public async void ShouldReturnUserDoc(string token, string uid)
 		{
-			var authToken = new AuthToken { Token = token, UID = uid, ExpiresAt = DateTimeOffset.Now.AddMinutes(3) };
+			var authToken = new RefreshToken { Token = token, UID = uid, ExpiresAt = DateTimeOffset.Now.AddMinutes(3) };
 			var anAuthToken = await _repo.Create(authToken);
 
 			Assert.Equal(authToken, anAuthToken);

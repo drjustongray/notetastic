@@ -3,11 +3,11 @@ using System.Linq;
 using NotetasticApi.Tests.Common;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
+namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 {
-	public class AuthTokenRepository_Delete : AuthTokenRepository_Base
+	public class RefreshTokenRepository_Delete : RefreshTokenRepository_Base
 	{
-		public AuthTokenRepository_Delete(DatabaseFixture fixture) : base(fixture)
+		public RefreshTokenRepository_Delete(DatabaseFixture fixture) : base(fixture)
 		{
 		}
 

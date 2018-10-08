@@ -3,7 +3,7 @@ using NotetasticApi.Common;
 
 namespace NotetasticApi.Users
 {
-	public class AuthToken : Record
+	public class RefreshToken : Record
 	{
 		public string UID { get; set; }
 		public string Token { get; set; }
@@ -11,7 +11,7 @@ namespace NotetasticApi.Users
 
 		public bool IsValid => !(string.IsNullOrWhiteSpace(UID) || string.IsNullOrWhiteSpace(Token) || ExpiresAt == null);
 
-		public static bool operator ==(AuthToken a, AuthToken b)
+		public static bool operator ==(RefreshToken a, RefreshToken b)
 		{
 			if (Object.ReferenceEquals(a, null))
 			{
@@ -24,7 +24,7 @@ namespace NotetasticApi.Users
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(AuthToken a, AuthToken b) => !(a == b);
+		public static bool operator !=(RefreshToken a, RefreshToken b) => !(a == b);
 
 		public override bool Equals(object obj)
 		{
@@ -33,7 +33,7 @@ namespace NotetasticApi.Users
 				return false;
 			}
 
-			var other = (AuthToken)obj;
+			var other = (RefreshToken)obj;
 
 			return Id == other.Id && UID == other.UID && Token == other.Token && ExpiresAt == other.ExpiresAt;
 		}

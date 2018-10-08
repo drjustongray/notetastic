@@ -3,28 +3,28 @@ using System.Collections.Generic;
 using NotetasticApi.Users;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users.AuthTokenTests
+namespace NotetasticApi.Tests.Users.RefreshTokenTests
 {
-	public class AuthToken_Equals
+	public class RefreshToken_Equals
 	{
-		private readonly List<AuthToken> _list1 = new List<AuthToken>();
-		private readonly List<AuthToken> _list2 = new List<AuthToken>();
+		private readonly List<RefreshToken> _list1 = new List<RefreshToken>();
+		private readonly List<RefreshToken> _list2 = new List<RefreshToken>();
 
-		public AuthToken_Equals()
+		public RefreshToken_Equals()
 		{
 			foreach (var id in new string[] { null, "someid", "someotherid" })
 				foreach (var token in new string[] { null, "sometoken", "someothertoken" })
 					foreach (var uid in new string[] { null, "uid1", "uid2" })
 						foreach (var dateTime in new DateTimeOffset?[] { null, DateTimeOffset.Now, DateTimeOffset.Now.AddDays(9) })
 						{
-							_list1.Add(new AuthToken
+							_list1.Add(new RefreshToken
 							{
 								Id = id,
 								Token = token,
 								UID = uid,
 								ExpiresAt = dateTime
 							});
-							_list2.Add(new AuthToken
+							_list2.Add(new RefreshToken
 							{
 								Id = id,
 								Token = token,

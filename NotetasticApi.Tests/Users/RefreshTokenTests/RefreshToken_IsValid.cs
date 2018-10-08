@@ -2,9 +2,9 @@ using System;
 using NotetasticApi.Users;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users.AuthTokenTests
+namespace NotetasticApi.Tests.Users.RefreshTokenTests
 {
-	public class AuthToken_IsValid
+	public class RefreshToken_IsValid
 	{
 		[Theory]
 		[InlineData(null)]
@@ -12,7 +12,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenTests
 		[InlineData("\n\t")]
 		public void IsFalseIfUIDInvalid(string uid)
 		{
-			var authToken = new AuthToken
+			var authToken = new RefreshToken
 			{
 				UID = uid,
 				Token = "somehash",
@@ -29,7 +29,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenTests
 		[InlineData("\n\t")]
 		public void IsFalseIfTokenInvalid(string token)
 		{
-			var authToken = new AuthToken
+			var authToken = new RefreshToken
 			{
 				UID = "uid",
 				Token = token,
@@ -43,7 +43,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenTests
 		[Fact]
 		public void IsFalseIfExpiresAtMissing()
 		{
-			var authToken = new AuthToken
+			var authToken = new RefreshToken
 			{
 				UID = "uid",
 				Token = "token"
@@ -56,7 +56,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenTests
 		[Fact]
 		public void IsTrueIfAllThingsPresent()
 		{
-			var authToken = new AuthToken
+			var authToken = new RefreshToken
 			{
 				UID = "uid",
 				Token = "token",

@@ -5,11 +5,11 @@ using NotetasticApi.Tests.Common;
 using NotetasticApi.Users;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
+namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 {
-	public class AuthTokenRepository_Update : AuthTokenRepository_Base
+	public class RefreshTokenRepository_Update : RefreshTokenRepository_Base
 	{
-		public AuthTokenRepository_Update(DatabaseFixture fixture) : base(fixture)
+		public RefreshTokenRepository_Update(DatabaseFixture fixture) : base(fixture)
 		{
 		}
 
@@ -26,7 +26,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
 		public async void ShouldThrowIfTokenInvalid()
 		{
 			await Assert.ThrowsAsync<ArgumentException>(
-				() => _repo.Update(new AuthToken())
+				() => _repo.Update(new RefreshToken())
 			);
 			AssertCollectionEquals();
 		}
@@ -35,7 +35,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
 		public async void ShouldThrowIfIdNull()
 		{
 			await Assert.ThrowsAsync<ArgumentException>(
-				() => _repo.Update(new AuthToken
+				() => _repo.Update(new RefreshToken
 				{
 					UID = "f@gd",
 					Token = "value",
@@ -51,7 +51,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
 		public async void ShouldThrowIfDocumentMissing(string id)
 		{
 			await Assert.ThrowsAsync<DocumentNotFoundException>(
-				() => _repo.Update(new AuthToken
+				() => _repo.Update(new RefreshToken
 				{
 					Id = id,
 					UID = "whatevs",
@@ -69,7 +69,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
 		public async void ShouldThrowIfUIDMismatch(string tokenString, string uid)
 		{
 			var token = _expectedTokens.First(_ => _.Token == tokenString);
-			token = new AuthToken
+			token = new RefreshToken
 			{
 				Id = token.Id,
 				UID = uid,
@@ -90,7 +90,7 @@ namespace NotetasticApi.Tests.Users.AuthTokenRepositoryTests
 		{
 			var toReplace = _expectedTokens.First(_ => _.Token == token);
 			await Assert.ThrowsAsync<DocumentConflictException>(
-				() => _repo.Update(new AuthToken
+				() => _repo.Update(new RefreshToken
 				{
 					Id = toReplace.Id,
 					Token = other,

@@ -7,35 +7,35 @@ using NotetasticApi.Common;
 namespace NotetasticApi.Users
 {
 
-	public interface IAuthTokenRepository
+	public interface IRefreshTokenRepository
 	{
-		Task<AuthToken> Create(AuthToken token);
-		Task<AuthToken> Find(string token);
-		Task<AuthToken> Update(AuthToken token);
+		Task<RefreshToken> Create(RefreshToken token);
+		Task<RefreshToken> Find(string token);
+		Task<RefreshToken> Update(RefreshToken token);
 		Task Delete(string token);
 		Task DeleteAll(string uid);
 	}
-	public class AuthTokenRepository : IAuthTokenRepository
+	public class RefreshTokenRepository : IRefreshTokenRepository
 	{
 
-		private IMongoCollection<AuthToken> _tokens;
+		private IMongoCollection<RefreshToken> _tokens;
 
-		public AuthTokenRepository(IMongoCollection<AuthToken> tokens)
+		public RefreshTokenRepository(IMongoCollection<RefreshToken> tokens)
 		{
 			_tokens = tokens;
-			_tokens.Indexes.CreateOne(new CreateIndexModel<AuthToken>(
-				Builders<AuthToken>.IndexKeys.Ascending(_ => _.Token),
+			_tokens.Indexes.CreateOne(new CreateIndexModel<RefreshToken>(
+				Builders<RefreshToken>.IndexKeys.Ascending(_ => _.Token),
 				new CreateIndexOptions
 				{
 					Unique = true
 				}
 			));
-			_tokens.Indexes.CreateOne(new CreateIndexModel<AuthToken>(
-				Builders<AuthToken>.IndexKeys.Ascending(_ => _.UID)
+			_tokens.Indexes.CreateOne(new CreateIndexModel<RefreshToken>(
+				Builders<RefreshToken>.IndexKeys.Ascending(_ => _.UID)
 			));
 		}
 
-		public async Task<AuthToken> Create(AuthToken token)
+		public async Task<RefreshToken> Create(RefreshToken token)
 		{
 			if (token == null)
 			{
@@ -82,17 +82,17 @@ namespace NotetasticApi.Users
 			await _tokens.DeleteManyAsync(new BsonDocument("UID", uid));
 		}
 
-		public async Task<AuthToken> Find(string token)
+		public async Task<RefreshToken> Find(string token)
 		{
 			if (token == null)
 			{
 				throw new ArgumentNullException(nameof(token));
 			}
-			var filter = Builders<AuthToken>.Filter.Eq("Token", token);
+			var filter = Builders<RefreshToken>.Filter.Eq("Token", token);
 			return await (await _tokens.FindAsync(filter)).FirstOrDefaultAsync();
 		}
 
-		public async Task<AuthToken> Update(AuthToken token)
+		public async Task<RefreshToken> Update(RefreshToken token)
 		{
 			if (token == null)
 			{
@@ -102,7 +102,7 @@ namespace NotetasticApi.Users
 			{
 				throw new ArgumentException($"Invalid: {token}");
 			}
-			var filter = Builders<AuthToken>.Filter.And(
+			var filter = Builders<RefreshToken>.Filter.And(
 				new BsonDocument("_id", token.Id),
 				new BsonDocument("UID", token.UID)
 			);
