@@ -36,7 +36,7 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 
 		protected readonly HashSet<RefreshToken> _expectedTokens;
 
-		protected HashSet<RefreshToken> _actualUsers => new HashSet<RefreshToken>(_collection.Find(new BsonDocument()).ToEnumerable());
+		protected HashSet<RefreshToken> _actualTokens => new HashSet<RefreshToken>(_collection.Find(new BsonDocument()).ToEnumerable());
 
 		public RefreshTokenRepository_Base(DatabaseFixture fixture)
 		{
@@ -57,7 +57,7 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		[Fact]
 		protected void AssertCollectionEquals()
 		{
-			Assert.Equal(_expectedTokens, _actualUsers);
+			Assert.Equal(_expectedTokens, _actualTokens);
 		}
 	}
 }

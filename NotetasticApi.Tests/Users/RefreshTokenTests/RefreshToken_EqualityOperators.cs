@@ -38,16 +38,16 @@ namespace NotetasticApi.Tests.Users.RefreshTokenTests
 		[Fact]
 		public void HandlesNullCorrectly()
 		{
-			RefreshToken authToken = new RefreshToken();
-			Assert.False(authToken == null);
-			Assert.False(null == authToken);
-			Assert.True(authToken != null);
-			Assert.True(null != authToken);
-			authToken = null;
-			Assert.True(authToken == null);
-			Assert.True(null == authToken);
-			Assert.False(authToken != null);
-			Assert.False(null != authToken);
+			RefreshToken refreshToken = new RefreshToken();
+			Assert.False(refreshToken == null);
+			Assert.False(null == refreshToken);
+			Assert.True(refreshToken != null);
+			Assert.True(null != refreshToken);
+			refreshToken = null;
+			Assert.True(refreshToken == null);
+			Assert.True(null == refreshToken);
+			Assert.False(refreshToken != null);
+			Assert.False(null != refreshToken);
 		}
 
 		[Fact]

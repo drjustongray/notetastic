@@ -24,11 +24,11 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		[InlineData("token1")]
 		[InlineData("token2")]
 		[InlineData("token3")]
-		public async void DeletesToken(string tokenString)
+		public async void DeletesToken(string token)
 		{
-			var token = _expectedTokens.First(_ => _.Token == tokenString);
-			_expectedTokens.Remove(token);
-			await _repo.Delete(tokenString);
+			var refreshToken = _expectedTokens.First(_ => _.Token == token);
+			_expectedTokens.Remove(refreshToken);
+			await _repo.Delete(token);
 			AssertCollectionEquals();
 		}
 
@@ -36,9 +36,9 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		[InlineData("token4")]
 		[InlineData("token5")]
 		[InlineData("token6")]
-		public async void DoesNothingIfTokenDoesNotExist(string tokenString)
+		public async void DoesNothingIfTokenDoesNotExist(string token)
 		{
-			await _repo.Delete(tokenString);
+			await _repo.Delete(token);
 			AssertCollectionEquals();
 		}
 	}

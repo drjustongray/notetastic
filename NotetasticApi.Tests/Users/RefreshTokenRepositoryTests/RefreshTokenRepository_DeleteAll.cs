@@ -25,8 +25,8 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		[InlineData("uid2")]
 		public async void DeletesTokens(string uid)
 		{
-			var tokens = _expectedTokens.Where(_ => _.UID == uid).ToHashSet();
-			_expectedTokens.ExceptWith(tokens);
+			var refreshTokens = _expectedTokens.Where(_ => _.UID == uid).ToHashSet();
+			_expectedTokens.ExceptWith(refreshTokens);
 			await _repo.DeleteAll(uid);
 			AssertCollectionEquals();
 		}

@@ -38,16 +38,16 @@ namespace NotetasticApi.Tests.Users.RefreshTokenTests
 		[Fact]
 		public void HandlesNullCorrectly()
 		{
-			User user = new User();
-			Assert.False(user.Equals(null));
+			RefreshToken refreshToken = new RefreshToken();
+			Assert.False(refreshToken.Equals(null));
 		}
 
 		[Fact]
 		public void ReturnsTrueIfSameInstance()
 		{
-			foreach (var user in _list1)
+			foreach (var refreshToken in _list1)
 			{
-				Assert.True(user.Equals(user));
+				Assert.True(refreshToken.Equals(refreshToken));
 			}
 		}
 

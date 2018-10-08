@@ -12,15 +12,15 @@ namespace NotetasticApi.Tests.Users.RefreshTokenTests
 		[InlineData("\n\t")]
 		public void IsFalseIfUIDInvalid(string uid)
 		{
-			var authToken = new RefreshToken
+			var refreshToken = new RefreshToken
 			{
 				UID = uid,
 				Token = "somehash",
 				ExpiresAt = DateTimeOffset.Now
 			};
-			Assert.False(authToken.IsValid);
-			authToken.Id = "asom";
-			Assert.False(authToken.IsValid);
+			Assert.False(refreshToken.IsValid);
+			refreshToken.Id = "asom";
+			Assert.False(refreshToken.IsValid);
 		}
 
 		[Theory]
@@ -29,42 +29,42 @@ namespace NotetasticApi.Tests.Users.RefreshTokenTests
 		[InlineData("\n\t")]
 		public void IsFalseIfTokenInvalid(string token)
 		{
-			var authToken = new RefreshToken
+			var refreshToken = new RefreshToken
 			{
 				UID = "uid",
 				Token = token,
 				ExpiresAt = DateTimeOffset.Now
 			};
-			Assert.False(authToken.IsValid);
-			authToken.Id = "asom";
-			Assert.False(authToken.IsValid);
+			Assert.False(refreshToken.IsValid);
+			refreshToken.Id = "asom";
+			Assert.False(refreshToken.IsValid);
 		}
 
 		[Fact]
 		public void IsFalseIfExpiresAtMissing()
 		{
-			var authToken = new RefreshToken
+			var refreshToken = new RefreshToken
 			{
 				UID = "uid",
 				Token = "token"
 			};
-			Assert.False(authToken.IsValid);
-			authToken.Id = "asom";
-			Assert.False(authToken.IsValid);
+			Assert.False(refreshToken.IsValid);
+			refreshToken.Id = "asom";
+			Assert.False(refreshToken.IsValid);
 		}
 
 		[Fact]
 		public void IsTrueIfAllThingsPresent()
 		{
-			var authToken = new RefreshToken
+			var refreshToken = new RefreshToken
 			{
 				UID = "uid",
 				Token = "token",
 				ExpiresAt = DateTimeOffset.Now
 			};
-			Assert.True(authToken.IsValid);
-			authToken.Id = "asom";
-			Assert.True(authToken.IsValid);
+			Assert.True(refreshToken.IsValid);
+			refreshToken.Id = "asom";
+			Assert.True(refreshToken.IsValid);
 		}
 	}
 }

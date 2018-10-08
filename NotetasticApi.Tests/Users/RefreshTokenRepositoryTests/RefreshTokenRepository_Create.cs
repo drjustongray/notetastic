@@ -38,7 +38,13 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		public async void ShouldThrowIfIdNonNull(string value)
 		{
 			await Assert.ThrowsAsync<ArgumentException>(
-				() => _repo.Create(new RefreshToken { UID = "f@gd", Token = "value", Id = value, ExpiresAt = DateTimeOffset.Now })
+				() => _repo.Create(new RefreshToken
+				{
+					UID = "f@gd",
+					Token = "value",
+					Id = value,
+					ExpiresAt = DateTimeOffset.Now
+				})
 			);
 			AssertCollectionEquals();
 		}
@@ -49,7 +55,12 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		public async void ShouldThrowIfTokenInUse(string token)
 		{
 			await Assert.ThrowsAsync<DocumentConflictException>(
-				() => _repo.Create(new RefreshToken { Token = token, UID = "uid3", ExpiresAt = DateTimeOffset.Now.AddMinutes(3) })
+				() => _repo.Create(new RefreshToken
+				{
+					Token = token,
+					UID = "uid3",
+					ExpiresAt = DateTimeOffset.Now.AddMinutes(3)
+				})
 			);
 			AssertCollectionEquals();
 		}
@@ -59,10 +70,15 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		[InlineData("ad089708", "uid2")]
 		public async void ShouldAddDocToDB(string token, string uid)
 		{
-			var authToken = new RefreshToken { Token = token, UID = uid, ExpiresAt = DateTimeOffset.Now.AddMinutes(3) };
-			await _repo.Create(authToken);
+			var refreshToken = new RefreshToken
+			{
+				Token = token,
+				UID = uid,
+				ExpiresAt = DateTimeOffset.Now.AddMinutes(3)
+			};
+			await _repo.Create(refreshToken);
 
-			_expectedTokens.Add(authToken);
+			_expectedTokens.Add(refreshToken);
 			AssertCollectionEquals();
 		}
 
@@ -71,10 +87,15 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		[InlineData("ad089708", "uid2")]
 		public async void ShouldReturnUserDoc(string token, string uid)
 		{
-			var authToken = new RefreshToken { Token = token, UID = uid, ExpiresAt = DateTimeOffset.Now.AddMinutes(3) };
-			var anAuthToken = await _repo.Create(authToken);
+			var expected = new RefreshToken
+			{
+				Token = token,
+				UID = uid,
+				ExpiresAt = DateTimeOffset.Now.AddMinutes(3)
+			};
+			var actual = await _repo.Create(expected);
 
-			Assert.Equal(authToken, anAuthToken);
+			Assert.Equal(expected, actual);
 		}
 	}
 }

@@ -66,18 +66,18 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		[InlineData("token1", "uid2")]
 		[InlineData("token2", "uid3")]
 		[InlineData("token3", "uid1")]
-		public async void ShouldThrowIfUIDMismatch(string tokenString, string uid)
+		public async void ShouldThrowIfUIDMismatch(string token, string uid)
 		{
-			var token = _expectedTokens.First(_ => _.Token == tokenString);
-			token = new RefreshToken
+			var refreshToken = _expectedTokens.First(_ => _.Token == token);
+			refreshToken = new RefreshToken
 			{
-				Id = token.Id,
+				Id = refreshToken.Id,
 				UID = uid,
-				Token = token.Token + "asdf",
-				ExpiresAt = token.ExpiresAt?.AddDays(3)
+				Token = refreshToken.Token + "asdf",
+				ExpiresAt = refreshToken.ExpiresAt?.AddDays(3)
 			};
 			await Assert.ThrowsAsync<DocumentNotFoundException>(
-				() => _repo.Update(token)
+				() => _repo.Update(refreshToken)
 			);
 			AssertCollectionEquals();
 		}
@@ -107,13 +107,13 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		[InlineData("token3", "token6")]
 		public async void ShouldUpdateDocInDB(string from, string to)
 		{
-			var token = _expectedTokens.First(_ => _.Token == from);
-			_expectedTokens.Remove(token);
-			token.Token = to;
-			token.ExpiresAt += TimeSpan.FromDays(2);
-			_expectedTokens.Add(token);
+			var refreshToken = _expectedTokens.First(_ => _.Token == from);
+			_expectedTokens.Remove(refreshToken);
+			refreshToken.Token = to;
+			refreshToken.ExpiresAt += TimeSpan.FromDays(2);
+			_expectedTokens.Add(refreshToken);
 
-			await _repo.Update(token);
+			await _repo.Update(refreshToken);
 			AssertCollectionEquals();
 		}
 
@@ -123,13 +123,13 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		[InlineData("token3", "token6")]
 		public async void ShouldReturnUserDoc(string from, string to)
 		{
-			var token = _expectedTokens.First(_ => _.Token == from);
-			token.Token = to;
-			token.ExpiresAt += TimeSpan.FromDays(2);
+			var expected = _expectedTokens.First(_ => _.Token == from);
+			expected.Token = to;
+			expected.ExpiresAt += TimeSpan.FromDays(2);
 
-			var aToken = await _repo.Update(token);
+			var actual = await _repo.Update(expected);
 
-			Assert.Equal(token, aToken);
+			Assert.Equal(expected, actual);
 		}
 	}
 }

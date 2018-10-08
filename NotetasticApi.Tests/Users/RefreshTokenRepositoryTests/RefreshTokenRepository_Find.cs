@@ -25,16 +25,16 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		[InlineData("token2")]
 		public async void ReturnsAuthTokenIfFound(string token)
 		{
-			var authToken = await _repo.Find(token);
-			Assert.Equal(authToken, _expectedTokens.First(_ => _.Token == token));
+			var refreshToken = await _repo.Find(token);
+			Assert.Equal(refreshToken, _expectedTokens.First(_ => _.Token == token));
 			AssertCollectionEquals();
 		}
 
 		[Fact]
 		public async void ReturnsNullIfAuthTokenNotFound()
 		{
-			var token = await _repo.Find("asdfa");
-			Assert.Null(token);
+			var refreshToken = await _repo.Find("asdfa");
+			Assert.Null(refreshToken);
 			AssertCollectionEquals();
 		}
 	}
