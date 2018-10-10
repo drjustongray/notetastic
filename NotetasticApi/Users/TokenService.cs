@@ -1,6 +1,7 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
 
 namespace NotetasticApi.Users
@@ -14,6 +15,7 @@ namespace NotetasticApi.Users
 	public interface ITokenService
 	{
 		string CreateAccessToken(string uid);
+		string CreateRefreshToken();
 	}
 
 	public class TokenService : ITokenService
@@ -21,6 +23,7 @@ namespace NotetasticApi.Users
 		private readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
 		private readonly SecurityKey _key;
 		private readonly SigningCredentials _credentials;
+		private RandomNumberGenerator rng = RandomNumberGenerator.Create();
 		public TokenService(SecurityKey key)
 		{
 			_key = key;
@@ -40,6 +43,14 @@ namespace NotetasticApi.Users
 				expires: DateTime.Now.AddMinutes(5)
 			);
 			return _tokenHandler.WriteToken(token);
+		}
+
+		public string CreateRefreshToken()
+		{
+			var randomNumber = new byte[32];
+			rng.GetBytes(randomNumber);
+			var token = Convert.ToBase64String(randomNumber);
+			return token;
 		}
 	}
 }
