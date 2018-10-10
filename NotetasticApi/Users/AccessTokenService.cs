@@ -20,9 +20,11 @@ namespace NotetasticApi.Users
 	{
 		private readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
 		private readonly SecurityKey _key;
+		private readonly SigningCredentials _credentials;
 		public AccessTokenService(SecurityKey key)
 		{
 			_key = key;
+			_credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
 		}
 
 		public string CreateAccessToken(string uid)
@@ -33,7 +35,7 @@ namespace NotetasticApi.Users
 			}
 			var token = new JwtSecurityToken(
 				claims: new Claim[] { new Claim(ClaimTypes.UID, uid) },
-				signingCredentials: new SigningCredentials(_key, SecurityAlgorithms.HmacSha256),
+				signingCredentials: _credentials,
 				notBefore: DateTime.Now,
 				expires: DateTime.Now.AddMinutes(5)
 			);
