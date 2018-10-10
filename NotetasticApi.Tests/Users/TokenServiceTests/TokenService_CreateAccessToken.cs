@@ -6,16 +6,16 @@ using Microsoft.IdentityModel.Tokens;
 using NotetasticApi.Users;
 using Xunit;
 
-namespace NotetasticApi.Tests.Users
+namespace NotetasticApi.Tests.Users.TokenServiceTests
 {
-	public class AccessTokenService
+	public class TokenService_CreateAccessToken
 	{
 		private readonly SymmetricSecurityKey _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superdupersecret"));
-		private readonly NotetasticApi.Users.AccessTokenService _service;
+		private readonly NotetasticApi.Users.TokenService _service;
 
-		public AccessTokenService()
+		public TokenService_CreateAccessToken()
 		{
-			_service = new NotetasticApi.Users.AccessTokenService(_key);
+			_service = new NotetasticApi.Users.TokenService(_key);
 		}
 
 		[Fact]

@@ -11,17 +11,17 @@ namespace NotetasticApi.Users
 		public const string UID = "UID";
 	}
 
-	public interface IAccessTokenService
+	public interface ITokenService
 	{
 		string CreateAccessToken(string uid);
 	}
 
-	public class AccessTokenService : IAccessTokenService
+	public class TokenService : ITokenService
 	{
 		private readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
 		private readonly SecurityKey _key;
 		private readonly SigningCredentials _credentials;
-		public AccessTokenService(SecurityKey key)
+		public TokenService(SecurityKey key)
 		{
 			_key = key;
 			_credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
