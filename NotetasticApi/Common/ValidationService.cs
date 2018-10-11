@@ -7,6 +7,7 @@ namespace NotetasticApi.Common
 
 	public interface IValidationService
 	{
+		void AssertNonNull<T>(T value, string varName);
 		bool IsPasswordValid(string password, out string reason);
 		bool IsUsernameValid(string username, out string reason);
 		void ValidatePassword(string password);
@@ -15,6 +16,14 @@ namespace NotetasticApi.Common
 
 	public class ValidationService : IValidationService
 	{
+		public void AssertNonNull<T>(T value, string varName)
+		{
+			if (value == null)
+			{
+				throw new ArgumentNullException(varName);
+			}
+		}
+
 		public bool IsPasswordValid(string password, out string reason)
 		{
 			if (password == null)
