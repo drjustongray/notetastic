@@ -126,7 +126,27 @@ namespace NotetasticApi.Users
 		[HttpGet, AllowAnonymous]
 		public async Task<ActionResult<AuthenticationResponse>> GetUserAuth()
 		{
-			return null;
+			if (!Request.Cookies.ContainsKey(REFRESH_TOKEN))
+			{
+				return BadRequest();
+			}
+			var tokenPair = await userService.CreateAuthTokens(Request.Cookies[REFRESH_TOKEN]);
+			if (tokenPair == null)
+			{
+				return Unauthorized();
+			}
+			var cookieOptions = new CookieOptions { Secure = true, HttpOnly = true };
+			if (tokenPair.Persistent)
+			{
+				cookieOptions.MaxAge = TimeSpan.FromDays(30);
+			}
+			Response.Cookies.Append(REFRESH_TOKEN, tokenPair.RefreshToken, cookieOptions);
+			return new AuthenticationResponse
+			{
+				uid = tokenPair.User.Id,
+				username = tokenPair.User.UserName,
+				token = tokenPair.AccessToken
+			};
 		}
 
 		[HttpPut("username")]

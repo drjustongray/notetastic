@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using NotetasticApi.Common;
@@ -31,5 +33,33 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			userController.ControllerContext = controllerContext;
 			return cookies;
 		}
+
+		protected Mock<IResponseCookies> SetupRequestCookies(string refreshToken = null, bool includeResponse = false)
+		{
+			var controllerContext = new ControllerContext();
+			var httpContext = new Mock<HttpContext>(MockBehavior.Strict);
+			var request = new Mock<HttpRequest>(MockBehavior.Strict);
+			//var cookies = new Mock<IResponseCookies>(MockBehavior.Strict);
+			var cookies = refreshToken == null ?
+				new RequestCookieCollection() :
+				new RequestCookieCollection(new Dictionary<string, string> { { UserController.REFRESH_TOKEN, refreshToken } });
+
+			request.SetupGet(x => x.Cookies).Returns(cookies);
+			httpContext.SetupGet(x => x.Request).Returns(request.Object);
+
+			Mock<IResponseCookies> resCookies = null;
+			if (includeResponse)
+			{
+				var response = new Mock<HttpResponse>(MockBehavior.Strict);
+				resCookies = new Mock<IResponseCookies>(MockBehavior.Strict);
+				response.SetupGet(x => x.Cookies).Returns(resCookies.Object);
+				httpContext.SetupGet(x => x.Response).Returns(response.Object);
+			}
+			controllerContext.HttpContext = httpContext.Object;
+			userController.ControllerContext = controllerContext;
+
+			return resCookies;
+		}
+
 	}
 }
