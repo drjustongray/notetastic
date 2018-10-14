@@ -129,7 +129,8 @@ namespace NotetasticApi.Users
 			return new TokenPair
 			{
 				RefreshToken = refreshToken.Token,
-				AccessToken = tokenService.CreateAccessToken(user.Id)
+				AccessToken = tokenService.CreateAccessToken(user.Id),
+				User = user
 			};
 		}
 
@@ -156,10 +157,12 @@ namespace NotetasticApi.Users
 			{
 				await UpdateToken(tokenDoc);
 			}
+
 			return new TokenPair
 			{
 				RefreshToken = tokenDoc.Token,
-				AccessToken = tokenService.CreateAccessToken(tokenDoc.UID)
+				AccessToken = tokenService.CreateAccessToken(tokenDoc.UID),
+				User = await userRepo.FindById(tokenDoc.UID)
 			};
 		}
 

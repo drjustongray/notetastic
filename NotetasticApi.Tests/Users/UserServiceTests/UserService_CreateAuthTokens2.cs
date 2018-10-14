@@ -60,6 +60,9 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		[InlineData("reftok3", "uid3")]
 		public async void UpdatesRefreshTokenReturnsTokenPair(string token, string uid)
 		{
+			var user = new User { Id = uid, UserName = "someusername" };
+			userRepo.Setup(x => x.FindById(uid)).ReturnsAsync(user);
+
 			var tokenDoc = new RefreshToken
 			{
 				Id = "someid" + token,
@@ -83,7 +86,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 
 			var result = await userService.CreateAuthTokens(token);
 			refreshTokenRepo.Verify(x => x.Update(It.IsAny<RefreshToken>()));
-			Assert.Equal(new TokenPair { RefreshToken = newToken.Token, AccessToken = accessToken }, result);
+			Assert.Equal(new TokenPair { RefreshToken = newToken.Token, AccessToken = accessToken, User = user }, result);
 		}
 
 		[Theory]
@@ -92,6 +95,9 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		[InlineData("reftok3", "uid3")]
 		public async void RetriesOnDocumentConflictError(string token, string uid)
 		{
+			var user = new User { Id = uid, UserName = "someusername" };
+			userRepo.Setup(x => x.FindById(uid)).ReturnsAsync(user);
+
 			var tokenDoc = new RefreshToken
 			{
 				Id = "someid" + token,
@@ -128,7 +134,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 
 			var result = await userService.CreateAuthTokens(token);
 			refreshTokenRepo.Verify(x => x.Update(It.IsNotNull<RefreshToken>()), Times.Exactly(2));
-			Assert.Equal(new TokenPair { RefreshToken = refreshToken.Token, AccessToken = accessToken }, result);
+			Assert.Equal(new TokenPair { RefreshToken = refreshToken.Token, AccessToken = accessToken, User = user }, result);
 		}
 
 		[Theory]

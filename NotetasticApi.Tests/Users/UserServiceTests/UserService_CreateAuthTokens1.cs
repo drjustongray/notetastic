@@ -44,10 +44,12 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		[InlineData("uid3")]
 		public async void SavesRefreshTokenReturnsTokenPair(string uid)
 		{
+			var user = new User { Id = uid, UserName = "someusername" };
 			var expected = new TokenPair
 			{
 				AccessToken = "axessToken" + uid,
-				RefreshToken = "refreshToken" + uid
+				RefreshToken = "refreshToken" + uid,
+				User = user
 			};
 			var refreshToken = new RefreshToken
 			{
@@ -59,7 +61,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 			tokenService.Setup(x => x.CreateRefreshToken()).Returns(expected.RefreshToken);
 			refreshTokenRepo.Setup(x => x.Create(Matches(refreshToken))).ReturnsAsync(refreshToken);
 
-			var actual = await userService.CreateAuthTokens(new User { Id = uid });
+			var actual = await userService.CreateAuthTokens(user);
 			Assert.Equal(expected, actual);
 			refreshTokenRepo.Verify(x => x.Create(It.IsAny<RefreshToken>()), Times.Once);
 		}
@@ -70,10 +72,12 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		[InlineData("uid3")]
 		public async void RetriesOnDocumentConflictError(string uid)
 		{
+			var user = new User { Id = uid, UserName = "someusername" };
 			var expected = new TokenPair
 			{
 				AccessToken = "axessToken" + uid,
-				RefreshToken = "refreshToken" + uid
+				RefreshToken = "refreshToken" + uid,
+				User = user
 			};
 			var refreshToken = new RefreshToken
 			{
@@ -97,7 +101,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 			refreshTokenRepo.SetupSequence(x => x.Create(Matches(refreshToken)))
 				.ReturnsAsync(refreshToken);
 
-			var actual = await userService.CreateAuthTokens(new User { Id = uid });
+			var actual = await userService.CreateAuthTokens(user);
 			Assert.Equal(expected, actual);
 			refreshTokenRepo.Verify(x => x.Create(It.IsNotNull<RefreshToken>()), Times.Exactly(2));
 		}

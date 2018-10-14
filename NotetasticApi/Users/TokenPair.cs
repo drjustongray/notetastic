@@ -6,6 +6,7 @@ namespace NotetasticApi.Users
 	{
 		public string AccessToken { get; set; }
 		public string RefreshToken { get; set; }
+		public User User { get; set; }
 
 		public override bool Equals(object obj)
 		{
@@ -15,7 +16,7 @@ namespace NotetasticApi.Users
 			}
 			var other = (TokenPair)obj;
 
-			return AccessToken == other.AccessToken && RefreshToken == other.RefreshToken;
+			return AccessToken == other.AccessToken && RefreshToken == other.RefreshToken && User == other.User;
 		}
 
 		// override object.GetHashCode

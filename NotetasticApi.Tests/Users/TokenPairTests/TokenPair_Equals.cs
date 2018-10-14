@@ -11,20 +11,23 @@ namespace NotetasticApi.Tests.Users.TokenPairTests
 
 		public TokenPair_Equals()
 		{
-			foreach (var accessToken in new string[] { null, "ax1", "ax2" })
-				foreach (var refreshToken in new string[] { null, "ref1", "ref2" })
-				{
-					list1.Add(new TokenPair
+			foreach (var user in new User[] { null, new User { Id = "something" }, new User { Id = "somethingelse" } })
+				foreach (var accessToken in new string[] { null, "ax1", "ax2" })
+					foreach (var refreshToken in new string[] { null, "ref1", "ref2" })
 					{
-						AccessToken = accessToken,
-						RefreshToken = refreshToken
-					});
-					list2.Add(new TokenPair
-					{
-						AccessToken = accessToken,
-						RefreshToken = refreshToken
-					});
-				}
+						list1.Add(new TokenPair
+						{
+							AccessToken = accessToken,
+							RefreshToken = refreshToken,
+							User = user
+						});
+						list2.Add(new TokenPair
+						{
+							AccessToken = accessToken,
+							RefreshToken = refreshToken,
+							User = user
+						});
+					}
 		}
 
 		[Fact]
