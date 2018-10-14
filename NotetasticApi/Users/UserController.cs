@@ -54,12 +54,7 @@ namespace NotetasticApi.Users
 
 			var shouldPersist = auth.rememberMe ?? false;
 			var tokens = await userService.CreateAuthTokens(user, shouldPersist);
-			var cookieOptions = new CookieOptions { Secure = true, HttpOnly = true };
-			if (shouldPersist)
-			{
-				cookieOptions.MaxAge = TimeSpan.FromDays(30);
-			}
-			Response.Cookies.Append(REFRESH_TOKEN, tokens.RefreshToken, cookieOptions);
+			SetRefreshToken(tokens.RefreshToken, shouldPersist);
 			return new AuthenticationResponse
 			{
 				uid = user.Id,
@@ -103,12 +98,7 @@ namespace NotetasticApi.Users
 			}
 			var shouldPersist = auth.rememberMe ?? false;
 			var tokens = await userService.CreateAuthTokens(user, shouldPersist);
-			var cookieOptions = new CookieOptions { Secure = true, HttpOnly = true };
-			if (shouldPersist)
-			{
-				cookieOptions.MaxAge = TimeSpan.FromDays(30);
-			}
-			Response.Cookies.Append(REFRESH_TOKEN, tokens.RefreshToken, cookieOptions);
+			SetRefreshToken(tokens.RefreshToken, shouldPersist);
 			return new AuthenticationResponse
 			{
 				uid = user.Id,
@@ -126,21 +116,17 @@ namespace NotetasticApi.Users
 		[HttpGet, AllowAnonymous]
 		public async Task<ActionResult<AuthenticationResponse>> GetUserAuth()
 		{
-			if (!Request.Cookies.ContainsKey(REFRESH_TOKEN))
+			var refreshToken = GetRefreshToken();
+			if (refreshToken == null)
 			{
 				return BadRequest();
 			}
-			var tokenPair = await userService.CreateAuthTokens(Request.Cookies[REFRESH_TOKEN]);
+			var tokenPair = await userService.CreateAuthTokens(refreshToken);
 			if (tokenPair == null)
 			{
 				return Unauthorized();
 			}
-			var cookieOptions = new CookieOptions { Secure = true, HttpOnly = true };
-			if (tokenPair.Persistent)
-			{
-				cookieOptions.MaxAge = TimeSpan.FromDays(30);
-			}
-			Response.Cookies.Append(REFRESH_TOKEN, tokenPair.RefreshToken, cookieOptions);
+			SetRefreshToken(tokenPair.RefreshToken, tokenPair.Persistent);
 			return new AuthenticationResponse
 			{
 				uid = tokenPair.User.Id,
@@ -168,13 +154,38 @@ namespace NotetasticApi.Users
 		[HttpGet("logout"), AllowAnonymous]
 		public async Task<ActionResult> Logout()
 		{
-			return null;
+			var refreshToken = GetRefreshToken();
+			if (refreshToken == null)
+			{
+				return BadRequest();
+			}
+			await userService.RevokeRefreshToken(refreshToken);
+			RemoveRefreshToken();
+			return NoContent();
 		}
 
 		[HttpGet("logoutall")]
 		public async Task<ActionResult> LogoutAll()
 		{
 			return null;
+		}
+
+		private string GetRefreshToken() => Request.Cookies.ContainsKey(REFRESH_TOKEN)
+												? Request.Cookies[REFRESH_TOKEN] : null;
+
+		private void SetRefreshToken(string token, bool shouldPersist)
+		{
+			var cookieOptions = new CookieOptions { Secure = true, HttpOnly = true };
+			if (shouldPersist)
+			{
+				cookieOptions.MaxAge = TimeSpan.FromDays(30);
+			}
+			Response.Cookies.Append(REFRESH_TOKEN, token, cookieOptions);
+		}
+
+		private void RemoveRefreshToken()
+		{
+			Response.Cookies.Delete(REFRESH_TOKEN);
 		}
 
 		private string UID
