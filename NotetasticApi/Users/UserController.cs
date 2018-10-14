@@ -167,7 +167,9 @@ namespace NotetasticApi.Users
 		[HttpGet("logoutall")]
 		public async Task<ActionResult> LogoutAll()
 		{
-			return null;
+			await userService.RevokeAllRefreshTokens(UID);
+			RemoveRefreshToken();
+			return NoContent();
 		}
 
 		private string GetRefreshToken()

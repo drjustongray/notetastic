@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Mvc;
@@ -21,10 +22,16 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			userController = new UserController(userService.Object, validationService.Object);
 		}
 
-		protected Mock<IResponseCookies> SetupResponseCookies()
+		protected Mock<IResponseCookies> SetupResponseCookies(string uid = null)
 		{
 			var controllerContext = new ControllerContext();
 			var httpContext = new Mock<HttpContext>(MockBehavior.Strict);
+			if (uid != null)
+			{
+				httpContext.SetupGet(x => x.User).Returns(
+					new ClaimsPrincipal(new ClaimsIdentity(new Claim[] { new Claim(NotetasticApi.Users.ClaimTypes.UID, uid) }))
+				);
+			}
 			var response = new Mock<HttpResponse>(MockBehavior.Strict);
 			var cookies = new Mock<IResponseCookies>(MockBehavior.Strict);
 			response.SetupGet(x => x.Cookies).Returns(cookies.Object);
