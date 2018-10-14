@@ -7,10 +7,12 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 {
 	public class UserController_Logout : UserController_Base
 	{
-		[Fact]
-		public async void ReturnsBadRequestIfCookieNotPresent()
+		[Theory]
+		[InlineData(null)]
+		[InlineData("")]
+		public async void ReturnsBadRequestIfCookieMissing(string token)
 		{
-			SetupRequestCookies();
+			SetupRequestCookies(token);
 			var result = await userController.Logout();
 			Assert.IsType<BadRequestResult>(result);
 		}

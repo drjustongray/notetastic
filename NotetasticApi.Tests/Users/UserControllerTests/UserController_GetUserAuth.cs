@@ -9,10 +9,12 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 {
 	public class UserController_GetUserAuth : UserController_Base
 	{
-		[Fact]
-		public async void ReturnsBadRequestIfCookieMissing()
+		[Theory]
+		[InlineData(null)]
+		[InlineData("")]
+		public async void ReturnsBadRequestIfCookieMissing(string value)
 		{
-			SetupRequestCookies();
+			SetupRequestCookies(value);
 			var result = await userController.GetUserAuth();
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			Assert.IsType<BadRequestResult>(actionResult.Result);

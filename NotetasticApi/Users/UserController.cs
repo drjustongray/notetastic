@@ -170,8 +170,18 @@ namespace NotetasticApi.Users
 			return null;
 		}
 
-		private string GetRefreshToken() => Request.Cookies.ContainsKey(REFRESH_TOKEN)
-												? Request.Cookies[REFRESH_TOKEN] : null;
+		private string GetRefreshToken()
+		{
+			if (Request.Cookies.ContainsKey(REFRESH_TOKEN))
+			{
+				var token = Request.Cookies[REFRESH_TOKEN];
+				if (!string.IsNullOrEmpty(token))
+				{
+					return token;
+				}
+			}
+			return null;
+		}
 
 		private void SetRefreshToken(string token, bool shouldPersist)
 		{
