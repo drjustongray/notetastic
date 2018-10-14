@@ -77,7 +77,41 @@ namespace NotetasticApi.Users
 		[HttpPut, AllowAnonymous]
 		public async Task<ActionResult<AuthenticationResponse>> Register([FromBody] AuthenticationRequest auth)
 		{
-			return null;
+			string usernameIssue;
+			string passwordIssue;
+			var usernameProblem = !validationService.IsUsernameValid(auth?.username, out usernameIssue);
+			var passwordProblem = !validationService.IsPasswordValid(auth?.password, out passwordIssue);
+			if (usernameProblem || passwordProblem)
+			{
+				var modelState = new ModelStateDictionary();
+				if (usernameProblem)
+				{
+					modelState.AddModelError("username", usernameIssue);
+				}
+				if (passwordProblem)
+				{
+					modelState.AddModelError("password", passwordIssue);
+				}
+				return BadRequest(modelState);
+			}
+			var user = await userService.CreateAccount(auth.username, auth.password);
+			if (user == null)
+			{
+				return Conflict();
+			}
+			var tokens = await userService.CreateAuthTokens(user);
+			var cookieOptions = new CookieOptions { Secure = true, HttpOnly = true };
+			if (auth.rememberMe ?? false)
+			{
+				cookieOptions.MaxAge = TimeSpan.FromDays(30);
+			}
+			Response.Cookies.Append(REFRESH_TOKEN, tokens.RefreshToken, cookieOptions);
+			return new AuthenticationResponse
+			{
+				uid = user.Id,
+				username = user.UserName,
+				token = tokens.AccessToken
+			};
 		}
 
 		/// <summary>
