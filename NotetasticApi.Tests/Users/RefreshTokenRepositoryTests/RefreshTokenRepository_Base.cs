@@ -24,7 +24,8 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		{
 			UID = "uid2",
 			Token = "token2",
-			ExpiresAt = DateTimeOffset.Now.AddMinutes(2)
+			ExpiresAt = DateTimeOffset.Now.AddMinutes(2),
+			Persistent = true
 		};
 
 		protected readonly RefreshToken _existing3 = new RefreshToken

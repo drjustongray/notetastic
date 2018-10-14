@@ -12,26 +12,29 @@ namespace NotetasticApi.Tests.Users.RefreshTokenTests
 
 		public RefreshToken_Equals()
 		{
-			foreach (var id in new string[] { null, "someid", "someotherid" })
-				foreach (var token in new string[] { null, "sometoken", "someothertoken" })
-					foreach (var uid in new string[] { null, "uid1", "uid2" })
-						foreach (var dateTime in new DateTimeOffset?[] { null, DateTimeOffset.Now, DateTimeOffset.Now.AddDays(9) })
-						{
-							_list1.Add(new RefreshToken
+			foreach (var persistent in new bool[] { true, false })
+				foreach (var id in new string[] { null, "someid", "someotherid" })
+					foreach (var token in new string[] { null, "sometoken", "someothertoken" })
+						foreach (var uid in new string[] { null, "uid1", "uid2" })
+							foreach (var dateTime in new DateTimeOffset?[] { null, DateTimeOffset.Now, DateTimeOffset.Now.AddDays(9) })
 							{
-								Id = id,
-								Token = token,
-								UID = uid,
-								ExpiresAt = dateTime
-							});
-							_list2.Add(new RefreshToken
-							{
-								Id = id,
-								Token = token,
-								UID = uid,
-								ExpiresAt = dateTime
-							});
-						}
+								_list1.Add(new RefreshToken
+								{
+									Id = id,
+									Token = token,
+									UID = uid,
+									ExpiresAt = dateTime,
+									Persistent = persistent
+								});
+								_list2.Add(new RefreshToken
+								{
+									Id = id,
+									Token = token,
+									UID = uid,
+									ExpiresAt = dateTime,
+									Persistent = persistent
+								});
+							}
 
 		}
 

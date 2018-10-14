@@ -8,6 +8,7 @@ namespace NotetasticApi.Users
 		public string UID { get; set; }
 		public string Token { get; set; }
 		public DateTimeOffset? ExpiresAt { get; set; }
+		public bool Persistent { get; set; }
 
 		public bool IsValid => !(string.IsNullOrWhiteSpace(UID) || string.IsNullOrWhiteSpace(Token) || ExpiresAt == null);
 
@@ -35,7 +36,7 @@ namespace NotetasticApi.Users
 
 			var other = (RefreshToken)obj;
 
-			return Id == other.Id && UID == other.UID && Token == other.Token && ExpiresAt == other.ExpiresAt;
+			return Id == other.Id && UID == other.UID && Token == other.Token && ExpiresAt == other.ExpiresAt && Persistent == other.Persistent;
 		}
 
 		public override int GetHashCode()

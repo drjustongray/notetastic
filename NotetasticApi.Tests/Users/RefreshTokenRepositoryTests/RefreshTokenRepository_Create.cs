@@ -66,15 +66,16 @@ namespace NotetasticApi.Tests.Users.RefreshTokenRepositoryTests
 		}
 
 		[Theory]
-		[InlineData("asdf", "uid3")]
-		[InlineData("ad089708", "uid2")]
-		public async void ShouldAddDocToDB(string token, string uid)
+		[InlineData("asdf", "uid3", true)]
+		[InlineData("ad089708", "uid2", false)]
+		public async void ShouldAddDocToDB(string token, string uid, bool persistent)
 		{
 			var refreshToken = new RefreshToken
 			{
 				Token = token,
 				UID = uid,
-				ExpiresAt = DateTimeOffset.Now.AddMinutes(3)
+				ExpiresAt = DateTimeOffset.Now.AddMinutes(3),
+				Persistent = persistent
 			};
 			await _repo.Create(refreshToken);
 
