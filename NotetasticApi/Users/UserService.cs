@@ -91,11 +91,18 @@ namespace NotetasticApi.Users
 		{
 			validationService.ValidateUsername(username);
 			validationService.ValidatePassword(password);
-			return await userRepo.Create(new User
+			try
 			{
-				UserName = username,
-				PasswordHash = passwordService.Hash(password)
-			});
+				return await userRepo.Create(new User
+				{
+					UserName = username,
+					PasswordHash = passwordService.Hash(password)
+				});
+			}
+			catch (DocumentConflictException)
+			{
+				return null;
+			}
 		}
 
 		/// <summary>

@@ -1,5 +1,6 @@
 using System;
 using Moq;
+using NotetasticApi.Common;
 using NotetasticApi.Users;
 using Xunit;
 
@@ -107,7 +108,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		[InlineData("asdfasdf", "password11kla;jdflkjsd")]
 		[InlineData("afsd", "password2aoiudvfoiu")]
 		[InlineData("7907", "password3ajsdlkfj")]
-		public async void ThrowsIfUsernameConflict(string username, string password)
+		public async void ReturnsNullIfUsernameConflict(string username, string password)
 		{
 			var hash = password + "hash";
 			passwordService.Setup(x => x.Hash(password)).Returns(hash);
@@ -117,14 +118,10 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				PasswordHash = hash
 			};
 
-			var expected = new Exception();
+			userRepo.Setup(x => x.Create(user)).ThrowsAsync(new DocumentConflictException());
 
-			userRepo.Setup(x => x.Create(user)).ThrowsAsync(expected);
-
-			var actual = await Assert.ThrowsAsync<Exception>(
-				() => userService.CreateAccount(username, password)
-			);
-			Assert.Same(expected, actual);
+			var result = await userService.CreateAccount(username, password);
+			Assert.Null(result);
 		}
 	}
 }
