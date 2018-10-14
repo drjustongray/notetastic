@@ -142,7 +142,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			var accessToken = "78a0sd8v098as08dv";
 			userService.Setup(x => x.CreateAccount(username, password))
 				.ReturnsAsync(user);
-			userService.Setup(x => x.CreateAuthTokens(user))
+			userService.Setup(x => x.CreateAuthTokens(user, It.IsAny<bool>()))
 				.ReturnsAsync(new TokenPair { AccessToken = accessToken, RefreshToken = refToken });
 
 			foreach (var rememberMe in new bool?[] { null, true, false })
@@ -172,7 +172,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			var accessToken = "78a0sd8v098as08dv";
 			userService.Setup(x => x.CreateAccount(username, password))
 				.ReturnsAsync(user);
-			userService.Setup(x => x.CreateAuthTokens(user))
+			userService.Setup(x => x.CreateAuthTokens(user, false))
 				.ReturnsAsync(new TokenPair { AccessToken = accessToken, RefreshToken = refToken });
 
 			foreach (var rememberMe in new bool?[] { null, false })
@@ -204,7 +204,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			var accessToken = "78a0sd8v098as08dv";
 			userService.Setup(x => x.CreateAccount(username, password))
 				.ReturnsAsync(user);
-			userService.Setup(x => x.CreateAuthTokens(user))
+			userService.Setup(x => x.CreateAuthTokens(user, true))
 				.ReturnsAsync(new TokenPair { AccessToken = accessToken, RefreshToken = refToken });
 
 			var cookies = SetupResponseCookies();

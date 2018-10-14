@@ -41,7 +41,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 
 			if (Math.Abs(timeDiff?.Ticks ?? 10000000000) < 1000000)
 			{
-				return a.Equals(new RefreshToken { Id = b.Id, UID = b.UID, Token = b.Token, ExpiresAt = a.ExpiresAt });
+				return a.Equals(new RefreshToken { Id = b.Id, UID = b.UID, Token = b.Token, ExpiresAt = a.ExpiresAt, Persistent = b.Persistent });
 			}
 			return false;
 		}

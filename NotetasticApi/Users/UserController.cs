@@ -51,9 +51,11 @@ namespace NotetasticApi.Users
 			{
 				return Unauthorized();
 			}
-			var tokens = await userService.CreateAuthTokens(user);
+
+			var shouldPersist = auth.rememberMe ?? false;
+			var tokens = await userService.CreateAuthTokens(user, shouldPersist);
 			var cookieOptions = new CookieOptions { Secure = true, HttpOnly = true };
-			if (auth.rememberMe ?? false)
+			if (shouldPersist)
 			{
 				cookieOptions.MaxAge = TimeSpan.FromDays(30);
 			}
@@ -99,9 +101,10 @@ namespace NotetasticApi.Users
 			{
 				return Conflict();
 			}
-			var tokens = await userService.CreateAuthTokens(user);
+			var shouldPersist = auth.rememberMe ?? false;
+			var tokens = await userService.CreateAuthTokens(user, shouldPersist);
 			var cookieOptions = new CookieOptions { Secure = true, HttpOnly = true };
-			if (auth.rememberMe ?? false)
+			if (shouldPersist)
 			{
 				cookieOptions.MaxAge = TimeSpan.FromDays(30);
 			}
@@ -121,7 +124,7 @@ namespace NotetasticApi.Users
 		/// <param name="userRepo"></param>
 		/// <returns></returns>
 		[HttpGet, AllowAnonymous]
-		public async Task<ActionResult<AuthenticationResponse>> GetUserAuth([FromServices] IUserRepository userRepo)
+		public async Task<ActionResult<AuthenticationResponse>> GetUserAuth()
 		{
 			return null;
 		}

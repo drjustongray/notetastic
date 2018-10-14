@@ -8,7 +8,7 @@ namespace NotetasticApi.Users
 	public interface IUserService
 	{
 		Task<User> Authenticate(string username, string password);
-		Task<TokenPair> CreateAuthTokens(User user);
+		Task<TokenPair> CreateAuthTokens(User user, bool isPersistent);
 		Task<TokenPair> CreateAuthTokens(string refreshToken);
 		Task<User> CreateAccount(string username, string password);
 		Task<User> ChangePassword(string uid, string password, string newPassword);
@@ -112,11 +112,11 @@ namespace NotetasticApi.Users
 		/// </summary>
 		/// <param name="user"></param>
 		/// <returns>New Access and Refresh Tokens (to send to client)</returns>
-		public async Task<TokenPair> CreateAuthTokens(User user)
+		public async Task<TokenPair> CreateAuthTokens(User user, bool isPersistent)
 		{
 			validationService.AssertNonNull(user, nameof(user));
 			validationService.AssertNonNull(user.Id, nameof(user.Id));
-			var refreshToken = new RefreshToken { UID = user.Id };
+			var refreshToken = new RefreshToken { UID = user.Id, Persistent = isPersistent };
 			try
 			{
 				await CreateToken(refreshToken);
@@ -130,7 +130,8 @@ namespace NotetasticApi.Users
 			{
 				RefreshToken = refreshToken.Token,
 				AccessToken = tokenService.CreateAccessToken(user.Id),
-				User = user
+				User = user,
+				Persistent = isPersistent
 			};
 		}
 
@@ -162,7 +163,8 @@ namespace NotetasticApi.Users
 			{
 				RefreshToken = tokenDoc.Token,
 				AccessToken = tokenService.CreateAccessToken(tokenDoc.UID),
-				User = await userRepo.FindById(tokenDoc.UID)
+				User = await userRepo.FindById(tokenDoc.UID),
+				Persistent = tokenDoc.Persistent
 			};
 		}
 

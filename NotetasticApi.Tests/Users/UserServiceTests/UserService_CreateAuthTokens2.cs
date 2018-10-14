@@ -37,17 +37,18 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		}
 
 		[Theory]
-		[InlineData("reftok1")]
-		[InlineData("reftok2")]
-		[InlineData("reftok3")]
-		public async void ReturnsNullIfTokenExpired(string token)
+		[InlineData("reftok1", true)]
+		[InlineData("reftok2", false)]
+		[InlineData("reftok3", true)]
+		public async void ReturnsNullIfTokenExpired(string token, bool shouldPersist)
 		{
 			var tokenDoc = new RefreshToken
 			{
 				Id = "someid" + token,
 				Token = token,
 				UID = "uid",
-				ExpiresAt = DateTimeOffset.Now.AddDays(-2)
+				ExpiresAt = DateTimeOffset.Now.AddDays(-2),
+				Persistent = shouldPersist
 			};
 			refreshTokenRepo.Setup(x => x.Find(token)).ReturnsAsync(tokenDoc);
 			var result = await userService.CreateAuthTokens(token);
@@ -55,10 +56,10 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		}
 
 		[Theory]
-		[InlineData("reftok1", "uid1")]
-		[InlineData("reftok2", "uid2")]
-		[InlineData("reftok3", "uid3")]
-		public async void UpdatesRefreshTokenReturnsTokenPair(string token, string uid)
+		[InlineData("reftok1", "uid1", false)]
+		[InlineData("reftok2", "uid2", true)]
+		[InlineData("reftok3", "uid3", false)]
+		public async void UpdatesRefreshTokenReturnsTokenPair(string token, string uid, bool shouldPersist)
 		{
 			var user = new User { Id = uid, UserName = "someusername" };
 			userRepo.Setup(x => x.FindById(uid)).ReturnsAsync(user);
@@ -68,7 +69,8 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = "someid" + token,
 				Token = token,
 				UID = uid,
-				ExpiresAt = DateTimeOffset.Now.AddDays(23)
+				ExpiresAt = DateTimeOffset.Now.AddDays(23),
+				Persistent = shouldPersist
 			};
 			refreshTokenRepo.Setup(x => x.Find(token)).ReturnsAsync(tokenDoc);
 
@@ -77,7 +79,8 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = tokenDoc.Id,
 				UID = uid,
 				Token = "newtoken" + token,
-				ExpiresAt = DateTimeOffset.Now.AddDays(30)
+				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				Persistent = shouldPersist
 			};
 			refreshTokenRepo.SetupSequence(x => x.Update(Matches(newToken))).ReturnsAsync(newToken);
 			var accessToken = uid + "token";
@@ -86,14 +89,20 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 
 			var result = await userService.CreateAuthTokens(token);
 			refreshTokenRepo.Verify(x => x.Update(It.IsAny<RefreshToken>()));
-			Assert.Equal(new TokenPair { RefreshToken = newToken.Token, AccessToken = accessToken, User = user }, result);
+			Assert.Equal(new TokenPair
+			{
+				RefreshToken = newToken.Token,
+				AccessToken = accessToken,
+				User = user,
+				Persistent = shouldPersist
+			}, result);
 		}
 
 		[Theory]
-		[InlineData("reftok1", "uid1")]
-		[InlineData("reftok2", "uid2")]
-		[InlineData("reftok3", "uid3")]
-		public async void RetriesOnDocumentConflictError(string token, string uid)
+		[InlineData("reftok1", "uid1", true)]
+		[InlineData("reftok2", "uid2", false)]
+		[InlineData("reftok3", "uid3", true)]
+		public async void RetriesOnDocumentConflictError(string token, string uid, bool shouldPersist)
 		{
 			var user = new User { Id = uid, UserName = "someusername" };
 			userRepo.Setup(x => x.FindById(uid)).ReturnsAsync(user);
@@ -103,7 +112,8 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = "someid" + token,
 				Token = token,
 				UID = uid,
-				ExpiresAt = DateTimeOffset.Now.AddDays(23)
+				ExpiresAt = DateTimeOffset.Now.AddDays(23),
+				Persistent = shouldPersist
 			};
 			refreshTokenRepo.Setup(x => x.Find(token)).ReturnsAsync(tokenDoc);
 
@@ -112,14 +122,16 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = tokenDoc.Id,
 				UID = uid,
 				Token = "tokenthatsalreadyinuse",
-				ExpiresAt = DateTimeOffset.Now.AddDays(30)
+				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				Persistent = shouldPersist
 			};
 			var refreshToken = new RefreshToken
 			{
 				Id = tokenDoc.Id,
 				UID = uid,
 				Token = "newtoken" + token,
-				ExpiresAt = DateTimeOffset.Now.AddDays(30)
+				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				Persistent = shouldPersist
 			};
 			refreshTokenRepo.SetupSequence(x => x.Update(Matches(refreshToken)))
 				.ReturnsAsync(refreshToken);
@@ -134,21 +146,28 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 
 			var result = await userService.CreateAuthTokens(token);
 			refreshTokenRepo.Verify(x => x.Update(It.IsNotNull<RefreshToken>()), Times.Exactly(2));
-			Assert.Equal(new TokenPair { RefreshToken = refreshToken.Token, AccessToken = accessToken, User = user }, result);
+			Assert.Equal(new TokenPair
+			{
+				RefreshToken = refreshToken.Token,
+				AccessToken = accessToken,
+				User = user,
+				Persistent = shouldPersist
+			}, result);
 		}
 
 		[Theory]
-		[InlineData("reftok1", "uid1")]
-		[InlineData("reftok2", "uid2")]
-		[InlineData("reftok3", "uid3")]
-		public async void RetriesOnceOnDocumentConflictError(string token, string uid)
+		[InlineData("reftok1", "uid1", false)]
+		[InlineData("reftok2", "uid2", true)]
+		[InlineData("reftok3", "uid3", false)]
+		public async void RetriesOnceOnDocumentConflictError(string token, string uid, bool shouldPersist)
 		{
 			var tokenDoc = new RefreshToken
 			{
 				Id = "someid" + token,
 				Token = token,
 				UID = uid,
-				ExpiresAt = DateTimeOffset.Now.AddDays(23)
+				ExpiresAt = DateTimeOffset.Now.AddDays(23),
+				Persistent = shouldPersist
 			};
 			refreshTokenRepo.Setup(x => x.Find(token)).ReturnsAsync(tokenDoc);
 
@@ -157,14 +176,16 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = tokenDoc.Id,
 				UID = uid,
 				Token = "tokenthatsalreadyinuse",
-				ExpiresAt = DateTimeOffset.Now.AddDays(30)
+				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				Persistent = shouldPersist
 			};
 			var duplicateToken2 = new RefreshToken
 			{
 				Id = tokenDoc.Id,
 				UID = uid,
 				Token = "anothertokenthatsalreadyinuse",
-				ExpiresAt = DateTimeOffset.Now.AddDays(30)
+				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				Persistent = shouldPersist
 			};
 			tokenService.SetupSequence(x => x.CreateRefreshToken())
 				.Returns(duplicateToken1.Token)
