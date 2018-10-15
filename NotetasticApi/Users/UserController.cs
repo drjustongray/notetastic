@@ -35,16 +35,10 @@ namespace NotetasticApi.Users
 		{
 			if (auth?.username == null || auth.password == null)
 			{
-				var modelState = new ModelStateDictionary();
-				if (auth?.username == null)
-				{
-					modelState.AddModelError("username", "username must be present");
-				}
-				if (auth?.password == null)
-				{
-					modelState.AddModelError("password", "password must be present");
-				}
-				return BadRequest(modelState);
+				return BadRequest(
+					usernameProblem: auth?.username == null ? "username must be present" : null,
+					passwordProblem: auth?.password == null ? "password must be present" : null
+				);
 			}
 			var user = await userService.Authenticate(auth.username, auth.password);
 			if (user == null)
@@ -80,16 +74,10 @@ namespace NotetasticApi.Users
 			var passwordProblem = !validationService.IsPasswordValid(auth?.password, out passwordIssue);
 			if (usernameProblem || passwordProblem)
 			{
-				var modelState = new ModelStateDictionary();
-				if (usernameProblem)
-				{
-					modelState.AddModelError("username", usernameIssue);
-				}
-				if (passwordProblem)
-				{
-					modelState.AddModelError("password", passwordIssue);
-				}
-				return BadRequest(modelState);
+				return BadRequest(
+					usernameProblem: usernameProblem ? usernameIssue : null,
+					passwordProblem: passwordProblem ? passwordIssue : null
+				);
 			}
 			var user = await userService.CreateAccount(auth.username, auth.password);
 			if (user == null)
@@ -119,7 +107,7 @@ namespace NotetasticApi.Users
 			var refreshToken = GetRefreshToken();
 			if (refreshToken == null)
 			{
-				return BadRequest();
+				return base.BadRequest();
 			}
 			var tokenPair = await userService.CreateAuthTokens(refreshToken);
 			if (tokenPair == null)
@@ -145,24 +133,18 @@ namespace NotetasticApi.Users
 		{
 			if (auth == null)
 			{
-				var dict = new ModelStateDictionary();
-				dict.AddModelError("message", "Incorrect Format");
-				return BadRequest(dict);
+				return BadRequest("Incorrect Format");
 			}
 			var currentPassword = auth.password;
 			if (currentPassword == null)
 			{
-				var dict = new ModelStateDictionary();
-				dict.AddModelError("message", "Current Password Must Be Provided");
-				return BadRequest(dict);
+				return BadRequest("Current Password Must Be Provided");
 			}
 			var newPassword = auth.newPassword;
 			var newUsername = auth.newUsername;
 			if ((newPassword == null) == (newUsername == null))
 			{
-				var dict = new ModelStateDictionary();
-				dict.AddModelError("message", "Must Provide Exactly One Of: New Password, New Username");
-				return BadRequest(dict);
+				return BadRequest("Must Provide Exactly One Of: New Password, New Username");
 			}
 			User user;
 			if (newUsername != null)
@@ -171,9 +153,7 @@ namespace NotetasticApi.Users
 				var passed = validationService.IsUsernameValid(newUsername, out message);
 				if (!passed)
 				{
-					var dict = new ModelStateDictionary();
-					dict.AddModelError("username", message);
-					return BadRequest(dict);
+					return BadRequest(usernameProblem: message);
 				}
 				user = await userService.ChangeUsername(UID, newUsername, currentPassword);
 			}
@@ -183,9 +163,7 @@ namespace NotetasticApi.Users
 				var passed = validationService.IsPasswordValid(newPassword, out message);
 				if (!passed)
 				{
-					var dict = new ModelStateDictionary();
-					dict.AddModelError("password", message);
-					return BadRequest(dict);
+					return BadRequest(passwordProblem: message);
 				}
 				user = await userService.ChangePassword(UID, currentPassword, newPassword);
 			}
@@ -207,7 +185,7 @@ namespace NotetasticApi.Users
 			var refreshToken = GetRefreshToken();
 			if (refreshToken == null)
 			{
-				return BadRequest();
+				return base.BadRequest();
 			}
 			await userService.RevokeRefreshToken(refreshToken);
 			RemoveRefreshToken();
@@ -222,6 +200,23 @@ namespace NotetasticApi.Users
 			return NoContent();
 		}
 
+		private BadRequestObjectResult BadRequest(string message = null, string usernameProblem = null, string passwordProblem = null)
+		{
+			var dict = new ModelStateDictionary();
+			if (message != null)
+			{
+				dict.AddModelError("message", message);
+			}
+			if (usernameProblem != null)
+			{
+				dict.AddModelError("username", usernameProblem);
+			}
+			if (passwordProblem != null)
+			{
+				dict.AddModelError("password", passwordProblem);
+			}
+			return BadRequest(dict);
+		}
 		private string GetRefreshToken()
 		{
 			if (Request.Cookies.ContainsKey(REFRESH_TOKEN))
