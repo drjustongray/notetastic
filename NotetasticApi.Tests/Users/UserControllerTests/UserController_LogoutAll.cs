@@ -48,9 +48,8 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		{
 			userService.Setup(x => x.RevokeAllRefreshTokens(uid))
 				.Returns(Task.CompletedTask);
-			cookies = SetupResponseCookies(uid);
-			cookies.Setup(x => x.Delete(UserController.REFRESH_TOKEN));
-			
+			cookies = SetupResponseCookies();
+			SetupContext(cookies.Object, uid: uid);
 		}
 	}
 }

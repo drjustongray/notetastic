@@ -12,7 +12,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		[InlineData("")]
 		public async void ReturnsBadRequestIfCookieMissing(string token)
 		{
-			SetupRequestCookies(token);
+			SetupContext(reqCookies: SetupRequestCookies(token));
 			var result = await userController.Logout();
 			Assert.IsType<BadRequestResult>(result);
 		}
@@ -23,8 +23,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		[InlineData("token3")]
 		public async void ResultIsNoContent(string token)
 		{
-			var cookies = SetupRequestCookies(token, true);
-			cookies.Setup(x => x.Delete(UserController.REFRESH_TOKEN));
+			SetupContext(SetupResponseCookies().Object, SetupRequestCookies(token));
 			userService.Setup(x => x.RevokeRefreshToken(token)).Returns(Task.CompletedTask);
 			var result = await userController.Logout();
 			Assert.IsType<NoContentResult>(result);
@@ -36,8 +35,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		[InlineData("token3")]
 		public async void RevokesRefreshToken(string token)
 		{
-			var cookies = SetupRequestCookies(token, true);
-			cookies.Setup(x => x.Delete(UserController.REFRESH_TOKEN));
+			SetupContext(SetupResponseCookies().Object, SetupRequestCookies(token));
 			userService.Setup(x => x.RevokeRefreshToken(token)).Returns(Task.CompletedTask);
 			await userController.Logout();
 			userService.Verify(x => x.RevokeRefreshToken(token));
@@ -49,8 +47,8 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		[InlineData("token3")]
 		public async void RemovesRefreshTokenCookie(string token)
 		{
-			var cookies = SetupRequestCookies(token, true);
-			cookies.Setup(x => x.Delete(UserController.REFRESH_TOKEN));
+			var cookies = SetupResponseCookies();
+			SetupContext(cookies.Object, SetupRequestCookies(token));
 			userService.Setup(x => x.RevokeRefreshToken(token)).Returns(Task.CompletedTask);
 			await userController.Logout();
 			cookies.Verify(x => x.Delete(UserController.REFRESH_TOKEN));

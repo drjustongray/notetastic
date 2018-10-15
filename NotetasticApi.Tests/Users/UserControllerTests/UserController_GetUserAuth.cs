@@ -14,7 +14,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		[InlineData("")]
 		public async void ReturnsBadRequestIfCookieMissing(string value)
 		{
-			SetupRequestCookies(value);
+			SetupContext(reqCookies: SetupRequestCookies(value));
 			var result = await userController.GetUserAuth();
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			Assert.IsType<BadRequestResult>(actionResult.Result);
@@ -26,7 +26,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		[InlineData("token3")]
 		public async void ReturnsUnauthorizedIfTokenBad(string token)
 		{
-			SetupRequestCookies(token);
+			SetupContext(reqCookies: SetupRequestCookies(token));
 			userService.Setup(x => x.CreateAuthTokens(token)).ReturnsAsync((TokenPair)null);
 			var result = await userController.GetUserAuth();
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
@@ -43,10 +43,10 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			var refToken = "asdflasdfas";
 			var accessToken = "78a0sd8v098as08dv";
 
-			var cookies = SetupRequestCookies(token, true);
-			cookies.Setup(x => x.Append(UserController.REFRESH_TOKEN, refToken, It.IsAny<CookieOptions>()));
+			SetupContext(SetupResponseCookies().Object, SetupRequestCookies(token));
 			userService.Setup(x => x.CreateAuthTokens(token))
 				.ReturnsAsync(new TokenPair { AccessToken = accessToken, RefreshToken = refToken, User = user });
+
 			var result = await userController.GetUserAuth();
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			var authRes = Assert.IsType<AuthenticationResponse>(actionResult.Value);
@@ -65,8 +65,8 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			var refToken = "asdflasdfas";
 			var accessToken = "78a0sd8v098as08dv";
 
-			var cookies = SetupRequestCookies(token, true);
-			cookies.Setup(x => x.Append(UserController.REFRESH_TOKEN, refToken, It.IsAny<CookieOptions>()));
+			var cookies = SetupResponseCookies();
+			SetupContext(cookies.Object, SetupRequestCookies(token));
 			userService.Setup(x => x.CreateAuthTokens(token))
 				.ReturnsAsync(new TokenPair
 				{
@@ -95,8 +95,8 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			var refToken = "asdflasdfas";
 			var accessToken = "78a0sd8v098as08dv";
 
-			var cookies = SetupRequestCookies(token, true);
-			cookies.Setup(x => x.Append(UserController.REFRESH_TOKEN, refToken, It.IsAny<CookieOptions>()));
+			var cookies = SetupResponseCookies();
+			SetupContext(cookies.Object, SetupRequestCookies(token));
 			userService.Setup(x => x.CreateAuthTokens(token))
 				.ReturnsAsync(new TokenPair
 				{

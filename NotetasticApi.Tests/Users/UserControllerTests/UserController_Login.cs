@@ -103,8 +103,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 
 			foreach (var rememberMe in new bool?[] { null, true, false })
 			{
-				var cookies = SetupResponseCookies();
-				cookies.Setup(x => x.Append(UserController.REFRESH_TOKEN, refToken, It.IsAny<CookieOptions>()));
+				SetupContext(SetupResponseCookies().Object);
 
 				authReq.rememberMe = rememberMe;
 				var result = await userController.Login(authReq);
@@ -134,7 +133,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			foreach (var rememberMe in new bool?[] { null, false })
 			{
 				var cookies = SetupResponseCookies();
-				cookies.Setup(x => x.Append(UserController.REFRESH_TOKEN, refToken, It.IsAny<CookieOptions>()));
+				SetupContext(cookies.Object);
 
 				authReq.rememberMe = rememberMe;
 				await userController.Login(authReq);
@@ -164,7 +163,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 				.ReturnsAsync(new TokenPair { AccessToken = accessToken, RefreshToken = refToken });
 
 			var cookies = SetupResponseCookies();
-			cookies.Setup(x => x.Append(UserController.REFRESH_TOKEN, refToken, It.IsAny<CookieOptions>()));
+			SetupContext(cookies.Object);
 
 			authReq.rememberMe = true;
 			await userController.Login(authReq);
