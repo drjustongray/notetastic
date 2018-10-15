@@ -135,16 +135,66 @@ namespace NotetasticApi.Users
 			};
 		}
 
-		[HttpPut("username")]
-		public async Task<ActionResult<AuthenticationResponse>> ChangeUsername([FromBody] AuthenticationRequest auth)
+		/// <summary>
+		/// If newUsername or newPassword (not both) and a password are present, then an attempt is made to update that value on the user
+		/// </summary>
+		/// <param name="auth"></param>
+		/// <returns></returns>
+		[HttpPatch]
+		public async Task<ActionResult<AuthenticationResponse>> UpdateUser([FromBody] AuthenticationRequest auth)
 		{
-			return null;
-		}
+			if (auth == null)
+			{
+				var dict = new ModelStateDictionary();
+				dict.AddModelError("message", "Incorrect Format");
+				return BadRequest(dict);
+			}
+			var currentPassword = auth.password;
+			if (currentPassword == null)
+			{
+				var dict = new ModelStateDictionary();
+				dict.AddModelError("message", "Current Password Must Be Provided");
+				return BadRequest(dict);
+			}
+			var newPassword = auth.newPassword;
+			var newUsername = auth.newUsername;
+			if ((newPassword == null) == (newUsername == null))
+			{
+				var dict = new ModelStateDictionary();
+				dict.AddModelError("message", "Must Provide Exactly One Of: New Password, New Username");
+				return BadRequest(dict);
+			}
+			User user;
+			if (newUsername != null)
+			{
+				string message;
+				var passed = validationService.IsUsernameValid(newUsername, out message);
+				if (!passed)
+				{
+					var dict = new ModelStateDictionary();
+					dict.AddModelError("username", message);
+					return BadRequest(dict);
+				}
+				user = await userService.ChangeUsername(UID, newUsername, currentPassword);
+			}
+			else
+			{
+				string message;
+				var passed = validationService.IsPasswordValid(newPassword, out message);
+				if (!passed)
+				{
+					var dict = new ModelStateDictionary();
+					dict.AddModelError("password", message);
+					return BadRequest(dict);
+				}
+				user = await userService.ChangePassword(UID, currentPassword, newPassword);
+			}
 
-		[HttpPut("password")]
-		public async Task<ActionResult<AuthenticationResponse>> ChangePassword([FromBody] AuthenticationRequest auth)
-		{
-			return null;
+			if (user == null)
+			{
+				return Unauthorized();
+			}
+			return new AuthenticationResponse { uid = UID, username = newUsername ?? user.UserName };
 		}
 
 		/// <summary>
