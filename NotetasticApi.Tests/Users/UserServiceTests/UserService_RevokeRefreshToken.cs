@@ -11,7 +11,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		public async void ValidatesTokenArg()
 		{
 			var e = new Exception();
-			validationService.Setup(x => x.AssertNonNull<string>(null, "token"))
+			validationService.Setup(x => x.AssertNonNull(null, "token"))
 				.Throws(e);
 
 			var ex = await Assert.ThrowsAnyAsync<Exception>(
@@ -26,7 +26,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		[InlineData("token3")]
 		public async void DeletesToken(string token)
 		{
-			validationService.Setup(x => x.AssertNonNull<string>(It.IsNotNull<string>(), "token"));
+			validationService.Setup(x => x.AssertNonNull(It.IsNotNull<string>(), "token"));
 			refreshTokenRepo.Setup(x => x.Delete(token)).Returns(Task.CompletedTask);
 			await userService.RevokeRefreshToken(token);
 			refreshTokenRepo.Verify(x => x.Delete(token), Times.Once);

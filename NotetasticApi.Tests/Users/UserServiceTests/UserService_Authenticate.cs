@@ -9,14 +9,14 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 	{
 		public UserService_Authenticate()
 		{
-			validationService.Setup(x => x.AssertNonNull<string>(It.IsNotNull<string>(), It.IsNotNull<string>()));
+			validationService.Setup(x => x.AssertNonNull(It.IsNotNull<string>(), It.IsNotNull<string>()));
 		}
 
 		[Fact]
 		public async void ValidatesUsername()
 		{
 			var expected = new ArgumentNullException("username");
-			validationService.Setup(x => x.AssertNonNull<string>(null, "username"))
+			validationService.Setup(x => x.AssertNonNull(null, "username"))
 				.Throws(expected);
 			var actual = await Assert.ThrowsAsync<ArgumentNullException>(
 				() => userService.Authenticate(null, "asdf")
@@ -28,7 +28,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		public async void ValidatesPassword()
 		{
 			var expected = new ArgumentNullException("password");
-			validationService.Setup(x => x.AssertNonNull<string>(null, "password"))
+			validationService.Setup(x => x.AssertNonNull(null, "password"))
 				.Throws(expected);
 			var actual = await Assert.ThrowsAsync<ArgumentNullException>(
 				() => userService.Authenticate("ausdfsd", null)

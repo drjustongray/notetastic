@@ -16,25 +16,16 @@ namespace NotetasticApi.Tests.Common.ValidationTests
 			_service.AssertNonNull(o, "");
 		}
 
-		[Fact]
-		public void ThrowsIfNullValue()
+		[Theory]
+		[InlineData("humbug")]
+		[InlineData("greg")]
+		[InlineData("")]
+		public void ThrowsIfNullValue(string paramName)
 		{
 			var exception = Assert.Throws<ArgumentNullException>(
-				() => _service.AssertNonNull<string>(null, "var1")
+				() => _service.AssertNonNull(null, paramName)
 			);
-			Assert.Equal("var1", exception.ParamName);
-			exception = Assert.Throws<ArgumentNullException>(
-				() => _service.AssertNonNull<object>(null, "var2")
-			);
-			Assert.Equal("var2", exception.ParamName);
-			exception = Assert.Throws<ArgumentNullException>(
-				() => _service.AssertNonNull<ValidationService>(null, "var3")
-			);
-			Assert.Equal("var3", exception.ParamName);
-			exception = Assert.Throws<ArgumentNullException>(
-				() => _service.AssertNonNull<Exception>(null, "var4")
-			);
-			Assert.Equal("var4", exception.ParamName);
+			Assert.Equal(paramName, exception.ParamName);
 		}
 	}
 }

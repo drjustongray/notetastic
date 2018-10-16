@@ -10,15 +10,15 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 	{
 		public UserService_CreateAuthTokens1()
 		{
-			validationService.Setup(x => x.AssertNonNull<User>(It.IsNotNull<User>(), "user"));
-			validationService.Setup(x => x.AssertNonNull<string>(It.IsNotNull<string>(), "Id"));
+			validationService.Setup(x => x.AssertNonNull(It.IsNotNull<User>(), "user"));
+			validationService.Setup(x => x.AssertNonNull(It.IsNotNull<string>(), "Id"));
 		}
 
 		[Fact]
 		public async void ValidatesUser()
 		{
 			var expected = new ArgumentNullException("user");
-			validationService.Setup(x => x.AssertNonNull<User>(null, "user"))
+			validationService.Setup(x => x.AssertNonNull(null, "user"))
 				.Throws(expected);
 			var actual = await Assert.ThrowsAsync<ArgumentNullException>(
 				() => userService.CreateAuthTokens((User)null, false)
@@ -30,7 +30,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		public async void ValidatesUserId()
 		{
 			var expected = new ArgumentNullException("Id");
-			validationService.Setup(x => x.AssertNonNull<string>(null, "Id"))
+			validationService.Setup(x => x.AssertNonNull(null, "Id"))
 				.Throws(expected);
 			var actual = await Assert.ThrowsAsync<ArgumentNullException>(
 				() => userService.CreateAuthTokens(new User(), false)

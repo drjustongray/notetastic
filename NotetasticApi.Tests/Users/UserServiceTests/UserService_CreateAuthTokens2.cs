@@ -10,14 +10,14 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 	{
 		public UserService_CreateAuthTokens2()
 		{
-			validationService.Setup(x => x.AssertNonNull<string>(It.IsNotNull<string>(), "refreshToken"));
+			validationService.Setup(x => x.AssertNonNull(It.IsNotNull<string>(), "refreshToken"));
 		}
 
 		[Fact]
 		public async void ValidatesToken()
 		{
 			var expected = new ArgumentNullException("refreshToken");
-			validationService.Setup(x => x.AssertNonNull<string>(null, "refreshToken"))
+			validationService.Setup(x => x.AssertNonNull(null, "refreshToken"))
 				.Throws(expected);
 			var actual = await Assert.ThrowsAsync<ArgumentNullException>(
 				() => userService.CreateAuthTokens((string)null)

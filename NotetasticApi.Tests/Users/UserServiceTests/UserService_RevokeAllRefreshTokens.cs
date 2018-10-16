@@ -11,7 +11,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		public async void ValidatesUIDArg()
 		{
 			var e = new Exception();
-			validationService.Setup(x => x.AssertNonNull<string>(null, "uid"))
+			validationService.Setup(x => x.AssertNonNull(null, "uid"))
 				.Throws(e);
 
 			var ex = await Assert.ThrowsAnyAsync<Exception>(
@@ -26,7 +26,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		[InlineData("uid3")]
 		public async void DeletesAllTokens(string uid)
 		{
-			validationService.Setup(x => x.AssertNonNull<string>(It.IsNotNull<string>(), "uid"));
+			validationService.Setup(x => x.AssertNonNull(It.IsNotNull<string>(), "uid"));
 			refreshTokenRepo.Setup(x => x.DeleteAll(uid)).Returns(Task.CompletedTask);
 			await userService.RevokeAllRefreshTokens(uid);
 			refreshTokenRepo.Verify(x => x.DeleteAll(uid), Times.Once);
