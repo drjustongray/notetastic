@@ -6,7 +6,7 @@ namespace NotetasticApi.Notes
 	{
 		public string URL { get; set; }
 
-		public override bool IsValid => UID != null && Title != null && URL != null;
+		public override bool IsValid => base.IsValid && URL != null;
 
 		public override bool Equals(object obj)
 		{

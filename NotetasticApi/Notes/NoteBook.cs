@@ -6,7 +6,7 @@ namespace NotetasticApi.Notes
 	{
 		public int Count { get; set; }
 
-		public override bool IsValid => UID != null && Title != null && Count >= 0;
+		public override bool IsValid => base.IsValid && Count >= 0;
 
 		public override bool Equals(object obj)
 		{

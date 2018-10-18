@@ -7,17 +7,18 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 	public class Checklist_IsValid
 	{
 		[Theory]
-		[InlineData(null, "Title")]
-		[InlineData("Uid", null)]
-		public void IsFalseIfUidOrTitleNull(string uid, string title)
+		[InlineData(null, "Title", true)]
+		[InlineData("Uid", null, false)]
+		[InlineData("uid", "title", null)]
+		public void IsFalseIfUidTitleOrArchivedNull(string uid, string title, bool? archived)
 		{
-			Assert.False(new Checklist { UID = uid, Title = title, Items = new List<CheckItem>() }.IsValid);
+			Assert.False(new Checklist { UID = uid, Title = title, Archived = archived, Items = new List<CheckItem>() }.IsValid);
 		}
 
 		[Fact]
 		public void IsFalseIfItemsNull()
 		{
-			Assert.False(new Checklist { UID = "uid", Title = "title" }.IsValid);
+			Assert.False(new Checklist { UID = "uid", Title = "title", Archived = false }.IsValid);
 		}
 
 		[Theory]
@@ -32,7 +33,7 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 				var item = new CheckItem { Checked = i % 2 == 0, Text = i == index ? null : "sometext" + i };
 				items.Add(item);
 			}
-			Assert.False(new Checklist { UID = "uid", Title = "title", Items = items }.IsValid);
+			Assert.False(new Checklist { UID = "uid", Title = "title", Archived = true, Items = items }.IsValid);
 		}
 
 		[Theory]
@@ -47,7 +48,7 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 				var item = new CheckItem { Checked = i % 2 == 0, Text = "sometext" + i };
 				items.Add(item);
 			}
-			Assert.True(new Checklist { UID = "uid", Title = "title", Items = items }.IsValid);
+			Assert.True(new Checklist { UID = "uid", Title = "title", Archived = false, Items = items }.IsValid);
 		}
 
 	}

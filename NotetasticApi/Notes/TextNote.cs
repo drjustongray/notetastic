@@ -6,7 +6,7 @@ namespace NotetasticApi.Notes
 	{
 		public string Text { get; set; }
 
-		public override bool IsValid => UID != null && Title != null && Text != null;
+		public override bool IsValid => base.IsValid && Text != null;
 
 		public override bool Equals(object obj)
 		{

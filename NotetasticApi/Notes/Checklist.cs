@@ -13,7 +13,7 @@ namespace NotetasticApi.Notes
 		public List<CheckItem> Items { get; set; }
 
 		public override bool IsValid =>
-			UID != null && Title != null && Items != null && !Items.Exists(_ => _.Text == null);
+			base.IsValid && Items != null && !Items.Exists(_ => _.Text == null);
 
 		public override bool Equals(object obj)
 		{

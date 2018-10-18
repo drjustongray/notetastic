@@ -8,7 +8,7 @@ namespace NotetasticApi.Notes
 		public double Longitude { get; set; }
 
 		public override bool IsValid =>
-			UID != null && Title != null && Math.Abs(Latitude) <= 90 && Math.Abs(Longitude) <= 180;
+			base.IsValid && Math.Abs(Latitude) <= 90 && Math.Abs(Longitude) <= 180;
 
 		public override bool Equals(object obj)
 		{
