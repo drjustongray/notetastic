@@ -92,7 +92,10 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
-			var count = 7;
+			var items = new List<NoteBookItem> {
+				new NoteBookItem { Id = "somig", Type = "sometgesd", Title = "sdouf" },
+				new NoteBookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" }
+			};
 			var expected = new NoteBook
 			{
 				Id = id,
@@ -100,7 +103,7 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 				NBID = nbid,
 				Archived = archived,
 				Title = title,
-				Count = count
+				Items = items
 			};
 			var json = JsonConvert.SerializeObject(expected, converter);
 			var note = JsonConvert.DeserializeObject<Note>(json, converter);

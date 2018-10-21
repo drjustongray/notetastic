@@ -16,7 +16,12 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 					foreach (var nbid in new string[] { null, "nbid1", "nbid2" })
 						foreach (var archived in new bool[] { true, false })
 							foreach (var title in new string[] { null, "sometitle", "some other title" })
-								foreach (var count in new int[] { 0, 1, 10, -3 })
+								foreach (var items in new List<NoteBookItem>[] {
+									null,
+									new List<NoteBookItem> { },
+									new List<NoteBookItem> { new NoteBookItem {Id = "somethig", Type="somethingesd", Title = "jfasdouf"} },
+									new List<NoteBookItem> { new NoteBookItem {Id = "somig", Type="sometgesd", Title = "sdouf"}, new NoteBookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" } }
+								})
 								{
 									list1.Add(new NoteBook
 									{
@@ -25,7 +30,7 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 										NBID = nbid,
 										Archived = archived,
 										Title = title,
-										Count = count
+										Items = items
 									});
 									list2.Add(new NoteBook
 									{
@@ -34,7 +39,7 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 										NBID = nbid,
 										Archived = archived,
 										Title = title,
-										Count = count
+										Items = items != null ? new List<NoteBookItem>(items) : null
 									});
 								}
 		}
@@ -70,7 +75,7 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 			for (int i = 0; i < list1.Count; i++)
 				for (int j = 0; j < list1.Count; j++)
 					if (i != j)
-						Assert.False(list1[i].Equals(list2[j]));
+						Assert.False(list1[i].Equals(list2[j]), $"{list1[i].Items} : {list2[j].Items}");
 		}
 	}
 }
