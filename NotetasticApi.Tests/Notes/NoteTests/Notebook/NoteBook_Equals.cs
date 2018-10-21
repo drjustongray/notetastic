@@ -11,37 +11,40 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 
 		public NoteBook_Equals()
 		{
-			foreach (var id in new string[] { null, "someid", "someotherid" })
-				foreach (var uid in new string[] { null, "uid1", "uid2" })
-					foreach (var nbid in new string[] { null, "nbid1", "nbid2" })
-						foreach (var archived in new bool[] { true, false })
-							foreach (var title in new string[] { null, "sometitle", "some other title" })
-								foreach (var items in new List<NoteBookItem>[] {
+			foreach (var isRoot in new bool[] { true, false })
+				foreach (var id in new string[] { null, "someid", "someotherid" })
+					foreach (var uid in new string[] { null, "uid1", "uid2" })
+						foreach (var nbid in new string[] { null, "nbid1", "nbid2" })
+							foreach (var archived in new bool[] { true, false })
+								foreach (var title in new string[] { null, "sometitle", "some other title" })
+									foreach (var items in new List<NoteBookItem>[] {
 									null,
 									new List<NoteBookItem> { },
 									new List<NoteBookItem> { new NoteBookItem {Id = "somethig", Type="somethingesd", Title = "jfasdouf"} },
 									new List<NoteBookItem> { new NoteBookItem {Id = "somig", Type="sometgesd", Title = "sdouf"}, new NoteBookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" } }
 								})
-								{
-									list1.Add(new NoteBook
 									{
-										Id = id,
-										UID = uid,
-										NBID = nbid,
-										Archived = archived,
-										Title = title,
-										Items = items
-									});
-									list2.Add(new NoteBook
-									{
-										Id = id,
-										UID = uid,
-										NBID = nbid,
-										Archived = archived,
-										Title = title,
-										Items = items != null ? new List<NoteBookItem>(items) : null
-									});
-								}
+										list1.Add(new NoteBook
+										{
+											Id = id,
+											UID = uid,
+											NBID = nbid,
+											Archived = archived,
+											Title = title,
+											Items = items,
+											IsRoot = isRoot
+										});
+										list2.Add(new NoteBook
+										{
+											Id = id,
+											UID = uid,
+											NBID = nbid,
+											Archived = archived,
+											Title = title,
+											Items = items != null ? new List<NoteBookItem>(items) : null,
+											IsRoot = isRoot
+										});
+									}
 		}
 
 		[Fact]

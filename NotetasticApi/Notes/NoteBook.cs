@@ -45,6 +45,7 @@ namespace NotetasticApi.Notes
 
 	public class NoteBook : Note
 	{
+		public bool IsRoot { get; set; }
 		public List<NoteBookItem> Items { get; set; }
 
 		public override bool IsValid => base.IsValid;
@@ -56,7 +57,7 @@ namespace NotetasticApi.Notes
 				return false;
 			}
 			var other = (NoteBook)obj;
-			return base.Equals(other) && (
+			return base.Equals(other) && IsRoot == other.IsRoot && (
 				(Items == null && other.Items == null) ||
 				(Items != null && other.Items != null && Items.SequenceEqual(other.Items))
 			);
@@ -64,7 +65,7 @@ namespace NotetasticApi.Notes
 
 		public override int GetHashCode()
 		{
-			return Tuple.Create(Id, UID, NBID, Archived, Title, Items).GetHashCode();
+			return Tuple.Create(Id, UID, NBID, Archived, Title).GetHashCode();
 		}
 
 		public static bool operator ==(NoteBook a, NoteBook b)
