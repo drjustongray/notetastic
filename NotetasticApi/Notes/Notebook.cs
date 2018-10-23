@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace NotetasticApi.Notes
 {
-	public class NoteBookItem
+	public class NotebookItem
 	{
 		public string Id { get; set; }
 		public string Title { get; set; }
@@ -17,7 +17,7 @@ namespace NotetasticApi.Notes
 			{
 				return false;
 			}
-			var other = (NoteBookItem)obj;
+			var other = (NotebookItem)obj;
 			return Id == other.Id && Title == other.Title && Type == other.Type;
 		}
 
@@ -27,7 +27,7 @@ namespace NotetasticApi.Notes
 			return Tuple.Create(Id, Title, Type).GetHashCode();
 		}
 
-		public static bool operator ==(NoteBookItem a, NoteBookItem b)
+		public static bool operator ==(NotebookItem a, NotebookItem b)
 		{
 			if (Object.ReferenceEquals(a, null))
 			{
@@ -40,13 +40,13 @@ namespace NotetasticApi.Notes
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(NoteBookItem a, NoteBookItem b) => !(a == b);
+		public static bool operator !=(NotebookItem a, NotebookItem b) => !(a == b);
 	}
 
-	public class NoteBook : Note
+	public class Notebook : Note
 	{
 		public bool IsRoot { get; set; }
-		public List<NoteBookItem> Items { get; set; }
+		public List<NotebookItem> Items { get; set; }
 
 		public override bool IsValid => base.IsValid;
 
@@ -56,7 +56,7 @@ namespace NotetasticApi.Notes
 			{
 				return false;
 			}
-			var other = (NoteBook)obj;
+			var other = (Notebook)obj;
 			return base.Equals(other) && IsRoot == other.IsRoot && (
 				(Items == null && other.Items == null) ||
 				(Items != null && other.Items != null && Items.SequenceEqual(other.Items))
@@ -68,7 +68,7 @@ namespace NotetasticApi.Notes
 			return Tuple.Create(Id, UID, NBID, Archived, Title).GetHashCode();
 		}
 
-		public static bool operator ==(NoteBook a, NoteBook b)
+		public static bool operator ==(Notebook a, Notebook b)
 		{
 			if (Object.ReferenceEquals(a, null))
 			{
@@ -81,6 +81,6 @@ namespace NotetasticApi.Notes
 			return a.Equals(b);
 		}
 
-		public static bool operator !=(NoteBook a, NoteBook b) => !(a == b);
+		public static bool operator !=(Notebook a, Notebook b) => !(a == b);
 	}
 }

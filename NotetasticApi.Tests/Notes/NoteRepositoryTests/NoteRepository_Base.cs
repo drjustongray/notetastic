@@ -13,18 +13,18 @@ namespace NotetasticApi.Tests.Notes.NoteRepositoryTests
 		protected readonly IMongoCollection<Note> collection;
 		protected NoteRepository repo;
 
-		protected readonly NoteBook root1 = new NoteBook
+		protected readonly Notebook root1 = new Notebook
 		{
 			UID = "uid1",
 			IsRoot = true,
-			Items = new List<NoteBookItem>()
+			Items = new List<NotebookItem>()
 		};
 
-		protected readonly NoteBook root2 = new NoteBook
+		protected readonly Notebook root2 = new Notebook
 		{
 			UID = "uid2",
 			IsRoot = true,
-			Items = new List<NoteBookItem>()
+			Items = new List<NotebookItem>()
 		};
 
 		protected readonly HashSet<Note> expectedCollection;

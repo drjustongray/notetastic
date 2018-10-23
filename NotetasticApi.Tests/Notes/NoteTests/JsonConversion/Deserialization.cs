@@ -106,11 +106,11 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
-			var items = new List<NoteBookItem> {
-				new NoteBookItem { Id = "somig", Type = "sometgesd", Title = "sdouf" },
-				new NoteBookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" }
+			var items = new List<NotebookItem> {
+				new NotebookItem { Id = "somig", Type = "sometgesd", Title = "sdouf" },
+				new NotebookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" }
 			};
-			var expected = new NoteBook
+			var expected = new Notebook
 			{
 				Id = id,
 				UID = uid,
@@ -119,9 +119,9 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 				Title = title,
 				Items = items
 			};
-			var json = $"{{ 'Id': '{id}', 'Type': 'NoteBook', 'UID': '{uid}', 'NBID': '{nbid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'Items': {JsonConvert.SerializeObject(items)} }}";
+			var json = $"{{ 'Id': '{id}', 'Type': 'Notebook', 'UID': '{uid}', 'NBID': '{nbid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'Items': {JsonConvert.SerializeObject(items)} }}";
 			var note = JsonConvert.DeserializeObject<Note>(json, converter);
-			var notebook = Assert.IsAssignableFrom<NoteBook>(note);
+			var notebook = Assert.IsAssignableFrom<Notebook>(note);
 			Assert.Equal(expected, notebook);
 		}
 

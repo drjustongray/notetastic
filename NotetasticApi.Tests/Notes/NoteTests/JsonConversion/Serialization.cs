@@ -92,11 +92,11 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
-			var items = new List<NoteBookItem> {
-				new NoteBookItem { Id = "somig", Type = "sometgesd", Title = "sdouf" },
-				new NoteBookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" }
+			var items = new List<NotebookItem> {
+				new NotebookItem { Id = "somig", Type = "sometgesd", Title = "sdouf" },
+				new NotebookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" }
 			};
-			var expected = new NoteBook
+			var expected = new Notebook
 			{
 				Id = id,
 				UID = uid,
@@ -107,7 +107,7 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			};
 			var json = JsonConvert.SerializeObject(expected, converter);
 			var note = JsonConvert.DeserializeObject<Note>(json, converter);
-			var notebook = Assert.IsAssignableFrom<NoteBook>(note);
+			var notebook = Assert.IsAssignableFrom<Notebook>(note);
 			Assert.Equal(expected, notebook);
 		}
 

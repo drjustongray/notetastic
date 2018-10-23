@@ -4,12 +4,12 @@ using Xunit;
 
 namespace NotetasticApi.Tests.Notes.NoteTests
 {
-	public class NoteBook_Equals
+	public class Notebook_Equals
 	{
-		private readonly List<NoteBook> list1 = new List<NoteBook>();
-		private readonly List<NoteBook> list2 = new List<NoteBook>();
+		private readonly List<Notebook> list1 = new List<Notebook>();
+		private readonly List<Notebook> list2 = new List<Notebook>();
 
-		public NoteBook_Equals()
+		public Notebook_Equals()
 		{
 			foreach (var isRoot in new bool[] { true, false })
 				foreach (var id in new string[] { null, "someid", "someotherid" })
@@ -17,14 +17,14 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 						foreach (var nbid in new string[] { null, "nbid1", "nbid2" })
 							foreach (var archived in new bool[] { true, false })
 								foreach (var title in new string[] { null, "sometitle", "some other title" })
-									foreach (var items in new List<NoteBookItem>[] {
+									foreach (var items in new List<NotebookItem>[] {
 									null,
-									new List<NoteBookItem> { },
-									new List<NoteBookItem> { new NoteBookItem {Id = "somethig", Type="somethingesd", Title = "jfasdouf"} },
-									new List<NoteBookItem> { new NoteBookItem {Id = "somig", Type="sometgesd", Title = "sdouf"}, new NoteBookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" } }
+									new List<NotebookItem> { },
+									new List<NotebookItem> { new NotebookItem {Id = "somethig", Type="somethingesd", Title = "jfasdouf"} },
+									new List<NotebookItem> { new NotebookItem {Id = "somig", Type="sometgesd", Title = "sdouf"}, new NotebookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" } }
 								})
 									{
-										list1.Add(new NoteBook
+										list1.Add(new Notebook
 										{
 											Id = id,
 											UID = uid,
@@ -34,14 +34,14 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 											Items = items,
 											IsRoot = isRoot
 										});
-										list2.Add(new NoteBook
+										list2.Add(new Notebook
 										{
 											Id = id,
 											UID = uid,
 											NBID = nbid,
 											Archived = archived,
 											Title = title,
-											Items = items != null ? new List<NoteBookItem>(items) : null,
+											Items = items != null ? new List<NotebookItem>(items) : null,
 											IsRoot = isRoot
 										});
 									}
@@ -50,7 +50,7 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 		[Fact]
 		public void HandlesNullCorrectly()
 		{
-			var notebook = new NoteBook();
+			var notebook = new Notebook();
 			Assert.False(notebook.Equals(null));
 		}
 

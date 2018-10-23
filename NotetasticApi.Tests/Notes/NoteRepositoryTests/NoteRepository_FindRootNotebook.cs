@@ -28,8 +28,8 @@ namespace NotetasticApi.Tests.Notes.NoteRepositoryTests
 		public async void CreatesAndReturnsRootNotebookIfItDoesNotExist(string uid)
 		{
 			await repo.FindRootNotebook(uid);
-			var note = actualCollection.Single(_ => _ is NoteBook && ((NoteBook)_).IsRoot && _.UID == uid);
-			var notebook = Assert.IsAssignableFrom<NoteBook>(note);
+			var note = actualCollection.Single(_ => _ is Notebook && ((Notebook)_).IsRoot && _.UID == uid);
+			var notebook = Assert.IsAssignableFrom<Notebook>(note);
 			Assert.True(notebook.IsRoot);
 			Assert.Null(notebook.NBID);
 			Assert.Null(notebook.Archived);

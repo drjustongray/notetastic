@@ -16,7 +16,7 @@ namespace NotetasticApi.Tests.Notes.NoteRepositoryTests
 		public async void DoesNotAllowCreatingAdditionalRoot(string uid)
 		{
 			await Assert.ThrowsAnyAsync<MongoDB.Driver.MongoWriteException>(
-				() => collection.InsertOneAsync(new NoteBook { UID = uid, IsRoot = true })
+				() => collection.InsertOneAsync(new Notebook { UID = uid, IsRoot = true })
 			);
 			AssertCollectionEquals();
 		}

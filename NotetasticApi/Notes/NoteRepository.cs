@@ -10,7 +10,7 @@ namespace NotetasticApi.Notes
 	{
 		Task<Note> Create(Note note);
 		Task<Note> FindById(string id, string uid);
-		Task<NoteBook> FindRootNotebook(string uid);
+		Task<Notebook> FindRootNotebook(string uid);
 		Task<Note> Update(Note note);
 		Task Delete(string id, string uid);
 	}
@@ -61,7 +61,7 @@ namespace NotetasticApi.Notes
 		/// </summary>
 		/// <param name="uid"></param>
 		/// <returns></returns>
-		public async Task<NoteBook> FindRootNotebook(string uid)
+		public async Task<Notebook> FindRootNotebook(string uid)
 		{
 			if (uid == null)
 			{
@@ -71,20 +71,20 @@ namespace NotetasticApi.Notes
 				Builders<Note>.Filter.Eq("UID", uid),
 				Builders<Note>.Filter.Eq("IsRoot", true)
 			);
-			var root = await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync() as NoteBook;
+			var root = await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync() as Notebook;
 			if (root == null)
 			{
 				// just in case another thread/machine is trying to create the root at the same time
 				try
 				{
-					root = new NoteBook { UID = uid, IsRoot = true };
+					root = new Notebook { UID = uid, IsRoot = true };
 					await noteCollection.InsertOneAsync(root);
 				}
 				catch (MongoWriteException e)
 				{
 					if (e.WriteError.Category == ServerErrorCategory.DuplicateKey)
 					{
-						return await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync() as NoteBook;
+						return await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync() as Notebook;
 					}
 					throw e;
 				}
