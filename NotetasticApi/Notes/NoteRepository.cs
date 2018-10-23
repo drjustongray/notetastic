@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace NotetasticApi.Notes
@@ -19,6 +21,17 @@ namespace NotetasticApi.Notes
 		public NoteRepository(IMongoCollection<Note> noteCollection)
 		{
 			this.noteCollection = noteCollection;
+			noteCollection.Indexes.CreateOne(new CreateIndexModel<Note>(
+				Builders<Note>.IndexKeys.Combine(
+					Builders<Note>.IndexKeys.Ascending(_ => _.UID),
+					new BsonDocument("IsRoot", 1)
+				),
+				new CreateIndexOptions
+				{
+					Unique = true,
+					Sparse = true
+				}
+			));
 		}
 
 		/// <summary>
@@ -48,9 +61,35 @@ namespace NotetasticApi.Notes
 		/// </summary>
 		/// <param name="uid"></param>
 		/// <returns></returns>
-		public Task<NoteBook> FindRootNotebook(string uid)
+		public async Task<NoteBook> FindRootNotebook(string uid)
 		{
-			throw new System.NotImplementedException();
+			if (uid == null)
+			{
+				throw new ArgumentNullException(nameof(uid));
+			}
+			var filter = Builders<Note>.Filter.And(
+				Builders<Note>.Filter.Eq("UID", uid),
+				Builders<Note>.Filter.Eq("IsRoot", true)
+			);
+			var root = await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync() as NoteBook;
+			if (root == null)
+			{
+				// just in case another thread/machine is trying to create the root at the same time
+				try
+				{
+					root = new NoteBook { UID = uid, IsRoot = true };
+					await noteCollection.InsertOneAsync(root);
+				}
+				catch (MongoWriteException e)
+				{
+					if (e.WriteError.Category == ServerErrorCategory.DuplicateKey)
+					{
+						return await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync() as NoteBook;
+					}
+					throw e;
+				}
+			}
+			return root;
 		}
 
 		/// <summary>
