@@ -17,6 +17,13 @@ namespace NotetasticApi.Notes
 	}
 	public class NoteRepository : INoteRepository
 	{
+		private static readonly BsonDocument IsRoot = new BsonDocument("IsRoot", true);
+		private static readonly FilterDefinition<Note> IsNotRoot = Builders<Note>.Filter.Not(IsRoot);
+		private static readonly BsonDocument IsNotebook = new BsonDocument("_t", "Notebook");
+		private static BsonDocument UidIs(string uid) => new BsonDocument("UID", uid);
+		private static BsonDocument IdIs(string id) => new BsonDocument("_id", id);
+		private static BsonDocument NbidIs(string nbid) => new BsonDocument("NBID", nbid);
+
 		private readonly IMongoCollection<Note> noteCollection;
 		private readonly IMongoClient client;
 
@@ -31,7 +38,7 @@ namespace NotetasticApi.Notes
 				new CreateIndexOptions<Note>
 				{
 					Unique = true,
-					PartialFilterExpression = new BsonDocument("IsRoot", true)
+					PartialFilterExpression = IsRoot
 				}
 			));
 		}
@@ -72,11 +79,7 @@ namespace NotetasticApi.Notes
 			Note note;
 			using (var session = await client.StartSessionAsync())
 			{
-				var filter = Builders<Note>.Filter.And(
-					new BsonDocument("_id", id),
-					new BsonDocument("UID", uid),
-					Builders<Note>.Filter.Not(new BsonDocument("IsRoot", true))
-				);
+				var filter = Builders<Note>.Filter.And(IdIs(id), UidIs(uid), IsNotRoot);
 				session.StartTransaction();
 				note = await noteCollection.FindOneAndDeleteAsync(session, filter);
 				if (note == null)
@@ -88,8 +91,8 @@ namespace NotetasticApi.Notes
 				// removing the note from the containing notebook's Items array
 				await noteCollection.UpdateOneAsync(
 					session,
-					new BsonDocument("_id", note.NBID),
-					Builders<Note>.Update.PullFilter<NotebookItem>("Items", new BsonDocument("_id", note.Id))
+					IdIs(note.NBID),
+					Builders<Note>.Update.PullFilter<NotebookItem>("Items", IdIs(note.Id))
 				);
 
 				await session.CommitTransactionAsync();
@@ -103,10 +106,7 @@ namespace NotetasticApi.Notes
 				{
 					var notebook = toExplore.Dequeue();
 					// find all notebooks in this notebook
-					var filter = Builders<Note>.Filter.And(
-						new BsonDocument("NBID", notebook),
-						new BsonDocument("_t", "Notebook")
-					);
+					var filter = Builders<Note>.Filter.And(NbidIs(notebook), IsNotebook);
 					using (var cursor = await noteCollection.FindAsync<Record>(filter))
 					{
 						while (await cursor.MoveNextAsync())
@@ -126,9 +126,25 @@ namespace NotetasticApi.Notes
 			return true;
 		}
 
-		public Task<Note> FindById(string id, string uid)
+		/// <summary>
+		/// retrieves the maching note from the db, if it exists.
+		/// the root notebook is excluded
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="uid"></param>
+		/// <returns></returns>
+		public async Task<Note> FindById(string id, string uid)
 		{
-			throw new System.NotImplementedException();
+			if (id == null)
+			{
+				throw new ArgumentNullException(nameof(id));
+			}
+			if (uid == null)
+			{
+				throw new ArgumentNullException(nameof(uid));
+			}
+			var filter = Builders<Note>.Filter.And(IdIs(id), UidIs(uid), IsNotRoot);
+			return await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync();
 		}
 
 		/// <summary>
@@ -142,10 +158,7 @@ namespace NotetasticApi.Notes
 			{
 				throw new ArgumentNullException(nameof(uid));
 			}
-			var filter = Builders<Note>.Filter.And(
-				Builders<Note>.Filter.Eq("UID", uid),
-				Builders<Note>.Filter.Eq("IsRoot", true)
-			);
+			var filter = Builders<Note>.Filter.And(UidIs(uid), IsRoot);
 			var root = await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync() as Notebook;
 			if (root == null)
 			{
