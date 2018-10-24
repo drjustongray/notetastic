@@ -34,8 +34,9 @@ namespace NotetasticApi.Tests.Notes.NoteRepositoryTests
 			Assert.Null(notebook.NBID);
 			Assert.Null(notebook.Archived);
 			Assert.Null(notebook.Title);
-			expectedCollection.Add(notebook);
-			AssertCollectionEquals();
+			var expected = expectedCollection;
+			expected.Add(notebook);
+			AssertCollectionEquals(expected);
 		}
 
 		[Fact]

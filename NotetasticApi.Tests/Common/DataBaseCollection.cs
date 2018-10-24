@@ -18,7 +18,7 @@ namespace NotetasticApi.Tests.Common
 		private readonly MongoDbRunner _runner;
 		public DatabaseFixture()
 		{
-			_runner = MongoDbRunner.Start();
+			_runner = MongoDbRunner.Start(singleNodeReplSet: true);
 			Client = new MongoClient(_runner.ConnectionString);
 		}
 

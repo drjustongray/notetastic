@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace NotetasticApi.Notes
 {
@@ -45,6 +46,7 @@ namespace NotetasticApi.Notes
 
 	public class Notebook : Note
 	{
+		[BsonIgnoreIfDefault]
 		public bool IsRoot { get; set; }
 		public List<NotebookItem> Items { get; set; }
 

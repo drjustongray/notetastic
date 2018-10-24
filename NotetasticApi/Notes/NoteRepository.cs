@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using MongoDB.Bson;
 using MongoDB.Driver;
+using NotetasticApi.Common;
 
 namespace NotetasticApi.Notes
 {
@@ -12,24 +13,25 @@ namespace NotetasticApi.Notes
 		Task<Note> FindById(string id, string uid);
 		Task<Notebook> FindRootNotebook(string uid);
 		Task<Note> Update(Note note);
-		Task Delete(string id, string uid);
+		Task<bool> Delete(string id, string uid);
 	}
 	public class NoteRepository : INoteRepository
 	{
 		private readonly IMongoCollection<Note> noteCollection;
+		private readonly IMongoClient client;
 
-		public NoteRepository(IMongoCollection<Note> noteCollection)
+		public NoteRepository(IMongoCollection<Note> noteCollection, IMongoClient client)
 		{
 			this.noteCollection = noteCollection;
+			this.client = client;
 			noteCollection.Indexes.CreateOne(new CreateIndexModel<Note>(
 				Builders<Note>.IndexKeys.Combine(
-					Builders<Note>.IndexKeys.Ascending(_ => _.UID),
-					new BsonDocument("IsRoot", 1)
+					Builders<Note>.IndexKeys.Ascending(_ => _.UID)
 				),
-				new CreateIndexOptions
+				new CreateIndexOptions<Note>
 				{
 					Unique = true,
-					Sparse = true
+					PartialFilterExpression = new BsonDocument("IsRoot", true)
 				}
 			));
 		}
@@ -46,9 +48,82 @@ namespace NotetasticApi.Notes
 			throw new System.NotImplementedException();
 		}
 
-		public Task Delete(string id, string uid)
+		/// <summary>
+		/// deletes the matching note if it exists.
+		/// If the note is a Notebook, deletes all sub-notes
+		/// removes the corresponding NotebookItem from the notebook containing it
+		/// does not allow the user's root notebook to be deleted
+		/// returns false if there's no matching document
+		/// </summary>
+		/// <param name="id"></param>
+		/// <param name="uid"></param>
+		/// <returns></returns>
+		public async Task<bool> Delete(string id, string uid)
 		{
-			throw new System.NotImplementedException();
+			if (id == null)
+			{
+				throw new ArgumentNullException(nameof(id));
+			}
+			if (uid == null)
+			{
+				throw new ArgumentNullException(nameof(uid));
+			}
+
+			Note note;
+			using (var session = await client.StartSessionAsync())
+			{
+				var filter = Builders<Note>.Filter.And(
+					new BsonDocument("_id", id),
+					new BsonDocument("UID", uid),
+					Builders<Note>.Filter.Not(new BsonDocument("IsRoot", true))
+				);
+				session.StartTransaction();
+				note = await noteCollection.FindOneAndDeleteAsync(session, filter);
+				if (note == null)
+				{
+					await session.AbortTransactionAsync();
+					return false;
+				}
+
+				// removing the note from the containing notebook's Items array
+				await noteCollection.UpdateOneAsync(
+					session,
+					new BsonDocument("_id", note.NBID),
+					Builders<Note>.Update.PullFilter<NotebookItem>("Items", new BsonDocument("_id", note.Id))
+				);
+
+				await session.CommitTransactionAsync();
+			}
+			if (note is Notebook)
+			{
+				var toExplore = new Queue<string>();
+				toExplore.Enqueue(note.Id);
+				var subNotebooks = new HashSet<string> { note.Id };
+				while (toExplore.Count > 0)
+				{
+					var notebook = toExplore.Dequeue();
+					// find all notebooks in this notebook
+					var filter = Builders<Note>.Filter.And(
+						new BsonDocument("NBID", notebook),
+						new BsonDocument("_t", "Notebook")
+					);
+					using (var cursor = await noteCollection.FindAsync<Record>(filter))
+					{
+						while (await cursor.MoveNextAsync())
+						{
+							foreach (var doc in cursor.Current)
+							{
+								toExplore.Enqueue(doc.Id);
+								subNotebooks.Add(doc.Id);
+							}
+						}
+					}
+				}
+
+				// delete all documents with NBID's matching something in containedNotebookIds
+				await noteCollection.DeleteManyAsync(Builders<Note>.Filter.In("NBID", subNotebooks));
+			}
+			return true;
 		}
 
 		public Task<Note> FindById(string id, string uid)
