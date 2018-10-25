@@ -17,7 +17,6 @@ namespace NotetasticApi.Notes
 		public string NBID { get; set; }
 		public bool? Archived { get; set; }
 		public string Title { get; set; }
-		public DateTimeOffset LastModified { get; set; }
 		public virtual bool IsValid => UID != null && Archived != null && Title != null;
 
 		// override object.Equals
