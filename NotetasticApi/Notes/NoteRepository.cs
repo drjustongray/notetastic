@@ -80,12 +80,18 @@ namespace NotetasticApi.Notes
 					return null;
 				}
 			}
-			await noteCollection.InsertOneAsync(note);
-			await noteCollection.FindOneAndUpdateAsync(
-				IdIs(notebook.Id),
-				Builders<Note>.Update.Push("Items", new NotebookItem { Id = note.Id, Title = note.Title, Type = note.GetType().Name })
-			);
-			return note;
+			using (var session = await client.StartSessionAsync())
+			{
+				session.StartTransaction();
+				await noteCollection.InsertOneAsync(session, note);
+				await noteCollection.FindOneAndUpdateAsync(
+					session,
+					IdIs(notebook.Id),
+					Builders<Note>.Update.Push("Items", new NotebookItem { Id = note.Id, Title = note.Title, Type = note.GetType().Name })
+				);
+				await session.CommitTransactionAsync();
+				return note;
+			}
 		}
 
 		/// <summary>
@@ -217,6 +223,8 @@ namespace NotetasticApi.Notes
 		/// replaces the note in the repo with a matchin id and uid
 		/// exception: notebooks will just have certain properties updated, as the Items property is managed by the repo
 		/// if NBID missing,the value for user's root notebook is used
+		/// if the NBID is modified: ownership and existence of notebooks is done, Items array is updated
+		/// the type of the note cannot change
 		/// the root notebook cannot be modified
 		/// </summary>
 		/// <param name="note"></param>
