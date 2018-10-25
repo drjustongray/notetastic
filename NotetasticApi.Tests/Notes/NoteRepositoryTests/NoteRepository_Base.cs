@@ -78,7 +78,7 @@ namespace NotetasticApi.Tests.Notes.NoteRepositoryTests
 		{
 			UID = "uid2",
 			IsRoot = true,
-			Items = new List<NotebookItem>() { new NotebookItem { Title = "title2", Type = "TextNote" } }
+			Items = new List<NotebookItem>() { new NotebookItem { Title = "title2", Type = "TextNote" }, new NotebookItem { Title = "notebook3", Type = "Notebook" } }
 		};
 
 		// in notebook root2
@@ -90,8 +90,16 @@ namespace NotetasticApi.Tests.Notes.NoteRepositoryTests
 			Text = "some more text"
 		};
 
+		protected readonly Notebook notebook3 = new Notebook
+		{
+			UID = "uid2",
+			Archived = true,
+			Title = "notebook3",
+			Items = new List<NotebookItem>()
+		};
+
 		protected HashSet<Note> expectedCollection => new HashSet<Note>
-			 { root1, root2, note1, note2, note3, note4, notebook1, notebook2 };
+			 { root1, root2, note1, note2, note3, note4, notebook1, notebook2, notebook3 };
 
 		protected HashSet<Note> actualCollection => new HashSet<Note>(collection.Find(new BsonDocument()).ToEnumerable());
 
@@ -106,10 +114,12 @@ namespace NotetasticApi.Tests.Notes.NoteRepositoryTests
 			note1.NBID = root1.Id;
 			notebook1.NBID = root1.Id;
 			note2.NBID = root2.Id;
-			collection.InsertMany(new Note[] { note1, note2, notebook1 });
+			notebook3.NBID = root2.Id;
+			collection.InsertMany(new Note[] { note1, note2, notebook1, notebook3 });
 			root1.Items[0].Id = note1.Id;
 			root1.Items[1].Id = notebook1.Id;
 			root2.Items[0].Id = note2.Id;
+			root2.Items[1].Id = notebook3.Id;
 			collection.ReplaceOne(new BsonDocument("_id", root1.Id), root1);
 			collection.ReplaceOne(new BsonDocument("_id", root2.Id), root2);
 			note3.NBID = notebook1.Id;

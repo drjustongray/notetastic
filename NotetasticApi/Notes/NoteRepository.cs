@@ -44,15 +44,48 @@ namespace NotetasticApi.Notes
 		}
 
 		/// <summary>
-		/// adds any valid note to repository
+		/// adds any valid note to repository, throws if argument null or invalid
 		/// NoteBooks will be foced into an 'empty' state first
+		/// all notes will have archived set to false
 		/// if NBID missing,the value for user's root notebook is used
 		/// </summary>
 		/// <param name="note"></param>
 		/// <returns></returns>
-		public Task<Note> Create(Note note)
+		public async Task<Note> Create(Note note)
 		{
-			throw new System.NotImplementedException();
+			if (note == null)
+			{
+				throw new ArgumentNullException(nameof(note));
+			}
+			note.Archived = false;
+			if (!note.IsValid || note.Id != null)
+			{
+				throw new ArgumentException($"Note invalid: {note}");
+			}
+			if (note is Notebook)
+			{
+				((Notebook)note).Items = new List<NotebookItem>();
+			}
+			Notebook notebook;
+			if (note.NBID == null)
+			{
+				notebook = await FindRootNotebook(note.UID);
+				note.NBID = notebook.Id;
+			}
+			else
+			{
+				notebook = await noteCollection.FindOneAsync(Builders<Note>.Filter.And(IdIs(note.NBID), UidIs(note.UID), IsNotebook)) as Notebook;
+				if (notebook == null)
+				{
+					return null;
+				}
+			}
+			await noteCollection.InsertOneAsync(note);
+			await noteCollection.FindOneAndUpdateAsync(
+				IdIs(notebook.Id),
+				Builders<Note>.Update.Push("Items", new NotebookItem { Id = note.Id, Title = note.Title, Type = note.GetType().Name })
+			);
+			return note;
 		}
 
 		/// <summary>
@@ -165,7 +198,7 @@ namespace NotetasticApi.Notes
 				// just in case another thread/machine is trying to create the root at the same time
 				try
 				{
-					root = new Notebook { UID = uid, IsRoot = true };
+					root = new Notebook { UID = uid, IsRoot = true, Items = new List<NotebookItem>() };
 					await noteCollection.InsertOneAsync(root);
 				}
 				catch (MongoWriteException e)
