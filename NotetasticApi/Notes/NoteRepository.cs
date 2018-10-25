@@ -177,7 +177,7 @@ namespace NotetasticApi.Notes
 				throw new ArgumentNullException(nameof(uid));
 			}
 			var filter = Builders<Note>.Filter.And(IdIs(id), UidIs(uid), IsNotRoot);
-			return await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync();
+			return await noteCollection.FindOneAsync(filter);
 		}
 
 		/// <summary>
@@ -192,7 +192,7 @@ namespace NotetasticApi.Notes
 				throw new ArgumentNullException(nameof(uid));
 			}
 			var filter = Builders<Note>.Filter.And(UidIs(uid), IsRoot);
-			var root = await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync() as Notebook;
+			var root = await noteCollection.FindOneAsync(filter) as Notebook;
 			if (root == null)
 			{
 				// just in case another thread/machine is trying to create the root at the same time
@@ -205,7 +205,7 @@ namespace NotetasticApi.Notes
 				{
 					if (e.WriteError.Category == ServerErrorCategory.DuplicateKey)
 					{
-						return await (await noteCollection.FindAsync(filter)).FirstOrDefaultAsync() as Notebook;
+						return await noteCollection.FindOneAsync(filter) as Notebook;
 					}
 					throw e;
 				}

@@ -66,7 +66,7 @@ namespace NotetasticApi.Users
 				throw new ArgumentNullException(nameof(id));
 			}
 			var filter = new BsonDocument("_id", id);
-			return await (await _users.FindAsync(filter)).FirstOrDefaultAsync();
+			return await _users.FindOneAsync(filter);
 		}
 
 		public async Task<User> FindByUserName(string userName)
@@ -76,7 +76,7 @@ namespace NotetasticApi.Users
 				throw new ArgumentNullException(nameof(userName));
 			}
 			var filter = new BsonDocument("UserName", userName);
-			return await (await _users.FindAsync(filter)).FirstOrDefaultAsync();
+			return await _users.FindOneAsync(filter);
 		}
 
 		public async Task<User> UpdatePasswordHash(string id, string hash)

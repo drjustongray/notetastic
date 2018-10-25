@@ -89,7 +89,7 @@ namespace NotetasticApi.Users
 				throw new ArgumentNullException(nameof(token));
 			}
 			var filter = Builders<RefreshToken>.Filter.Eq("Token", token);
-			return await (await _tokens.FindAsync(filter)).FirstOrDefaultAsync();
+			return await _tokens.FindOneAsync(filter);
 		}
 
 		public async Task<RefreshToken> Update(RefreshToken token)
