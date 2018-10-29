@@ -46,7 +46,6 @@ namespace NotetasticApi.Tests.Notes.NoteRepositoryTests
 			Text = "some more text"
 		};
 
-
 		protected HashSet<Note> expectedCollection => new HashSet<Note> { note1, note2, note3, note4 };
 
 		protected HashSet<Note> actualCollection => new HashSet<Note>(collection.Find(new BsonDocument()).ToEnumerable());

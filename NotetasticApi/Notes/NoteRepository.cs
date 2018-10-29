@@ -17,10 +17,11 @@ namespace NotetasticApi.Notes
 	public class NoteRepository : INoteRepository
 	{
 		private static readonly BsonDocument IsRoot = new BsonDocument("IsRoot", true);
+		private static readonly FilterDefinition<Note> IsNotRoot = Builders<Note>.Filter.Not(IsRoot);
+		private static FilterDefinition<Note> HasType(Type type) => new BsonDocument("_t", type.Name);
 		private static readonly BsonDocument IsNotebook = new BsonDocument("_t", "Notebook");
-		private static BsonDocument UidIs(string uid) => new BsonDocument("UID", uid);
-		private static BsonDocument IdIs(string id) => new BsonDocument("_id", id);
-		private static BsonDocument NbidIs(string nbid) => new BsonDocument("NBID", nbid);
+		private static FilterDefinition<Note> OwnedBy(string uid) => new BsonDocument("UID", uid);
+		private static FilterDefinition<Note> HasId(string id) => new BsonDocument("_id", id);
 
 		private readonly IMongoCollection<Note> noteCollection;
 
@@ -74,7 +75,7 @@ namespace NotetasticApi.Notes
 				throw new ArgumentNullException(nameof(uid));
 			}
 
-			var filter = Builders<Note>.Filter.And(IdIs(id), UidIs(uid));
+			var filter = Builders<Note>.Filter.And(HasId(id), OwnedBy(uid));
 			var note = await noteCollection.FindOneAndDeleteAsync(filter);
 
 			return note != null;
@@ -97,7 +98,7 @@ namespace NotetasticApi.Notes
 			{
 				throw new ArgumentNullException(nameof(uid));
 			}
-			var filter = Builders<Note>.Filter.And(IdIs(id), UidIs(uid));
+			var filter = Builders<Note>.Filter.And(HasId(id), OwnedBy(uid));
 			return await noteCollection.FindOneAsync(filter);
 		}
 
@@ -105,15 +106,30 @@ namespace NotetasticApi.Notes
 		/// replaces the note in the repo with a matchin id and uid
 		/// exception: notebooks will just have certain properties updated, as the Items property is managed by the repo
 		/// if NBID missing,the value for user's root notebook is used
-		/// if the NBID is modified: ownership and existence of notebooks is done, Items array is updated
+		/// if the NBID is modified: ownership and existence of notebooks is verified, Items arrays on both are updated
+		/// cycles are prevented
 		/// the type of the note cannot change
 		/// the root notebook cannot be modified
 		/// </summary>
 		/// <param name="note"></param>
 		/// <returns></returns>
-		public Task<Note> Update(Note note)
+		public async Task<Note> Update(Note note)
 		{
-			throw new System.NotImplementedException();
+			if (note == null)
+			{
+				throw new ArgumentNullException(nameof(note));
+			}
+			if (!note.IsValid || note.Id == null)
+			{
+				throw new ArgumentException($"Note invalid: {note}");
+			}
+
+			var filter = Builders<Note>.Filter.And(HasId(note.Id), OwnedBy(note.UID), HasType(note.GetType()), IsNotRoot);
+
+			var old = await noteCollection.FindOneAndReplaceAsync(filter, note);
+
+
+			return old != null ? note : old;
 		}
 	}
 }
