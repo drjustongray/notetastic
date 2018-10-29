@@ -48,7 +48,7 @@ namespace NotetasticApi.Notes
 
 		public override int GetHashCode()
 		{
-			return Tuple.Create(Id, UID, NBID, Archived, Title).GetHashCode();
+			return Tuple.Create(Id, UID, Archived, Title).GetHashCode();
 		}
 
 		public static bool operator ==(Checklist a, Checklist b)

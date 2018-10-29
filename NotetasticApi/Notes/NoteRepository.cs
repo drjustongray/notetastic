@@ -11,36 +11,22 @@ namespace NotetasticApi.Notes
 	{
 		Task<Note> Create(Note note);
 		Task<Note> FindById(string id, string uid);
-		Task<Notebook> FindRootNotebook(string uid);
 		Task<Note> Update(Note note);
 		Task<bool> Delete(string id, string uid);
 	}
 	public class NoteRepository : INoteRepository
 	{
 		private static readonly BsonDocument IsRoot = new BsonDocument("IsRoot", true);
-		private static readonly FilterDefinition<Note> IsNotRoot = Builders<Note>.Filter.Not(IsRoot);
 		private static readonly BsonDocument IsNotebook = new BsonDocument("_t", "Notebook");
 		private static BsonDocument UidIs(string uid) => new BsonDocument("UID", uid);
 		private static BsonDocument IdIs(string id) => new BsonDocument("_id", id);
 		private static BsonDocument NbidIs(string nbid) => new BsonDocument("NBID", nbid);
 
 		private readonly IMongoCollection<Note> noteCollection;
-		private readonly IMongoClient client;
 
-		public NoteRepository(IMongoCollection<Note> noteCollection, IMongoClient client)
+		public NoteRepository(IMongoCollection<Note> noteCollection)
 		{
 			this.noteCollection = noteCollection;
-			this.client = client;
-			noteCollection.Indexes.CreateOne(new CreateIndexModel<Note>(
-				Builders<Note>.IndexKeys.Combine(
-					Builders<Note>.IndexKeys.Ascending(_ => _.UID)
-				),
-				new CreateIndexOptions<Note>
-				{
-					Unique = true,
-					PartialFilterExpression = IsRoot
-				}
-			));
 		}
 
 		/// <summary>
@@ -62,36 +48,9 @@ namespace NotetasticApi.Notes
 			{
 				throw new ArgumentException($"Note invalid: {note}");
 			}
-			if (note is Notebook)
-			{
-				((Notebook)note).Items = new List<NotebookItem>();
-			}
-			Notebook notebook;
-			if (note.NBID == null)
-			{
-				notebook = await FindRootNotebook(note.UID);
-				note.NBID = notebook.Id;
-			}
-			else
-			{
-				notebook = await noteCollection.FindOneAsync(Builders<Note>.Filter.And(IdIs(note.NBID), UidIs(note.UID), IsNotebook)) as Notebook;
-				if (notebook == null)
-				{
-					return null;
-				}
-			}
-			using (var session = await client.StartSessionAsync())
-			{
-				session.StartTransaction();
-				await noteCollection.InsertOneAsync(session, note);
-				await noteCollection.FindOneAndUpdateAsync(
-					session,
-					IdIs(notebook.Id),
-					Builders<Note>.Update.Push("Items", new NotebookItem { Id = note.Id, Title = note.Title, Type = note.GetType().Name })
-				);
-				await session.CommitTransactionAsync();
-				return note;
-			}
+			await noteCollection.InsertOneAsync(note);
+			return note;
+
 		}
 
 		/// <summary>
@@ -115,54 +74,10 @@ namespace NotetasticApi.Notes
 				throw new ArgumentNullException(nameof(uid));
 			}
 
-			Note note;
-			using (var session = await client.StartSessionAsync())
-			{
-				var filter = Builders<Note>.Filter.And(IdIs(id), UidIs(uid), IsNotRoot);
-				session.StartTransaction();
-				note = await noteCollection.FindOneAndDeleteAsync(session, filter);
-				if (note == null)
-				{
-					await session.AbortTransactionAsync();
-					return false;
-				}
+			var filter = Builders<Note>.Filter.And(IdIs(id), UidIs(uid));
+			var note = await noteCollection.FindOneAndDeleteAsync(filter);
 
-				// removing the note from the containing notebook's Items array
-				await noteCollection.UpdateOneAsync(
-					session,
-					IdIs(note.NBID),
-					Builders<Note>.Update.PullFilter<NotebookItem>("Items", IdIs(note.Id))
-				);
-
-				await session.CommitTransactionAsync();
-			}
-			if (note is Notebook)
-			{
-				var toExplore = new Queue<string>();
-				toExplore.Enqueue(note.Id);
-				var subNotebooks = new HashSet<string> { note.Id };
-				while (toExplore.Count > 0)
-				{
-					var notebook = toExplore.Dequeue();
-					// find all notebooks in this notebook
-					var filter = Builders<Note>.Filter.And(NbidIs(notebook), IsNotebook);
-					using (var cursor = await noteCollection.FindAsync<Record>(filter))
-					{
-						while (await cursor.MoveNextAsync())
-						{
-							foreach (var doc in cursor.Current)
-							{
-								toExplore.Enqueue(doc.Id);
-								subNotebooks.Add(doc.Id);
-							}
-						}
-					}
-				}
-
-				// delete all documents with NBID's matching something in containedNotebookIds
-				await noteCollection.DeleteManyAsync(Builders<Note>.Filter.In("NBID", subNotebooks));
-			}
-			return true;
+			return note != null;
 		}
 
 		/// <summary>
@@ -182,41 +97,8 @@ namespace NotetasticApi.Notes
 			{
 				throw new ArgumentNullException(nameof(uid));
 			}
-			var filter = Builders<Note>.Filter.And(IdIs(id), UidIs(uid), IsNotRoot);
+			var filter = Builders<Note>.Filter.And(IdIs(id), UidIs(uid));
 			return await noteCollection.FindOneAsync(filter);
-		}
-
-		/// <summary>
-		/// retrieves the user's root notebook, creating it if necessary
-		/// </summary>
-		/// <param name="uid"></param>
-		/// <returns></returns>
-		public async Task<Notebook> FindRootNotebook(string uid)
-		{
-			if (uid == null)
-			{
-				throw new ArgumentNullException(nameof(uid));
-			}
-			var filter = Builders<Note>.Filter.And(UidIs(uid), IsRoot);
-			var root = await noteCollection.FindOneAsync(filter) as Notebook;
-			if (root == null)
-			{
-				// just in case another thread/machine is trying to create the root at the same time
-				try
-				{
-					root = new Notebook { UID = uid, IsRoot = true, Items = new List<NotebookItem>() };
-					await noteCollection.InsertOneAsync(root);
-				}
-				catch (MongoWriteException e)
-				{
-					if (e.WriteError.Category == ServerErrorCategory.DuplicateKey)
-					{
-						return await noteCollection.FindOneAsync(filter) as Notebook;
-					}
-					throw e;
-				}
-			}
-			return root;
 		}
 
 		/// <summary>

@@ -15,42 +15,39 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 			var rand = new Random();
 			foreach (var id in new string[] { null, "someid", "someotherid" })
 				foreach (var uid in new string[] { null, "uid1", "uid2" })
-					foreach (var nbid in new string[] { null, "nbid1", "nbid2" })
-						foreach (var archived in new bool[] { true, false })
-							foreach (var title in new string[] { null, "sometitle", "some other title" })
-								foreach (var itemCounts in new int[] { -1, 0, 3, 3, 5, 5, 10, 10 })
+					foreach (var archived in new bool[] { true, false })
+						foreach (var title in new string[] { null, "sometitle", "some other title" })
+							foreach (var itemCounts in new int[] { -1, 0, 3, 3, 5, 5, 10, 10 })
+							{
+								var items1 = itemCounts != -1 ? new List<CheckItem>() : null;
+								var items2 = itemCounts != -1 ? new List<CheckItem>() : null;
+								for (int i = 0; i < itemCounts; i++)
 								{
-									var items1 = itemCounts != -1 ? new List<CheckItem>() : null;
-									var items2 = itemCounts != -1 ? new List<CheckItem>() : null;
-									for (int i = 0; i < itemCounts; i++)
+									var item = new CheckItem
 									{
-										var item = new CheckItem
-										{
-											Checked = rand.Next() % 2 == 0,
-											Text = rand.Next() % 10 == 0 ? null : "sometext" + rand.Next()
-										};
-										items1.Add(item);
-										items2.Add(item);
-									}
-									list1.Add(new Checklist
-									{
-										Id = id,
-										UID = uid,
-										NBID = nbid,
-										Archived = archived,
-										Title = title,
-										Items = items1
-									});
-									list2.Add(new Checklist
-									{
-										Id = id,
-										UID = uid,
-										NBID = nbid,
-										Archived = archived,
-										Title = title,
-										Items = items2
-									});
+										Checked = rand.Next() % 2 == 0,
+										Text = rand.Next() % 10 == 0 ? null : "sometext" + rand.Next()
+									};
+									items1.Add(item);
+									items2.Add(item);
 								}
+								list1.Add(new Checklist
+								{
+									Id = id,
+									UID = uid,
+									Archived = archived,
+									Title = title,
+									Items = items1
+								});
+								list2.Add(new Checklist
+								{
+									Id = id,
+									UID = uid,
+									Archived = archived,
+									Title = title,
+									Items = items2
+								});
+							}
 		}
 
 		[Fact]

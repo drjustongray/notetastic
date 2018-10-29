@@ -14,7 +14,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 		{
 			var id = "someid";
 			var uid = "someuid";
-			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
 			var url = "someurl";
@@ -22,7 +21,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			{
 				Id = id,
 				UID = uid,
-				NBID = nbid,
 				Archived = archived,
 				Title = title,
 				URL = url
@@ -39,7 +37,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 		{
 			var id = "someid";
 			var uid = "someuid";
-			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
 			var items = new List<CheckItem> { new CheckItem { Text = "grapes" }, new CheckItem { Checked = true, Text = "apples" } };
@@ -47,7 +44,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			{
 				Id = id,
 				UID = uid,
-				NBID = nbid,
 				Archived = archived,
 				Title = title,
 				Items = items
@@ -63,7 +59,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 		{
 			var id = "someid";
 			var uid = "someuid";
-			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
 			var lat = 89;
@@ -72,7 +67,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			{
 				Id = id,
 				UID = uid,
-				NBID = nbid,
 				Archived = archived,
 				Title = title,
 				Latitude = lat,
@@ -85,38 +79,10 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 		}
 
 		[Fact]
-		public void SerializesNotebooks()
-		{
-			var id = "someid";
-			var uid = "someuid";
-			var nbid = "somenbid";
-			var archived = true;
-			var title = "sometitle";
-			var items = new List<NotebookItem> {
-				new NotebookItem { Id = "somig", Type = "sometgesd", Title = "sdouf" },
-				new NotebookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" }
-			};
-			var expected = new Notebook
-			{
-				Id = id,
-				UID = uid,
-				NBID = nbid,
-				Archived = archived,
-				Title = title,
-				Items = items
-			};
-			var json = JsonConvert.SerializeObject(expected, converter);
-			var note = JsonConvert.DeserializeObject<Note>(json, converter);
-			var notebook = Assert.IsAssignableFrom<Notebook>(note);
-			Assert.Equal(expected, notebook);
-		}
-
-		[Fact]
 		public void SerializesTextNotes()
 		{
 			var id = "someid";
 			var uid = "someuid";
-			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
 			var text = "some text";
@@ -124,7 +90,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			{
 				Id = id,
 				UID = uid,
-				NBID = nbid,
 				Archived = archived,
 				Title = title,
 				Text = text

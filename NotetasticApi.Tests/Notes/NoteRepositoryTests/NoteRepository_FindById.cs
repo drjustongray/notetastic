@@ -34,16 +34,6 @@ namespace NotetasticApi.Tests.Notes.NoteRepositoryTests
 		[Theory]
 		[InlineData("uid1")]
 		[InlineData("uid2")]
-		public async void ReturnsNullIfRoot(string uid)
-		{
-			var root = uid == root1.UID ? root1 : root2;
-			Assert.Null(await repo.FindById(root.Id, uid));
-			AssertCollectionEquals();
-		}
-
-		[Theory]
-		[InlineData("uid1")]
-		[InlineData("uid2")]
 		public async void ReturnsNullIfUIDMisMatch(string uid)
 		{
 			var id = uid == note1.UID ? note2.Id : note1.Id;

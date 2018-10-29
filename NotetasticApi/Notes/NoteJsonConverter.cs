@@ -20,8 +20,6 @@ namespace NotetasticApi.Notes
 						return jsonObject.ToObject<Checklist>();
 					case nameof(Location):
 						return jsonObject.ToObject<Location>();
-					case nameof(Notebook):
-						return jsonObject.ToObject<Notebook>();
 					case nameof(TextNote):
 						return jsonObject.ToObject<TextNote>();
 				}

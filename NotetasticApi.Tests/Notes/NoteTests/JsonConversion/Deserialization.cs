@@ -29,7 +29,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 		{
 			var id = "someid";
 			var uid = "someuid";
-			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
 			var url = "someurl";
@@ -37,12 +36,11 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			{
 				Id = id,
 				UID = uid,
-				NBID = nbid,
 				Archived = archived,
 				Title = title,
 				URL = url
 			};
-			var json = $"{{ 'Id': '{id}', 'Type': 'Bookmark', 'UID': '{uid}', 'NBID': '{nbid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'URL': '{url}' }}";
+			var json = $"{{ 'Id': '{id}', 'Type': 'Bookmark', 'UID': '{uid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'URL': '{url}' }}";
 			var note = JsonConvert.DeserializeObject<Note>(json, converter);
 			var bookmark = Assert.IsAssignableFrom<Bookmark>(note);
 			Assert.Equal(expected, bookmark);
@@ -53,7 +51,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 		{
 			var id = "someid";
 			var uid = "someuid";
-			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
 			var items = new List<CheckItem> { new CheckItem { Text = "grapes" }, new CheckItem { Checked = true, Text = "apples" } };
@@ -61,12 +58,11 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			{
 				Id = id,
 				UID = uid,
-				NBID = nbid,
 				Archived = archived,
 				Title = title,
 				Items = items
 			};
-			var json = $"{{ 'Id': '{id}', 'Type': 'Checklist', 'UID': '{uid}', 'NBID': '{nbid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'Items': [{{'Checked': false, 'Text': 'grapes'}}, {{'Checked': true, 'Text': 'apples'}}] }}";
+			var json = $"{{ 'Id': '{id}', 'Type': 'Checklist', 'UID': '{uid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'Items': [{{'Checked': false, 'Text': 'grapes'}}, {{'Checked': true, 'Text': 'apples'}}] }}";
 			var note = JsonConvert.DeserializeObject<Note>(json, converter);
 			var checklist = Assert.IsAssignableFrom<Checklist>(note);
 			Assert.Equal(expected, checklist);
@@ -77,7 +73,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 		{
 			var id = "someid";
 			var uid = "someuid";
-			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
 			var lat = 89;
@@ -86,43 +81,15 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			{
 				Id = id,
 				UID = uid,
-				NBID = nbid,
 				Archived = archived,
 				Title = title,
 				Latitude = lat,
 				Longitude = lon
 			};
-			var json = $"{{ 'Id': '{id}', 'Type': 'Location', 'UID': '{uid}', 'NBID': '{nbid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'Latitude': '{lat}', 'Longitude': '{lon}' }}";
+			var json = $"{{ 'Id': '{id}', 'Type': 'Location', 'UID': '{uid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'Latitude': '{lat}', 'Longitude': '{lon}' }}";
 			var note = JsonConvert.DeserializeObject<Note>(json, converter);
 			var location = Assert.IsAssignableFrom<Location>(note);
 			Assert.Equal(expected, location);
-		}
-
-		[Fact]
-		public void DeserializesNotebooks()
-		{
-			var id = "someid";
-			var uid = "someuid";
-			var nbid = "somenbid";
-			var archived = true;
-			var title = "sometitle";
-			var items = new List<NotebookItem> {
-				new NotebookItem { Id = "somig", Type = "sometgesd", Title = "sdouf" },
-				new NotebookItem { Id = "somsdfgsig", Type = "somgsdfgetgesd", Title = "sdsdfgouf" }
-			};
-			var expected = new Notebook
-			{
-				Id = id,
-				UID = uid,
-				NBID = nbid,
-				Archived = archived,
-				Title = title,
-				Items = items
-			};
-			var json = $"{{ 'Id': '{id}', 'Type': 'Notebook', 'UID': '{uid}', 'NBID': '{nbid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'Items': {JsonConvert.SerializeObject(items)} }}";
-			var note = JsonConvert.DeserializeObject<Note>(json, converter);
-			var notebook = Assert.IsAssignableFrom<Notebook>(note);
-			Assert.Equal(expected, notebook);
 		}
 
 		[Fact]
@@ -130,7 +97,6 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 		{
 			var id = "someid";
 			var uid = "someuid";
-			var nbid = "somenbid";
 			var archived = true;
 			var title = "sometitle";
 			var text = "some text";
@@ -138,12 +104,11 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			{
 				Id = id,
 				UID = uid,
-				NBID = nbid,
 				Archived = archived,
 				Title = title,
 				Text = text
 			};
-			var json = $"{{ 'Id': '{id}', 'Type': 'TextNote', 'UID': '{uid}', 'NBID': '{nbid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'Text': '{text}' }}";
+			var json = $"{{ 'Id': '{id}', 'Type': 'TextNote', 'UID': '{uid}', 'Archived': {archived.ToString().ToLower()}, 'Title': '{title}', 'Text': '{text}' }}";
 			var note = JsonConvert.DeserializeObject<Note>(json, converter);
 			var textNote = Assert.IsAssignableFrom<TextNote>(note);
 			Assert.Equal(expected, textNote);

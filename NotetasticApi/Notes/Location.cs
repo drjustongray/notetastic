@@ -23,7 +23,7 @@ namespace NotetasticApi.Notes
 
 		public override int GetHashCode()
 		{
-			return Tuple.Create(Id, UID, NBID, Archived, Title, Latitude, Longitude).GetHashCode();
+			return Tuple.Create(Id, UID, Archived, Title, Latitude, Longitude).GetHashCode();
 		}
 
 		public static bool operator ==(Location a, Location b)

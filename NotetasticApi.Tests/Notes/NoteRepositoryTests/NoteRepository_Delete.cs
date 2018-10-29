@@ -44,49 +44,14 @@ namespace NotetasticApi.Tests.Notes.NoteRepositoryTests
 		[Theory]
 		[InlineData("uid1")]
 		[InlineData("uid2")]
-		public async void ReturnFalseDoesNothingIfRoot(string uid)
-		{
-			var root = uid == note1.UID ? root1 : root2;
-			Assert.False(await repo.Delete(root.Id, uid));
-			AssertCollectionEquals();
-		}
-
-		[Theory]
-		[InlineData("uid1")]
-		[InlineData("uid2")]
 		public async void ReturnTrueDeletesSingleNoteIfMatch(string uid)
 		{
 			var note = uid == note1.UID ? note1 : note2;
-			var root = uid == note1.UID ? root1 : root2;
 			Assert.True(await repo.Delete(note.Id, uid));
-			root.Items.RemoveAt(0);
 			var expected = expectedCollection;
 			expected.Remove(note);
 			AssertCollectionEquals(expected);
 		}
 
-		[Fact]
-		public async void DeletesContainedNotesIfNotebook()
-		{
-			Assert.True(await repo.Delete(notebook2.Id, notebook2.UID));
-			notebook1.Items.RemoveAt(1);
-			var expected = expectedCollection;
-			expected.Remove(notebook2);
-			expected.Remove(note4);
-			AssertCollectionEquals(expected);
-		}
-
-		[Fact]
-		public async void DeletesSubNotes()
-		{
-			Assert.True(await repo.Delete(notebook1.Id, notebook1.UID));
-			root1.Items.RemoveAt(1);
-			var expected = expectedCollection;
-			expected.Remove(notebook1);
-			expected.Remove(notebook2);
-			expected.Remove(note3);
-			expected.Remove(note4);
-			AssertCollectionEquals(expected);
-		}
 	}
 }

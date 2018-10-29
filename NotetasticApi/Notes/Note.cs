@@ -10,11 +10,6 @@ namespace NotetasticApi.Notes
 		/// </summary>
 		/// <value></value>
 		public string UID { get; set; }
-		/// <summary>
-		/// the id of the notebook this note belongs in
-		/// </summary>
-		/// <value></value>
-		public string NBID { get; set; }
 		public bool? Archived { get; set; }
 		public string Title { get; set; }
 		public virtual bool IsValid => UID != null && Archived != null && Title != null;
@@ -31,7 +26,6 @@ namespace NotetasticApi.Notes
 
 			return Id == other.Id &&
 				UID == other.UID &&
-				NBID == other.NBID &&
 				Archived == other.Archived &&
 				Title == other.Title;
 		}
@@ -39,7 +33,7 @@ namespace NotetasticApi.Notes
 		// override object.GetHashCode
 		public override int GetHashCode()
 		{
-			return Tuple.Create(Id, UID, NBID, Archived, Title).GetHashCode();
+			return Tuple.Create(Id, UID, Archived, Title).GetHashCode();
 		}
 	}
 }

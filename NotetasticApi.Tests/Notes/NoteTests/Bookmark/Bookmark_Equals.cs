@@ -13,30 +13,27 @@ namespace NotetasticApi.Tests.Notes.NoteTests
 		{
 			foreach (var id in new string[] { null, "someid", "someotherid" })
 				foreach (var uid in new string[] { null, "uid1", "uid2" })
-					foreach (var nbid in new string[] { null, "nbid1", "nbid2" })
-						foreach (var archived in new bool[] { true, false })
-							foreach (var title in new string[] { null, "sometitle", "some other title" })
-								foreach (var url in new string[] { null, "http://somethingcool.com", "someotherurl" })
+					foreach (var archived in new bool[] { true, false })
+						foreach (var title in new string[] { null, "sometitle", "some other title" })
+							foreach (var url in new string[] { null, "http://somethingcool.com", "someotherurl" })
+							{
+								list1.Add(new Bookmark
 								{
-									list1.Add(new Bookmark
-									{
-										Id = id,
-										UID = uid,
-										NBID = nbid,
-										Archived = archived,
-										Title = title,
-										URL = url
-									});
-									list2.Add(new Bookmark
-									{
-										Id = id,
-										UID = uid,
-										NBID = nbid,
-										Archived = archived,
-										Title = title,
-										URL = url
-									});
-								}
+									Id = id,
+									UID = uid,
+									Archived = archived,
+									Title = title,
+									URL = url
+								});
+								list2.Add(new Bookmark
+								{
+									Id = id,
+									UID = uid,
+									Archived = archived,
+									Title = title,
+									URL = url
+								});
+							}
 		}
 
 		[Fact]

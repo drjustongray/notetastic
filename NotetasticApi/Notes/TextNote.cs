@@ -20,7 +20,7 @@ namespace NotetasticApi.Notes
 
 		public override int GetHashCode()
 		{
-			return Tuple.Create(Id, UID, NBID, Archived, Title, Text).GetHashCode();
+			return Tuple.Create(Id, UID, Archived, Title, Text).GetHashCode();
 		}
 
 		public static bool operator ==(TextNote a, TextNote b)
