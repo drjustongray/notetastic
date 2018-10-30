@@ -11,7 +11,7 @@ namespace NotetasticApi.Notes
 	{
 		Task<Note> Create(Note note);
 		Task<Note> FindById(string id, string uid);
-
+		Task<List<NoteMetaData>> FindAllByUser(string uid);
 		Task<Note> Update(Note note);
 		Task<bool> Delete(string id, string uid);
 	}
@@ -77,6 +77,15 @@ namespace NotetasticApi.Notes
 			var note = await noteCollection.FindOneAndDeleteAsync(filter);
 
 			return note != null;
+		}
+
+		public async Task<List<NoteMetaData>> FindAllByUser(string uid)
+		{
+			if (uid == null)
+			{
+				throw new ArgumentNullException(nameof(uid));
+			}
+			return await (await noteCollection.FindAsync<NoteMetaData>(OwnedBy(uid))).ToListAsync();
 		}
 
 		/// <summary>

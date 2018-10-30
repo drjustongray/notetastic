@@ -5,10 +5,12 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace NotetasticApi.Notes
 {
+	[BsonIgnoreExtraElements]
 	public class NoteMetaData
 	{
 		public string Id { get; set; }
 		public string Title { get; set; }
+		[BsonElement("_t")]
 		public string Type { get; set; }
 
 		// override object.Equals
