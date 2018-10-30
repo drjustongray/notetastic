@@ -11,15 +11,13 @@ namespace NotetasticApi.Notes
 	{
 		Task<Note> Create(Note note);
 		Task<Note> FindById(string id, string uid);
+
 		Task<Note> Update(Note note);
 		Task<bool> Delete(string id, string uid);
 	}
 	public class NoteRepository : INoteRepository
 	{
-		private static readonly BsonDocument IsRoot = new BsonDocument("IsRoot", true);
-		private static readonly FilterDefinition<Note> IsNotRoot = Builders<Note>.Filter.Not(IsRoot);
 		private static FilterDefinition<Note> HasType(Type type) => new BsonDocument("_t", type.Name);
-		private static readonly BsonDocument IsNotebook = new BsonDocument("_t", "Notebook");
 		private static FilterDefinition<Note> OwnedBy(string uid) => new BsonDocument("UID", uid);
 		private static FilterDefinition<Note> HasId(string id) => new BsonDocument("_id", id);
 
@@ -124,7 +122,7 @@ namespace NotetasticApi.Notes
 				throw new ArgumentException($"Note invalid: {note}");
 			}
 
-			var filter = Builders<Note>.Filter.And(HasId(note.Id), OwnedBy(note.UID), HasType(note.GetType()), IsNotRoot);
+			var filter = Builders<Note>.Filter.And(HasId(note.Id), OwnedBy(note.UID), HasType(note.GetType()));
 
 			var old = await noteCollection.FindOneAndReplaceAsync(filter, note);
 
