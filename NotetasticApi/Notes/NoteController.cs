@@ -62,7 +62,7 @@ namespace NotetasticApi.Notes
 
 		public async Task<ActionResult> DeleteNote(string id)
 		{
-			return null;
+			return await noteRepository.Delete(id, UID) ? Ok() : NotFound() as ActionResult;
 		}
 	}
 }
