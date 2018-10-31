@@ -1,6 +1,7 @@
 using System;
 using System.Globalization;
 using System.Linq;
+using NotetasticApi.Notes;
 
 namespace NotetasticApi.Common
 {
@@ -10,6 +11,7 @@ namespace NotetasticApi.Common
 		void AssertNonNull(object value, string varName);
 		bool IsPasswordValid(string password, out string reason);
 		bool IsUsernameValid(string username, out string reason);
+		bool IsNoteValid(Note note);
 		void ValidatePassword(string password);
 		void ValidateUsername(string username);
 	}
@@ -22,6 +24,11 @@ namespace NotetasticApi.Common
 			{
 				throw new ArgumentNullException(varName);
 			}
+		}
+
+		public bool IsNoteValid(Note note)
+		{
+			return note?.IsValid ?? false;
 		}
 
 		public bool IsPasswordValid(string password, out string reason)

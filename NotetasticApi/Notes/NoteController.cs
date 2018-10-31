@@ -11,15 +11,38 @@ namespace NotetasticApi.Notes
 	public class NoteController : BaseController
 	{
 		private readonly INoteRepository noteRepository;
+		private readonly IValidationService validationService;
 
-		public NoteController(INoteRepository noteRepository)
+		public NoteController(INoteRepository noteRepository, IValidationService validationService)
 		{
 			this.noteRepository = noteRepository;
+			this.validationService = validationService;
 		}
 
 		public async Task<ActionResult<Note>> PutNote(Note note)
 		{
-			return null;
+			if (note == null)
+			{
+				return BadRequest();
+			}
+			note.UID = UID;
+			if (!validationService.IsNoteValid(note))
+			{
+				return BadRequest();
+			}
+			if (note.Id == null)
+			{
+				return await noteRepository.Create(note);
+			}
+			else
+			{
+				note = await noteRepository.Update(note);
+				if (note == null)
+				{
+					return NotFound();
+				}
+				return note;
+			}
 		}
 
 		public async Task<ActionResult<Note>> GetNote(string id)
