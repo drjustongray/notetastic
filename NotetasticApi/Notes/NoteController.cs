@@ -57,7 +57,7 @@ namespace NotetasticApi.Notes
 
 		public async Task<ActionResult<List<NoteMetaData>>> GetNoteList()
 		{
-			return null;
+			return await noteRepository.FindAllByUser(UID);
 		}
 
 		public async Task<ActionResult> DeleteNote(string id)
