@@ -47,7 +47,12 @@ namespace NotetasticApi.Notes
 
 		public async Task<ActionResult<Note>> GetNote(string id)
 		{
-			return null;
+			var note = await noteRepository.FindById(id, UID);
+			if (note == null)
+			{
+				return NotFound();
+			}
+			return note;
 		}
 
 		public async Task<ActionResult<List<NoteMetaData>>> GetNoteList()
