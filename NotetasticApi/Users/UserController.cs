@@ -10,7 +10,7 @@ namespace NotetasticApi.Users
 {
 
 	[Route("user"), Authorize]
-	public class UserController : ControllerBase
+	public class UserController : BaseController
 	{
 		public const string REFRESH_TOKEN = "REFRESH_TOKEN";
 		private readonly IUserService userService;
@@ -245,19 +245,5 @@ namespace NotetasticApi.Users
 			Response.Cookies.Delete(REFRESH_TOKEN);
 		}
 
-		private string UID
-		{
-			get
-			{
-				foreach (var claim in User.Claims)
-				{
-					if (claim.Type == ClaimTypes.UID)
-					{
-						return claim.Value;
-					}
-				}
-				return null;
-			}
-		}
 	}
 }
