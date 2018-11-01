@@ -13,7 +13,7 @@ namespace NotetasticApi.Users
 	public class AuthController : BaseController
 	{
 		public const string REFRESH_TOKEN = "REFRESH_TOKEN";
-		public const string COOKIE_PATH = "api/user";
+		public const string COOKIE_PATH = "/api/auth";
 
 		private readonly IUserService userService;
 		private readonly IValidationService validationService;
@@ -234,7 +234,7 @@ namespace NotetasticApi.Users
 
 		private void SetRefreshToken(string token, bool shouldPersist)
 		{
-			var cookieOptions = new CookieOptions { Secure = true, HttpOnly = true };
+			var cookieOptions = new CookieOptions { Secure = true, HttpOnly = true, Path = COOKIE_PATH };
 			if (shouldPersist)
 			{
 				cookieOptions.MaxAge = TimeSpan.FromDays(30);

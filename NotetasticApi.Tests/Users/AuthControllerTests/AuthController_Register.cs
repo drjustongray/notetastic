@@ -185,7 +185,8 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 					_ => _.Secure == true &&
 						_.HttpOnly == true &&
 						_.MaxAge == null &&
-						_.Expires == null
+						_.Expires == null &&
+						_.Path == AuthController.COOKIE_PATH
 				)), Times.Once);
 				cookies.VerifyNoOtherCalls();
 			}
@@ -214,7 +215,8 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			cookies.Verify(x => x.Append(AuthController.REFRESH_TOKEN, refToken, It.Is<CookieOptions>(
 					_ => _.Secure == true &&
 						_.HttpOnly == true &&
-						_.MaxAge == TimeSpan.FromDays(30)
+						_.MaxAge == TimeSpan.FromDays(30) &&
+						_.Path == AuthController.COOKIE_PATH
 				)), Times.Once);
 			cookies.VerifyNoOtherCalls();
 		}
