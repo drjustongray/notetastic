@@ -10,52 +10,51 @@ namespace NotetasticApi.Tests.Users.TokenServiceTests
 {
 	public class TokenService_CreateAccessToken
 	{
-		private readonly SymmetricSecurityKey _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superdupersecret"));
-		private readonly NotetasticApi.Users.TokenService _service;
-
-		public TokenService_CreateAccessToken()
-		{
-			_service = new NotetasticApi.Users.TokenService(_key);
-		}
 
 		[Fact]
 		public void ThrowsIfUIDNull()
 		{
+			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("key"));
+			var service = new TokenService(signingKey, "audience", "issuer");
 			Assert.Throws<ArgumentNullException>(
-				() => _service.CreateAccessToken(null)
+				() => service.CreateAccessToken(null)
 			);
 		}
 
 		[Theory]
-		[InlineData("asdf")]
-		[InlineData("3as3sd4")]
-		[InlineData("asdf0988098")]
-		public void ReturnsValidJWT(string uid)
+		[InlineData("asdf", "suberdubersecret", "service1", "service2")]
+		[InlineData("3as3sd4", "anothersecretforfun", "hello1", "try2")]
+		[InlineData("asdf0988098", "fasdklfsdf89070987098", "asldkfjds", "afsdfdr")]
+		public void ReturnsValidJWT(string uid, string key, string issuer, string audience)
 		{
+			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+			var service = new TokenService(signingKey, audience, issuer);
 			SecurityToken validatedToken;
-			var token = _service.CreateAccessToken(uid);
+			var token = service.CreateAccessToken(uid);
 			var validationParams = new TokenValidationParameters()
 			{
-				IssuerSigningKey = _key,
-				ValidateAudience = false,
-				ValidateIssuer = false
+				ValidAudience = audience,
+				ValidIssuer = issuer,
+				IssuerSigningKey = signingKey
 			};
 			new JwtSecurityTokenHandler().ValidateToken(token, validationParams, out validatedToken);
 		}
 
 		[Theory]
-		[InlineData("asdf")]
-		[InlineData("3as3sd4")]
-		[InlineData("asdf0988098")]
-		public void IncludesUidClaim(string uid)
+		[InlineData("asdf", "suberdubersecret", "service1", "service2")]
+		[InlineData("3as3sd4", "anothersecretforfun", "hello1", "try2")]
+		[InlineData("asdf0988098", "fasdklfsdf89070987098", "asldkfjds", "afsdfdr")]
+		public void IncludesUidClaim(string uid, string key, string issuer, string audience)
 		{
+			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+			var service = new TokenService(signingKey, audience, issuer);
 			SecurityToken validatedToken;
-			var token = _service.CreateAccessToken(uid);
+			var token = service.CreateAccessToken(uid);
 			var validationParams = new TokenValidationParameters()
 			{
-				IssuerSigningKey = _key,
-				ValidateAudience = false,
-				ValidateIssuer = false
+				ValidAudience = audience,
+				ValidIssuer = issuer,
+				IssuerSigningKey = signingKey
 			};
 			new JwtSecurityTokenHandler().ValidateToken(token, validationParams, out validatedToken);
 			var jwt = validatedToken as JwtSecurityToken;
@@ -64,37 +63,41 @@ namespace NotetasticApi.Tests.Users.TokenServiceTests
 		}
 
 		[Theory]
-		[InlineData("asdf")]
-		[InlineData("3as3sd4")]
-		[InlineData("asdf0988098")]
-		public void ExpiresInApprox5Minutes(string uid)
+		[InlineData("asdf", "suberdubersecret", "service1", "service2")]
+		[InlineData("3as3sd4", "anothersecretforfun", "hello1", "try2")]
+		[InlineData("asdf0988098", "fasdklfsdf89070987098", "asldkfjds", "afsdfdr")]
+		public void ExpiresInApprox5Minutes(string uid, string key, string issuer, string audience)
 		{
+			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+			var service = new TokenService(signingKey, audience, issuer);
 			SecurityToken validatedToken;
-			var token = _service.CreateAccessToken(uid);
+			var token = service.CreateAccessToken(uid);
 			var validationParams = new TokenValidationParameters()
 			{
-				IssuerSigningKey = _key,
-				ValidateAudience = false,
-				ValidateIssuer = false
+				ValidAudience = audience,
+				ValidIssuer = issuer,
+				IssuerSigningKey = signingKey
 			};
 			new JwtSecurityTokenHandler().ValidateToken(token, validationParams, out validatedToken);
 			Assert.InRange<DateTime>(validatedToken.ValidTo, DateTime.UtcNow.AddMinutes(4.9), DateTime.UtcNow.AddMinutes(5.1));
 		}
 
 		[Theory]
-		[InlineData("asdf")]
-		[InlineData("3as3sd4")]
-		[InlineData("asdf0988098")]
-		public void NotValidBefore(string uid)
+		[InlineData("asdf", "suberdubersecret", "service1", "service2")]
+		[InlineData("3as3sd4", "anothersecretforfun", "hello1", "try2")]
+		[InlineData("asdf0988098", "fasdklfsdf89070987098", "asldkfjds", "afsdfdr")]
+		public void NotValidBefore(string uid, string key, string issuer, string audience)
 		{
+			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+			var service = new TokenService(signingKey, audience, issuer);
 			var now = DateTime.UtcNow.AddSeconds(-1);
 			SecurityToken validatedToken;
-			var token = _service.CreateAccessToken(uid);
+			var token = service.CreateAccessToken(uid);
 			var validationParams = new TokenValidationParameters()
 			{
-				IssuerSigningKey = _key,
-				ValidateAudience = false,
-				ValidateIssuer = false
+				ValidAudience = audience,
+				ValidIssuer = issuer,
+				IssuerSigningKey = signingKey
 			};
 			new JwtSecurityTokenHandler().ValidateToken(token, validationParams, out validatedToken);
 			Assert.InRange<DateTime>(validatedToken.ValidFrom, now, DateTime.UtcNow.AddSeconds(1));

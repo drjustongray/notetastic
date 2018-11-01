@@ -32,14 +32,15 @@ namespace NotetasticApi
 		// This method gets called by the runtime. Use this method to add services to the container.
 		public void ConfigureServices(IServiceCollection services)
 		{
+			var serviceName = "NotetasticAPI";
 			var jwtSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["jwt:key"]));
 			services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 				.AddJwtBearer(options =>
 				{
 					options.TokenValidationParameters = new TokenValidationParameters
 					{
-						ValidateAudience = false,
-						ValidateIssuer = false,
+						ValidAudience = serviceName,
+						ValidIssuer = serviceName,
 						ValidateLifetime = true,
 						ValidateIssuerSigningKey = true,
 						IssuerSigningKey = jwtSigningKey,
@@ -65,7 +66,7 @@ namespace NotetasticApi
 			services.AddSingleton<IUserRepository, UserRepository>();
 			services.AddSingleton<INoteRepository, NoteRepository>();
 
-			services.AddSingleton<ITokenService>(new TokenService(jwtSigningKey));
+			services.AddSingleton<ITokenService>(new TokenService(jwtSigningKey, serviceName, serviceName));
 			services.AddSingleton<IValidationService, ValidationService>();
 			services.AddSingleton<IPasswordService, PasswordService>();
 

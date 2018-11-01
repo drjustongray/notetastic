@@ -20,14 +20,19 @@ namespace NotetasticApi.Users
 
 	public class TokenService : ITokenService
 	{
-		private readonly JwtSecurityTokenHandler _tokenHandler = new JwtSecurityTokenHandler();
-		private readonly SecurityKey _key;
-		private readonly SigningCredentials _credentials;
+		private readonly JwtSecurityTokenHandler tokenHandler = new JwtSecurityTokenHandler();
+		private readonly SecurityKey key;
+		private readonly string audience;
+		private readonly string issuer;
+		private readonly SigningCredentials credentials;
 		private RandomNumberGenerator rng = RandomNumberGenerator.Create();
-		public TokenService(SecurityKey key)
+
+		public TokenService(SecurityKey key, string audience, string issuer)
 		{
-			_key = key;
-			_credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha256);
+			this.key = key;
+			this.audience = audience;
+			this.issuer = issuer;
+			credentials = new SigningCredentials(this.key, SecurityAlgorithms.HmacSha256);
 		}
 
 		public string CreateAccessToken(string uid)
@@ -37,12 +42,14 @@ namespace NotetasticApi.Users
 				throw new ArgumentNullException(nameof(uid));
 			}
 			var token = new JwtSecurityToken(
+				issuer: issuer,
+				audience: audience,
 				claims: new Claim[] { new Claim(ClaimTypes.UID, uid) },
-				signingCredentials: _credentials,
+				signingCredentials: credentials,
 				notBefore: DateTime.Now,
 				expires: DateTime.Now.AddMinutes(5)
 			);
-			return _tokenHandler.WriteToken(token);
+			return tokenHandler.WriteToken(token);
 		}
 
 		public string CreateRefreshToken()
