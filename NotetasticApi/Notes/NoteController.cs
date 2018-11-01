@@ -19,7 +19,8 @@ namespace NotetasticApi.Notes
 			this.validationService = validationService;
 		}
 
-		public async Task<ActionResult<Note>> PutNote(Note note)
+		[HttpPut]
+		public async Task<ActionResult<Note>> PutNote([FromBody] Note note)
 		{
 			if (note == null)
 			{
@@ -45,6 +46,7 @@ namespace NotetasticApi.Notes
 			}
 		}
 
+		[HttpGet("{id}")]
 		public async Task<ActionResult<Note>> GetNote(string id)
 		{
 			var note = await noteRepository.FindById(id, UID);
@@ -55,11 +57,13 @@ namespace NotetasticApi.Notes
 			return note;
 		}
 
+		[HttpGet]
 		public async Task<ActionResult<List<NoteMetaData>>> GetNoteList()
 		{
 			return await noteRepository.FindAllByUser(UID);
 		}
 
+		[HttpDelete("{id}")]
 		public async Task<ActionResult> DeleteNote(string id)
 		{
 			return await noteRepository.Delete(id, UID) ? Ok() : NotFound() as ActionResult;

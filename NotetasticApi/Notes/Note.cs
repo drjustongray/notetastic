@@ -1,8 +1,10 @@
 using System;
+using MongoDB.Bson.Serialization.Attributes;
 using NotetasticApi.Common;
 
 namespace NotetasticApi.Notes
 {
+	[BsonKnownTypes(typeof(TextNote), typeof(Location), typeof(Checklist), typeof(Bookmark))]
 	public abstract class Note : Record
 	{
 		/// <summary>

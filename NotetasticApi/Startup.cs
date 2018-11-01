@@ -15,6 +15,7 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver;
 using NotetasticApi.Common;
+using NotetasticApi.Notes;
 using NotetasticApi.Users;
 
 namespace NotetasticApi
@@ -45,17 +46,24 @@ namespace NotetasticApi
 						ClockSkew = TimeSpan.FromSeconds(30)
 					};
 				});
-			services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+			services.AddMvc()
+				.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+				.AddJsonOptions(options =>
+				{
+					options.SerializerSettings.Converters.Add(new NoteJsonConverter());
+				});
 
 
 			var mongoClient = new MongoClient(Configuration["mongo:connection_string"]);
 			var db = mongoClient.GetDatabase(Configuration["mongo:db_name"]);
-			
+
 			services.AddSingleton<IMongoCollection<User>>(db.GetCollection<User>("Users"));
 			services.AddSingleton<IMongoCollection<RefreshToken>>(db.GetCollection<RefreshToken>("RefreshTokens"));
+			services.AddSingleton<IMongoCollection<Note>>(db.GetCollection<Note>("Notes"));
 
 			services.AddSingleton<IRefreshTokenRepository, RefreshTokenRepository>();
 			services.AddSingleton<IUserRepository, UserRepository>();
+			services.AddSingleton<INoteRepository, NoteRepository>();
 
 			services.AddSingleton<ITokenService>(new TokenService(jwtSigningKey));
 			services.AddSingleton<IValidationService, ValidationService>();
