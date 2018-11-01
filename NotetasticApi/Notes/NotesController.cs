@@ -7,13 +7,13 @@ using NotetasticApi.Common;
 
 namespace NotetasticApi.Notes
 {
-	[Route("notes"), Authorize]
-	public class NoteController : BaseController
+	[Authorize]
+	public class NotesController : BaseController
 	{
 		private readonly INoteRepository noteRepository;
 		private readonly IValidationService validationService;
 
-		public NoteController(INoteRepository noteRepository, IValidationService validationService)
+		public NotesController(INoteRepository noteRepository, IValidationService validationService)
 		{
 			this.noteRepository = noteRepository;
 			this.validationService = validationService;

@@ -7,17 +7,17 @@ using NotetasticApi.Notes;
 
 namespace NotetasticApi.Tests.Notes.NoteControllerTests
 {
-	public class NoteController_Base
+	public class NotesController_Base
 	{
 		protected readonly Mock<INoteRepository> noteRepository;
 		protected Mock<IValidationService> validationService;
-		protected readonly NoteController noteController;
+		protected readonly NotesController noteController;
 
-		public NoteController_Base()
+		public NotesController_Base()
 		{
 			noteRepository = new Mock<INoteRepository>();
 			validationService = new Mock<IValidationService>(MockBehavior.Strict);
-			noteController = new NoteController(noteRepository.Object, validationService.Object);
+			noteController = new NotesController(noteRepository.Object, validationService.Object);
 		}
 
 		protected void SetupUser(string uid)

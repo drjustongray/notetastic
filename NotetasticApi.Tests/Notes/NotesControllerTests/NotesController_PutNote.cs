@@ -5,7 +5,7 @@ using Xunit;
 
 namespace NotetasticApi.Tests.Notes.NoteControllerTests
 {
-	public class NoteController_PutNote : NoteController_Base
+	public class NotesController_PutNote : NotesController_Base
 	{
 		[Fact]
 		public async void BadRequestIfArgNull()

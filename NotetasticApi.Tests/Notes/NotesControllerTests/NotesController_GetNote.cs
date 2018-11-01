@@ -5,7 +5,7 @@ using Xunit;
 
 namespace NotetasticApi.Tests.Notes.NoteControllerTests
 {
-	public class NoteController_GetNote : NoteController_Base
+	public class NotesController_GetNote : NotesController_Base
 	{
 		[Theory]
 		[InlineData("id1", "uid1")]

@@ -7,7 +7,7 @@ using Xunit;
 
 namespace NotetasticApi.Tests.Users.UserControllerTests
 {
-	public class UserController_GetUserAuth : UserController_Base
+	public class AuthController_GetUserAuth : AuthController_Base
 	{
 		[Theory]
 		[InlineData(null)]
@@ -15,7 +15,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		public async void ReturnsBadRequestIfCookieMissing(string value)
 		{
 			SetupContext(reqCookies: SetupRequestCookies(value));
-			var result = await userController.GetUserAuth();
+			var result = await authController.GetUserAuth();
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			Assert.IsType<BadRequestResult>(actionResult.Result);
 		}
@@ -28,7 +28,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		{
 			SetupContext(reqCookies: SetupRequestCookies(token));
 			userService.Setup(x => x.CreateAuthTokens(token)).ReturnsAsync((TokenPair)null);
-			var result = await userController.GetUserAuth();
+			var result = await authController.GetUserAuth();
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			Assert.IsType<UnauthorizedResult>(actionResult.Result);
 		}
@@ -47,7 +47,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			userService.Setup(x => x.CreateAuthTokens(token))
 				.ReturnsAsync(new TokenPair { AccessToken = accessToken, RefreshToken = refToken, User = user });
 
-			var result = await userController.GetUserAuth();
+			var result = await authController.GetUserAuth();
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			var authRes = Assert.IsType<AuthenticationResponse>(actionResult.Value);
 			Assert.Equal(user.Id, authRes.uid);
@@ -75,8 +75,8 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 					User = user,
 					Persistent = false
 				});
-			await userController.GetUserAuth();
-			cookies.Verify(x => x.Append(UserController.REFRESH_TOKEN, refToken, It.Is<CookieOptions>(
+			await authController.GetUserAuth();
+			cookies.Verify(x => x.Append(AuthController.REFRESH_TOKEN, refToken, It.Is<CookieOptions>(
 					_ => _.Secure == true &&
 						_.HttpOnly == true &&
 						_.MaxAge == null &&
@@ -105,8 +105,8 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 					User = user,
 					Persistent = true
 				});
-			await userController.GetUserAuth();
-			cookies.Verify(x => x.Append(UserController.REFRESH_TOKEN, refToken, It.Is<CookieOptions>(
+			await authController.GetUserAuth();
+			cookies.Verify(x => x.Append(AuthController.REFRESH_TOKEN, refToken, It.Is<CookieOptions>(
 					_ => _.Secure == true &&
 						_.HttpOnly == true &&
 						_.MaxAge == TimeSpan.FromDays(30)

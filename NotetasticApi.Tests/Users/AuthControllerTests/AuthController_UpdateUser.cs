@@ -6,12 +6,12 @@ using Xunit;
 
 namespace NotetasticApi.Tests.Users.UserControllerTests
 {
-	public class UserController_UpdateUser : UserController_Base
+	public class AuthController_UpdateUser : AuthController_Base
 	{
 		[Fact]
 		public async void PerformsNullCheck()
 		{
-			var result = await userController.UpdateUser(null);
+			var result = await authController.UpdateUser(null);
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			var badRequest = Assert.IsType<BadRequestObjectResult>(actionResult.Result);
 			var modelState = Assert.IsType<SerializableError>(badRequest.Value);
@@ -30,7 +30,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 				newUsername = newUsername
 			};
 
-			var result = await userController.UpdateUser(authReq);
+			var result = await authController.UpdateUser(authReq);
 
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			var badRequest = Assert.IsType<BadRequestObjectResult>(actionResult.Result);
@@ -51,7 +51,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 				newUsername = newUsername
 			};
 
-			var result = await userController.UpdateUser(authReq);
+			var result = await authController.UpdateUser(authReq);
 
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			var badRequest = Assert.IsType<BadRequestObjectResult>(actionResult.Result);
@@ -75,7 +75,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			validationService.Setup(x => x.IsUsernameValid(newUsername, out validationResponse))
 				.Returns(false);
 
-			var result = await userController.UpdateUser(authReq);
+			var result = await authController.UpdateUser(authReq);
 
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			var badRequest = Assert.IsType<BadRequestObjectResult>(actionResult.Result);
@@ -103,7 +103,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 				.ReturnsAsync((User)null);
 			SetupContext(uid: uid);
 
-			var result = await userController.UpdateUser(authReq);
+			var result = await authController.UpdateUser(authReq);
 
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			Assert.IsType<UnauthorizedResult>(actionResult.Result);
@@ -127,7 +127,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 				.ReturnsAsync(new User { Id = uid, UserName = newUsername });
 			SetupContext(uid: uid);
 
-			var result = await userController.UpdateUser(authReq);
+			var result = await authController.UpdateUser(authReq);
 
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			var authRes = Assert.IsType<AuthenticationResponse>(actionResult.Value);
@@ -151,7 +151,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			validationService.Setup(x => x.IsPasswordValid(newPassword, out validationResponse))
 				.Returns(false);
 
-			var result = await userController.UpdateUser(authReq);
+			var result = await authController.UpdateUser(authReq);
 
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			var badRequest = Assert.IsType<BadRequestObjectResult>(actionResult.Result);
@@ -179,7 +179,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 				.ReturnsAsync((User)null);
 			SetupContext(uid: uid);
 
-			var result = await userController.UpdateUser(authReq);
+			var result = await authController.UpdateUser(authReq);
 
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			Assert.IsType<UnauthorizedResult>(actionResult.Result);
@@ -203,7 +203,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 				.ReturnsAsync(new User { Id = uid, UserName = uid + "something" });
 			SetupContext(uid: uid);
 
-			var result = await userController.UpdateUser(authReq);
+			var result = await authController.UpdateUser(authReq);
 
 			var actionResult = Assert.IsType<ActionResult<AuthenticationResponse>>(result);
 			var authRes = Assert.IsType<AuthenticationResponse>(actionResult.Value);

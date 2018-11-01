@@ -9,17 +9,17 @@ using NotetasticApi.Users;
 
 namespace NotetasticApi.Tests.Users.UserControllerTests
 {
-	public class UserController_Base
+	public class AuthController_Base
 	{
 		protected readonly Mock<IUserService> userService;
 		protected readonly Mock<IValidationService> validationService;
-		protected readonly UserController userController;
+		protected readonly AuthController authController;
 
-		public UserController_Base()
+		public AuthController_Base()
 		{
 			userService = new Mock<IUserService>(MockBehavior.Strict);
 			validationService = new Mock<IValidationService>(MockBehavior.Strict);
-			userController = new UserController(userService.Object, validationService.Object);
+			authController = new AuthController(userService.Object, validationService.Object);
 		}
 
 		protected void SetupContext(IResponseCookies resCookies = null, IRequestCookieCollection reqCookies = null, string uid = null)
@@ -45,14 +45,14 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 				);
 			}
 			controllerContext.HttpContext = httpContext.Object;
-			userController.ControllerContext = controllerContext;
+			authController.ControllerContext = controllerContext;
 		}
 
 		protected Mock<IResponseCookies> SetupResponseCookies()
 		{
 			var cookies = new Mock<IResponseCookies>(MockBehavior.Strict);
-			cookies.Setup(x => x.Append(UserController.REFRESH_TOKEN, It.IsAny<string>(), It.IsAny<CookieOptions>()));
-			cookies.Setup(x => x.Delete(UserController.REFRESH_TOKEN));
+			cookies.Setup(x => x.Append(AuthController.REFRESH_TOKEN, It.IsAny<string>(), It.IsAny<CookieOptions>()));
+			cookies.Setup(x => x.Delete(AuthController.REFRESH_TOKEN));
 			return cookies;
 		}
 
@@ -60,7 +60,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		{
 			return refreshToken == null ?
 				new RequestCookieCollection() :
-				new RequestCookieCollection(new Dictionary<string, string> { { UserController.REFRESH_TOKEN, refreshToken } });
+				new RequestCookieCollection(new Dictionary<string, string> { { AuthController.REFRESH_TOKEN, refreshToken } });
 		}
 
 	}

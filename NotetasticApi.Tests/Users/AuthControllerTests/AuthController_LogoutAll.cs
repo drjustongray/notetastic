@@ -7,7 +7,7 @@ using Xunit;
 
 namespace NotetasticApi.Tests.Users.UserControllerTests
 {
-	public class UserController_LogoutAll : UserController_Base
+	public class AuthController_LogoutAll : AuthController_Base
 	{
 		private Mock<IResponseCookies> cookies;
 
@@ -18,7 +18,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		public async void RevokesAllTokens(string uid)
 		{
 			Setup(uid);
-			await userController.LogoutAll();
+			await authController.LogoutAll();
 			userService.Verify(x => x.RevokeAllRefreshTokens(uid), Times.Once);
 		}
 
@@ -29,8 +29,8 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		public async void DeletesCookie(string uid)
 		{
 			Setup(uid);
-			await userController.LogoutAll();
-			cookies.Verify(x => x.Delete(UserController.REFRESH_TOKEN));
+			await authController.LogoutAll();
+			cookies.Verify(x => x.Delete(AuthController.REFRESH_TOKEN));
 		}
 
 		[Theory]
@@ -40,7 +40,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		public async void ReturnsNoContent(string uid)
 		{
 			Setup(uid);
-			var result = await userController.LogoutAll();
+			var result = await authController.LogoutAll();
 			Assert.IsType<NoContentResult>(result);
 		}
 

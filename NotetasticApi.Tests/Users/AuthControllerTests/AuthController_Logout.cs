@@ -5,7 +5,7 @@ using Xunit;
 
 namespace NotetasticApi.Tests.Users.UserControllerTests
 {
-	public class UserController_Logout : UserController_Base
+	public class AuthController_Logout : AuthController_Base
 	{
 		[Theory]
 		[InlineData(null)]
@@ -13,7 +13,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		public async void ReturnsBadRequestIfCookieMissing(string token)
 		{
 			SetupContext(reqCookies: SetupRequestCookies(token));
-			var result = await userController.Logout();
+			var result = await authController.Logout();
 			Assert.IsType<BadRequestResult>(result);
 		}
 
@@ -25,7 +25,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		{
 			SetupContext(SetupResponseCookies().Object, SetupRequestCookies(token));
 			userService.Setup(x => x.RevokeRefreshToken(token)).Returns(Task.CompletedTask);
-			var result = await userController.Logout();
+			var result = await authController.Logout();
 			Assert.IsType<NoContentResult>(result);
 		}
 
@@ -37,7 +37,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		{
 			SetupContext(SetupResponseCookies().Object, SetupRequestCookies(token));
 			userService.Setup(x => x.RevokeRefreshToken(token)).Returns(Task.CompletedTask);
-			await userController.Logout();
+			await authController.Logout();
 			userService.Verify(x => x.RevokeRefreshToken(token));
 		}
 
@@ -50,8 +50,8 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			var cookies = SetupResponseCookies();
 			SetupContext(cookies.Object, SetupRequestCookies(token));
 			userService.Setup(x => x.RevokeRefreshToken(token)).Returns(Task.CompletedTask);
-			await userController.Logout();
-			cookies.Verify(x => x.Delete(UserController.REFRESH_TOKEN));
+			await authController.Logout();
+			cookies.Verify(x => x.Delete(AuthController.REFRESH_TOKEN));
 		}
 	}
 }

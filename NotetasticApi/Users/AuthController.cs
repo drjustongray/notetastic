@@ -9,14 +9,16 @@ using NotetasticApi.Common;
 namespace NotetasticApi.Users
 {
 
-	[Route("user"), Authorize]
-	public class UserController : BaseController
+	[Authorize]
+	public class AuthController : BaseController
 	{
 		public const string REFRESH_TOKEN = "REFRESH_TOKEN";
+		public const string COOKIE_PATH = "api/user";
+
 		private readonly IUserService userService;
 		private readonly IValidationService validationService;
 
-		public UserController(IUserService userService, IValidationService validationService)
+		public AuthController(IUserService userService, IValidationService validationService)
 		{
 			this.userService = userService;
 			this.validationService = validationService;

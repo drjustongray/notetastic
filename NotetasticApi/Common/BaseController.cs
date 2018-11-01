@@ -3,6 +3,7 @@ using NotetasticApi.Users;
 
 namespace NotetasticApi.Common
 {
+	[Route("api/[controller]")]
 	public class BaseController : ControllerBase
 	{
 		protected string UID
