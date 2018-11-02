@@ -66,9 +66,12 @@ namespace NotetasticApi
 			services.AddSingleton<IUserRepository, UserRepository>();
 			services.AddSingleton<INoteRepository, NoteRepository>();
 
-			services.AddSingleton<ITokenService>(new TokenService(jwtSigningKey, serviceName, serviceName));
+			var timeService = new TimeService();
+
+			services.AddSingleton<ITokenService>(new TokenService(jwtSigningKey, serviceName, serviceName, timeService));
 			services.AddSingleton<IValidationService, ValidationService>();
 			services.AddSingleton<IPasswordService, PasswordService>();
+			services.AddSingleton<ITimeService>(timeService);
 
 			services.AddSingleton<IUserService, UserService>();
 		}

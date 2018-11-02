@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using NotetasticApi.Common;
 
@@ -24,13 +23,15 @@ namespace NotetasticApi.Users
 		private readonly IPasswordService passwordService;
 		private readonly ITokenService tokenService;
 		private readonly IValidationService validationService;
+		private readonly ITimeService timeService;
 
 		public UserService(
 			IUserRepository userRepo,
 			IRefreshTokenRepository refreshTokenRepo,
 			IPasswordService passwordService,
 			ITokenService tokenService,
-			IValidationService validationService
+			IValidationService validationService,
+			ITimeService timeService
 		)
 		{
 			this.userRepo = userRepo;
@@ -38,6 +39,7 @@ namespace NotetasticApi.Users
 			this.passwordService = passwordService;
 			this.tokenService = tokenService;
 			this.validationService = validationService;
+			this.timeService = timeService;
 		}
 
 		public async Task<User> Authenticate(string username, string password)
@@ -146,7 +148,7 @@ namespace NotetasticApi.Users
 		{
 			validationService.AssertNonNull(refreshToken, nameof(refreshToken));
 			var tokenDoc = await refreshTokenRepo.Find(refreshToken);
-			if (tokenDoc == null || tokenDoc.ExpiresAt < DateTimeOffset.Now)
+			if (tokenDoc == null || tokenDoc.ExpiresAt < timeService.GetCurrentTime())
 			{
 				return null;
 			}
@@ -183,13 +185,13 @@ namespace NotetasticApi.Users
 		private async Task CreateToken(RefreshToken refreshToken)
 		{
 			refreshToken.Token = tokenService.CreateRefreshToken();
-			refreshToken.ExpiresAt = DateTimeOffset.Now.AddDays(30);
+			refreshToken.ExpiresAt = timeService.GetCurrentTime().AddDays(30);
 			await refreshTokenRepo.Create(refreshToken);
 		}
 
 		private async Task UpdateToken(RefreshToken tokenDoc)
 		{
-			tokenDoc.ExpiresAt = DateTimeOffset.Now.AddDays(30);
+			tokenDoc.ExpiresAt = timeService.GetCurrentTime().AddDays(30);
 			tokenDoc.Token = tokenService.CreateRefreshToken();
 			await refreshTokenRepo.Update(tokenDoc);
 		}

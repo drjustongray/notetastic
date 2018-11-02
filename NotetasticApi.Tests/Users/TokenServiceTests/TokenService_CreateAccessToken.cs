@@ -3,6 +3,8 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using Moq;
+using NotetasticApi.Common;
 using NotetasticApi.Users;
 using Xunit;
 
@@ -10,12 +12,21 @@ namespace NotetasticApi.Tests.Users.TokenServiceTests
 {
 	public class TokenService_CreateAccessToken
 	{
+		private readonly DateTimeOffset Now = DateTimeOffset.Now;
+		private readonly Mock<ITimeService> timeService;
+
+		public TokenService_CreateAccessToken()
+		{
+			timeService = new Mock<ITimeService>();
+			timeService.Setup(x => x.GetCurrentTime()).Returns(Now);
+		}
+
 
 		[Fact]
 		public void ThrowsIfUIDNull()
 		{
 			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("key"));
-			var service = new TokenService(signingKey, "audience", "issuer");
+			var service = new TokenService(signingKey, "audience", "issuer", timeService.Object);
 			Assert.Throws<ArgumentNullException>(
 				() => service.CreateAccessToken(null)
 			);
@@ -28,7 +39,7 @@ namespace NotetasticApi.Tests.Users.TokenServiceTests
 		public void ReturnsValidJWT(string uid, string key, string issuer, string audience)
 		{
 			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-			var service = new TokenService(signingKey, audience, issuer);
+			var service = new TokenService(signingKey, audience, issuer, timeService.Object);
 			SecurityToken validatedToken;
 			var token = service.CreateAccessToken(uid);
 			var validationParams = new TokenValidationParameters()
@@ -47,7 +58,7 @@ namespace NotetasticApi.Tests.Users.TokenServiceTests
 		public void IncludesUidClaim(string uid, string key, string issuer, string audience)
 		{
 			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-			var service = new TokenService(signingKey, audience, issuer);
+			var service = new TokenService(signingKey, audience, issuer, timeService.Object);
 			SecurityToken validatedToken;
 			var token = service.CreateAccessToken(uid);
 			var validationParams = new TokenValidationParameters()
@@ -69,7 +80,7 @@ namespace NotetasticApi.Tests.Users.TokenServiceTests
 		public void ExpiresInApprox5Minutes(string uid, string key, string issuer, string audience)
 		{
 			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-			var service = new TokenService(signingKey, audience, issuer);
+			var service = new TokenService(signingKey, audience, issuer, timeService.Object);
 			SecurityToken validatedToken;
 			var token = service.CreateAccessToken(uid);
 			var validationParams = new TokenValidationParameters()
@@ -79,7 +90,7 @@ namespace NotetasticApi.Tests.Users.TokenServiceTests
 				IssuerSigningKey = signingKey
 			};
 			new JwtSecurityTokenHandler().ValidateToken(token, validationParams, out validatedToken);
-			Assert.InRange<DateTime>(validatedToken.ValidTo, DateTime.UtcNow.AddMinutes(4.9), DateTime.UtcNow.AddMinutes(5.1));
+			Assert.Equal(DateTimeOffset.FromUnixTimeSeconds(Now.AddMinutes(5).ToUnixTimeSeconds()), validatedToken.ValidTo);
 		}
 
 		[Theory]
@@ -89,7 +100,7 @@ namespace NotetasticApi.Tests.Users.TokenServiceTests
 		public void NotValidBefore(string uid, string key, string issuer, string audience)
 		{
 			var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
-			var service = new TokenService(signingKey, audience, issuer);
+			var service = new TokenService(signingKey, audience, issuer, timeService.Object);
 			var now = DateTime.UtcNow.AddSeconds(-1);
 			SecurityToken validatedToken;
 			var token = service.CreateAccessToken(uid);
@@ -100,7 +111,7 @@ namespace NotetasticApi.Tests.Users.TokenServiceTests
 				IssuerSigningKey = signingKey
 			};
 			new JwtSecurityTokenHandler().ValidateToken(token, validationParams, out validatedToken);
-			Assert.InRange<DateTime>(validatedToken.ValidFrom, now, DateTime.UtcNow.AddSeconds(1));
+			Assert.Equal(DateTimeOffset.FromUnixTimeSeconds(Now.AddMinutes(5).ToUnixTimeSeconds()), validatedToken.ValidTo);
 		}
 	}
 }

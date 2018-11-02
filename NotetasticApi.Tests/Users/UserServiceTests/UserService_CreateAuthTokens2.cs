@@ -47,7 +47,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = "someid" + token,
 				Token = token,
 				UID = "uid",
-				ExpiresAt = DateTimeOffset.Now.AddDays(-2),
+				ExpiresAt = Now.AddDays(-2),
 				Persistent = shouldPersist
 			};
 			refreshTokenRepo.Setup(x => x.Find(token)).ReturnsAsync(tokenDoc);
@@ -69,7 +69,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = "someid" + token,
 				Token = token,
 				UID = uid,
-				ExpiresAt = DateTimeOffset.Now.AddDays(23),
+				ExpiresAt = Now.AddDays(23),
 				Persistent = shouldPersist
 			};
 			refreshTokenRepo.Setup(x => x.Find(token)).ReturnsAsync(tokenDoc);
@@ -79,10 +79,10 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = tokenDoc.Id,
 				UID = uid,
 				Token = "newtoken" + token,
-				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				ExpiresAt = Now.AddDays(30),
 				Persistent = shouldPersist
 			};
-			refreshTokenRepo.SetupSequence(x => x.Update(Matches(newToken))).ReturnsAsync(newToken);
+			refreshTokenRepo.SetupSequence(x => x.Update(newToken)).ReturnsAsync(newToken);
 			var accessToken = uid + "token";
 			tokenService.Setup(x => x.CreateAccessToken(uid)).Returns(accessToken);
 			tokenService.Setup(x => x.CreateRefreshToken()).Returns(newToken.Token);
@@ -112,7 +112,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = "someid" + token,
 				Token = token,
 				UID = uid,
-				ExpiresAt = DateTimeOffset.Now.AddDays(23),
+				ExpiresAt = Now.AddDays(23),
 				Persistent = shouldPersist
 			};
 			refreshTokenRepo.Setup(x => x.Find(token)).ReturnsAsync(tokenDoc);
@@ -122,7 +122,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = tokenDoc.Id,
 				UID = uid,
 				Token = "tokenthatsalreadyinuse",
-				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				ExpiresAt = Now.AddDays(30),
 				Persistent = shouldPersist
 			};
 			var refreshToken = new RefreshToken
@@ -130,12 +130,12 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = tokenDoc.Id,
 				UID = uid,
 				Token = "newtoken" + token,
-				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				ExpiresAt = Now.AddDays(30),
 				Persistent = shouldPersist
 			};
-			refreshTokenRepo.SetupSequence(x => x.Update(Matches(refreshToken)))
+			refreshTokenRepo.SetupSequence(x => x.Update(refreshToken))
 				.ReturnsAsync(refreshToken);
-			refreshTokenRepo.SetupSequence(x => x.Update(Matches(duplicateToken)))
+			refreshTokenRepo.SetupSequence(x => x.Update(duplicateToken))
 				.ThrowsAsync(new DocumentConflictException());
 
 			var accessToken = uid + "token";
@@ -166,7 +166,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = "someid" + token,
 				Token = token,
 				UID = uid,
-				ExpiresAt = DateTimeOffset.Now.AddDays(23),
+				ExpiresAt = Now.AddDays(23),
 				Persistent = shouldPersist
 			};
 			refreshTokenRepo.Setup(x => x.Find(token)).ReturnsAsync(tokenDoc);
@@ -176,7 +176,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = tokenDoc.Id,
 				UID = uid,
 				Token = "tokenthatsalreadyinuse",
-				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				ExpiresAt = Now.AddDays(30),
 				Persistent = shouldPersist
 			};
 			var duplicateToken2 = new RefreshToken
@@ -184,15 +184,15 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 				Id = tokenDoc.Id,
 				UID = uid,
 				Token = "anothertokenthatsalreadyinuse",
-				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				ExpiresAt = Now.AddDays(30),
 				Persistent = shouldPersist
 			};
 			tokenService.SetupSequence(x => x.CreateRefreshToken())
 				.Returns(duplicateToken1.Token)
 				.Returns(duplicateToken2.Token);
-			refreshTokenRepo.SetupSequence(x => x.Update(Matches(duplicateToken1)))
+			refreshTokenRepo.SetupSequence(x => x.Update(duplicateToken1))
 				.ThrowsAsync(new DocumentConflictException());
-			refreshTokenRepo.SetupSequence(x => x.Update(Matches(duplicateToken2)))
+			refreshTokenRepo.SetupSequence(x => x.Update(duplicateToken2))
 				.ThrowsAsync(new DocumentConflictException());
 
 			await Assert.ThrowsAsync<DocumentConflictException>(

@@ -12,7 +12,9 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 		protected readonly Mock<IPasswordService> passwordService;
 		protected readonly Mock<ITokenService> tokenService;
 		protected readonly Mock<IValidationService> validationService;
+		protected readonly Mock<ITimeService> timeService;
 		protected readonly UserService userService;
+		protected readonly DateTimeOffset Now = DateTimeOffset.Now;
 
 		public UserService_Base()
 		{
@@ -21,29 +23,18 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 			passwordService = new Mock<IPasswordService>(MockBehavior.Strict);
 			tokenService = new Mock<ITokenService>(MockBehavior.Strict);
 			validationService = new Mock<IValidationService>(MockBehavior.Strict);
+			timeService = new Mock<ITimeService>();
+			timeService.Setup(x => x.GetCurrentTime()).Returns(Now);
+
 			userService = new UserService(
 				userRepo.Object,
 				refreshTokenRepo.Object,
 				passwordService.Object,
 				tokenService.Object,
-				validationService.Object
+				validationService.Object,
+				timeService.Object
 			);
 		}
 
-		protected RefreshToken Matches(RefreshToken a)
-		{
-			return It.Is<RefreshToken>(_ => AlmostEqual(a, _));
-		}
-
-		protected bool AlmostEqual(RefreshToken a, RefreshToken b)
-		{
-			var timeDiff = a.ExpiresAt - b.ExpiresAt;
-
-			if (Math.Abs(timeDiff?.Ticks ?? 10000000000) < 1000000)
-			{
-				return a.Equals(new RefreshToken { Id = b.Id, UID = b.UID, Token = b.Token, ExpiresAt = a.ExpiresAt, Persistent = b.Persistent });
-			}
-			return false;
-		}
 	}
 }

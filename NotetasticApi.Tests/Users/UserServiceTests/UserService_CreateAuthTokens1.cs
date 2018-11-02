@@ -56,12 +56,12 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 			{
 				Token = expected.RefreshToken,
 				UID = uid,
-				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				ExpiresAt = Now.AddDays(30),
 				Persistent = shouldPersist
 			};
 			tokenService.Setup(x => x.CreateAccessToken(uid)).Returns(expected.AccessToken);
 			tokenService.Setup(x => x.CreateRefreshToken()).Returns(expected.RefreshToken);
-			refreshTokenRepo.Setup(x => x.Create(Matches(refreshToken))).ReturnsAsync(refreshToken);
+			refreshTokenRepo.Setup(x => x.Create(refreshToken)).ReturnsAsync(refreshToken);
 
 			var actual = await userService.CreateAuthTokens(user, shouldPersist);
 			Assert.Equal(expected, actual);
@@ -86,7 +86,7 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 			{
 				Token = expected.RefreshToken,
 				UID = uid,
-				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				ExpiresAt = Now.AddDays(30),
 				Persistent = shouldPersist
 			};
 
@@ -94,16 +94,16 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 			{
 				UID = uid,
 				Token = "tokenthatsalreadyinuse",
-				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				ExpiresAt = Now.AddDays(30),
 				Persistent = shouldPersist
 			};
 			tokenService.Setup(x => x.CreateAccessToken(uid)).Returns(expected.AccessToken);
 			tokenService.SetupSequence(x => x.CreateRefreshToken())
 				.Returns(duplicateToken.Token)
 				.Returns(expected.RefreshToken);
-			refreshTokenRepo.SetupSequence(x => x.Create(Matches(duplicateToken)))
+			refreshTokenRepo.SetupSequence(x => x.Create(duplicateToken))
 				.ThrowsAsync(new DocumentConflictException());
-			refreshTokenRepo.SetupSequence(x => x.Create(Matches(refreshToken)))
+			refreshTokenRepo.SetupSequence(x => x.Create(refreshToken))
 				.ReturnsAsync(refreshToken);
 
 			var actual = await userService.CreateAuthTokens(user, shouldPersist);
@@ -121,22 +121,22 @@ namespace NotetasticApi.Tests.Users.UserServiceTests
 			{
 				UID = uid,
 				Token = "tokenthatsalreadyinuse",
-				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				ExpiresAt = Now.AddDays(30),
 				Persistent = shouldPersist
 			};
 			var duplicateToken2 = new RefreshToken
 			{
 				UID = uid,
 				Token = "anothertokenthatsalreadyinuse",
-				ExpiresAt = DateTimeOffset.Now.AddDays(30),
+				ExpiresAt = Now.AddDays(30),
 				Persistent = shouldPersist
 			};
 			tokenService.SetupSequence(x => x.CreateRefreshToken())
 				.Returns(duplicateToken1.Token)
 				.Returns(duplicateToken2.Token);
-			refreshTokenRepo.SetupSequence(x => x.Create(Matches(duplicateToken1)))
+			refreshTokenRepo.SetupSequence(x => x.Create(duplicateToken1))
 				.ThrowsAsync(new DocumentConflictException());
-			refreshTokenRepo.SetupSequence(x => x.Create(Matches(duplicateToken2)))
+			refreshTokenRepo.SetupSequence(x => x.Create(duplicateToken2))
 				.ThrowsAsync(new DocumentConflictException());
 
 			await Assert.ThrowsAsync<DocumentConflictException>(

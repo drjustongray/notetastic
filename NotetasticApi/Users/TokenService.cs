@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using Microsoft.IdentityModel.Tokens;
+using NotetasticApi.Common;
 
 namespace NotetasticApi.Users
 {
@@ -24,14 +25,16 @@ namespace NotetasticApi.Users
 		private readonly SecurityKey key;
 		private readonly string audience;
 		private readonly string issuer;
+		private readonly ITimeService timeService;
 		private readonly SigningCredentials credentials;
 		private RandomNumberGenerator rng = RandomNumberGenerator.Create();
 
-		public TokenService(SecurityKey key, string audience, string issuer)
+		public TokenService(SecurityKey key, string audience, string issuer, ITimeService timeService)
 		{
 			this.key = key;
 			this.audience = audience;
 			this.issuer = issuer;
+			this.timeService = timeService;
 			credentials = new SigningCredentials(this.key, SecurityAlgorithms.HmacSha256);
 		}
 
@@ -46,8 +49,8 @@ namespace NotetasticApi.Users
 				audience: audience,
 				claims: new Claim[] { new Claim(ClaimTypes.UID, uid) },
 				signingCredentials: credentials,
-				notBefore: DateTime.Now,
-				expires: DateTime.Now.AddMinutes(5)
+				notBefore: timeService.GetCurrentTime().UtcDateTime,
+				expires: timeService.GetCurrentTime().AddMinutes(5).UtcDateTime
 			);
 			return tokenHandler.WriteToken(token);
 		}
