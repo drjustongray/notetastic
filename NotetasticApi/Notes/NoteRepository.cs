@@ -26,6 +26,9 @@ namespace NotetasticApi.Notes
 		public NoteRepository(IMongoCollection<Note> noteCollection)
 		{
 			this.noteCollection = noteCollection;
+			noteCollection.Indexes.CreateOne(new CreateIndexModel<Note>(
+				Builders<Note>.IndexKeys.Ascending(_ => _.UID)
+			));
 		}
 
 		/// <summary>
