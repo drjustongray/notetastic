@@ -79,7 +79,7 @@ describe("authAPI", () => {
 
 				const init = mock.lastCall()[1]
 				expect(JSON.parse(init.body as string)).toEqual(authBody)
-				expect(init.headers!["Content-Type"]).toMatch("application/json")
+				expect((init.headers as Record<string, string>)["Content-Type"]).toMatch("application/json")
 			})
 
 			it("rejects with bad request", async () => {
@@ -113,7 +113,7 @@ describe("authAPI", () => {
 
 				const init = mock.lastCall()[1]
 				expect(JSON.parse(init.body as string)).toEqual(authBody)
-				expect(init.headers!["Content-Type"]).toMatch("application/json")
+				expect((init.headers as Record<string, string>)["Content-Type"]).toMatch("application/json")
 			})
 
 			it("rejects with bad request", async () => {
@@ -180,7 +180,7 @@ describe("authAPI", () => {
 
 				const init = mock.lastCall()[1]
 				// tslint:disable-next-line:no-string-literal
-				expect(init.headers!["Authorization"]).toEqual(`Bearer ${token}`)
+				expect((init.headers as Record<string, string>)["Authorization"]).toEqual(`Bearer ${token}`)
 				expect(JSON.parse(init.body as string)).toEqual(changePasswordBody)
 			})
 
@@ -215,7 +215,7 @@ describe("authAPI", () => {
 
 				const init = mock.lastCall()[1]
 				// tslint:disable-next-line:no-string-literal
-				expect(init.headers!["Authorization"]).toEqual(`Bearer ${token}`)
+				expect((init.headers as Record<string, string>)["Authorization"]).toEqual(`Bearer ${token}`)
 				expect(JSON.parse(init.body as string)).toEqual(changeUsernameBody)
 			})
 
@@ -269,7 +269,7 @@ describe("authAPI", () => {
 
 				const init = mock.lastCall()[1]
 				// tslint:disable-next-line:no-string-literal
-				expect(init.headers!["Authorization"]).toEqual(`Bearer ${token}`)
+				expect((init.headers as Record<string, string>)["Authorization"]).toEqual(`Bearer ${token}`)
 			})
 
 			it("resolves", async () => {
