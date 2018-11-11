@@ -1,5 +1,5 @@
 import { authAPI } from "./api"
-import * as fetchMock from "fetch-mock"
+import fetchMock from "fetch-mock"
 
 describe("authAPI", () => {
 	describe("when cannot connect to server", () => {
