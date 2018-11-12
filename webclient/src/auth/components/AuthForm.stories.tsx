@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react';
 import { action } from '@storybook/addon-actions';
-import Form, { AuthFunction } from "./Form"
+import Form, { AuthFunction } from "./AuthForm"
 
 const stories = storiesOf("AuthForm", module)
 
