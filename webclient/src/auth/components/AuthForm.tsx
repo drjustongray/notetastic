@@ -1,7 +1,7 @@
 import * as React from "react"
 import { Formik, Field, Form, FormikActions, FormikProps, ErrorMessage } from "formik"
 
-export type AuthFunction = (username: string, password: string, rememberMe: boolean) => Promise<void>
+export type AuthFunction = (username: string, password: string, rememberMe: boolean) => Promise<any>
 
 
 export interface FormProps {
