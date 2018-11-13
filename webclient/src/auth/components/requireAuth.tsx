@@ -9,7 +9,7 @@ interface State {
 	loggedIn: boolean | undefined
 }
 
-export default () => <T extends {}>(WrappedComponent: React.ComponentType<T>) => (
+export default () => <T extends {}>(WrappedComponent: React.ComponentType<T>): React.ComponentClass<T> => (
 	class extends React.Component<T, State> {
 		static contextType = AuthContext
 		subscription: Subscription | undefined

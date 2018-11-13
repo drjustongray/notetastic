@@ -4,7 +4,7 @@ import { Formik, Field, Form, FormikActions, FormikProps, ErrorMessage } from "f
 export type AuthFunction = (username: string, password: string, rememberMe: boolean) => Promise<any>
 
 
-export interface FormProps {
+export interface AuthFormProps {
 	action: AuthFunction
 	title: string
 }
@@ -52,7 +52,7 @@ const render = (title: string, { status, isSubmitting }: FormikProps<FormValues>
 	</Form>
 )
 
-export default ({ action, title }: FormProps) => (
+export default ({ action, title }: AuthFormProps) => (
 	<Formik
 		initialValues={{ username: "", password: "", rememberMe: true }}
 		onSubmit={onSubmit.bind(null, action)}
