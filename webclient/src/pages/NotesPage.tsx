@@ -7,4 +7,4 @@ export const NotesPage = () => (
 	</div>
 )
 
-export default requireAuth()(NotesPage)
+export default requireAuth(NotesPage)

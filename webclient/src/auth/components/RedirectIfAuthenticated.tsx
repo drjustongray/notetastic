@@ -1,40 +1,21 @@
 import React from "react"
-import { Subscription } from "rxjs"
-import { AuthContext } from "../context";
-import { AuthService, AuthState } from "../authService";
+import { AuthState } from "../authService";
 import { Redirect } from "react-router-dom";
+import authConnect from "./authConnect";
 
-export default class extends React.Component<{ to: string }, { redirect: boolean }> {
-	static contextType = AuthContext
-	subscription: Subscription | undefined
+interface RedirectIfAuthenticatedProps {
+	redirect: boolean
+	to: string
+}
 
-	constructor(props: any) {
-		super(props)
-		this.update = this.update.bind(this)
-		this.state = { redirect: false }
-	}
+function ConditionalRedirect({ redirect, to }: RedirectIfAuthenticatedProps) {
+	return redirect ? <Redirect to={to} /> : null
+}
 
-	componentDidMount() {
-		const authService = this.context as AuthService
-		this.subscription = authService.authState.subscribe(this.update)
-	}
-
-	componentWillUnmount() {
-		if (this.subscription) {
-			this.subscription.unsubscribe()
-		}
-	}
-
-	update(authState: AuthState) {
-		if (authState.user) {
-			this.setState({ redirect: true })
-		}
-	}
-
-	render() {
-		if (this.state.redirect) {
-			return <Redirect to={this.props.to} />
-		}
-		return null
+function mapAuthToProps(authState: AuthState) {
+	return {
+		redirect: !!authState.user
 	}
 }
+
+export default authConnect(mapAuthToProps)<{ to: string }>(ConditionalRedirect)

@@ -1,55 +1,36 @@
 import React from "react"
-import { Subscription } from "rxjs"
-import Loading from "../../common-components/Loading";
+import omit from "lodash/omit"
+import Loading from "../../components/Loading";
 import { AuthContext } from "../context";
 import { AuthService, AuthState } from "../authService";
 import TabbedAuthForm from "./TabbedAuthForm";
+import authConnect from "./authConnect";
 
-interface State {
+interface RequireAuthProps {
 	loggedIn: boolean | undefined
 }
 
-export default () => <T extends {}>(WrappedComponent: React.ComponentType<T>): React.ComponentClass<T> => (
-	class extends React.Component<T, State> {
+function mapAuthToProps(authState: AuthState): RequireAuthProps {
+	const loggedIn = authState.unknown ? undefined : !!authState.user
+	return { loggedIn }
+}
+
+export default function <T extends {}>(WrappedComponent: React.ComponentType<T>): React.ComponentClass<T> {
+	return authConnect(mapAuthToProps)(class extends React.Component<T & RequireAuthProps> {
 		static contextType = AuthContext
-		subscription: Subscription | undefined
-
-		constructor(props: any) {
-			super(props)
-			this.update = this.update.bind(this)
-			this.state = { loggedIn: undefined }
-		}
-
-		componentDidMount() {
-			const authService = this.context as AuthService
-			this.subscription = authService.authState.subscribe(this.update)
-		}
-
-		componentWillUnmount() {
-			if (this.subscription) {
-				this.subscription.unsubscribe()
-			}
-		}
-
-		update(authState: AuthState) {
-			if (authState.user && !this.state.loggedIn) {
-				return this.setState({ loggedIn: true })
-			}
-			if (!authState.unknown && this.state.loggedIn != false) {
-				return this.setState({ loggedIn: false })
-			}
-		}
+		renderedOnce = false
 
 		render() {
-			const { loggedIn } = this.state
+			const { loggedIn } = this.props
 			if (loggedIn) {
-				return <WrappedComponent {...this.props} />
+				return <WrappedComponent {...omit(this.props, "loggedIn")} />
 			}
-			if (loggedIn == undefined) {
+			if (loggedIn == undefined && !this.renderedOnce) {
 				return <Loading />
 			}
+			this.renderedOnce = true
 			const authService = this.context as AuthService
 			return <TabbedAuthForm login={authService.login} register={authService.register} />
 		}
-	}
-)
+	})
+}

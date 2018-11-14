@@ -2,7 +2,7 @@ import * as React from "react"
 import TestRenderer from "react-test-renderer"
 
 import TabbedAuthForm from "./TabbedAuthForm"
-import Loading from "../../common-components/Loading"
+import Loading from "../../components/Loading"
 import requireAuth from "./requireAuth"
 import { AuthContext } from "../context"
 import { AuthService, AuthState } from "../authService";
@@ -12,7 +12,7 @@ import User from "../User";
 const { Provider } = AuthContext
 
 const WrappedComponent = () => <div></div>
-const Component = requireAuth()(WrappedComponent)
+const Component = requireAuth(WrappedComponent)
 
 describe("requireAuth", () => {
 	let authService: AuthService
@@ -32,8 +32,7 @@ describe("requireAuth", () => {
 	it("renders the Loading component initially (auth state is unknown)", () => {
 		const testRenderer = TestRenderer.create(<Provider value={authService}><Component /></Provider>)
 		const component = testRenderer.root.findByType(Component)
-		expect(component.children).toHaveLength(1)
-		expect(component.findByType(Loading)).toBe(component.children[0])
+		component.findByType(Loading)
 	})
 
 	it("renders the TabbedAuthForm when not logged in", () => {
@@ -42,9 +41,7 @@ describe("requireAuth", () => {
 		authState.next({})
 		testRenderer.update(root)
 		const component = testRenderer.root.findByType(Component)
-		expect(component.children).toHaveLength(1)
 		const form = component.findByType(TabbedAuthForm)
-		expect(form).toBe(component.children[0])
 		expect(form.props).toEqual({ login, register })
 	})
 
@@ -55,9 +52,7 @@ describe("requireAuth", () => {
 		authState.next({ user: new User("hhi", "hellooooo") })
 		testRenderer.update(root)
 		const component = testRenderer.root.findByType(Component)
-		expect(component.children).toHaveLength(1)
 		const wrapped = component.findByType(WrappedComponent)
-		expect(wrapped).toBe(component.children[0])
 		expect(wrapped.props).toEqual(props)
 	})
 
@@ -69,9 +64,7 @@ describe("requireAuth", () => {
 		authState.next({ unknown: true })
 		testRenderer.update(root)
 		const component = testRenderer.root.findByType(Component)
-		expect(component.children).toHaveLength(1)
 		const form = component.findByType(TabbedAuthForm)
-		expect(form).toBe(component.children[0])
 		expect(form.props).toEqual({ login, register })
 	})
 

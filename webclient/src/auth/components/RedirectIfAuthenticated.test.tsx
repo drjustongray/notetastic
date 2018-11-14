@@ -25,10 +25,10 @@ describe("RedirectIfAuthenticated", () => {
 	it("renders nothing when not logged in", () => {
 		const root = <Provider value={authService}><RedirectIfAuthenticated to="" /></Provider>
 		const testRenderer = TestRenderer.create(root)
-		expect(testRenderer.root.findByType(RedirectIfAuthenticated).children).toHaveLength(0)
+		expect(testRenderer.root.findAllByType(Redirect)).toHaveLength(0)
 		authState.next({})
 		testRenderer.update(root)
-		expect(testRenderer.root.findByType(RedirectIfAuthenticated).children).toHaveLength(0)
+		expect(testRenderer.root.findAllByType(Redirect)).toHaveLength(0)
 	})
 
 	it("renders redirect when logged in", () => {
