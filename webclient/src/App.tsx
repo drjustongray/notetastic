@@ -1,11 +1,26 @@
 import * as React from "react"
 import "./App.css"
+import AppBar from "./components/AppBar";
+import { Route } from "react-router-dom";
+import { INDEX, LOGIN, REGISTER, NOTES, LOGOUT, ABOUT } from "./pages/links";
+import IndexPage from "./pages/IndexPage";
+import LoginPage from "./pages/LoginPage";
+import RegisterPage from "./pages/RegisterPage";
+import NotesPage from "./pages/NotesPage";
+import LogoutPage from "./pages/LogoutPage";
+import AboutPage from "./pages/AboutPage";
 
 class App extends React.Component {
 	public render() {
 		return (
 			<div className="App">
-				To-Do
+				<AppBar />
+				<Route exact path={INDEX} component={IndexPage} />
+				<Route exact path={LOGIN} component={LoginPage} />
+				<Route exact path={REGISTER} component={RegisterPage} />
+				<Route exact path={NOTES} component={NotesPage} />
+				<Route exact path={LOGOUT} component={LogoutPage} />
+				<Route exact path={ABOUT} component={AboutPage} />
 			</div>
 		)
 	}
