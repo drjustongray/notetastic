@@ -1,5 +1,6 @@
 import * as React from "react"
 import { Formik, Field, Form, FormikActions, FormikProps, ErrorMessage } from "formik"
+import makeLabel from "../../components/makeLabel";
 
 export type AuthFunction = (username: string, password: string, rememberMe: boolean) => Promise<any>
 
@@ -25,8 +26,6 @@ const onSubmit = async (action: AuthFunction, values: FormValues, actions: Formi
 		actions.setStatus(e)
 	}
 }
-
-const makeLabel = (forWhat: string, text: string) => <label htmlFor={forWhat}>{text}</label>
 
 const render = (title: string, { status, isSubmitting, values, handleBlur, handleChange }: FormikProps<FormValues>) => (
 	<Form>
