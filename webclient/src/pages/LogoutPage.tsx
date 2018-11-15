@@ -17,6 +17,9 @@ export default class extends React.Component<{}, State> {
 	state: State = {}
 
 	async componentDidMount() {
+		if (!(this.context as AuthService).authState.value.user) {
+			return
+		}
 		try {
 			await (this.context as AuthService).logout()
 			this.setState({ loggedOut: true })
@@ -25,7 +28,8 @@ export default class extends React.Component<{}, State> {
 		}
 	}
 	render() {
-		if (this.state.loggedOut) {
+		const loggedOut = this.state.loggedOut || !(this.context as AuthService).authState.value.user
+		if (loggedOut) {
 			return <Redirect to={INDEX} />
 		}
 		if (this.state.error) {
