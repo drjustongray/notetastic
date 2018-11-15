@@ -28,7 +28,7 @@ const onSubmit = async (action: AuthFunction, values: FormValues, actions: Formi
 
 const makeLabel = (forWhat: string, text: string) => <label htmlFor={forWhat}>{text}</label>
 
-const render = (title: string, { status, isSubmitting }: FormikProps<FormValues>) => (
+const render = (title: string, { status, isSubmitting, values, handleBlur, handleChange }: FormikProps<FormValues>) => (
 	<Form>
 		<h2>{title}</h2>
 		<div>
@@ -42,7 +42,14 @@ const render = (title: string, { status, isSubmitting }: FormikProps<FormValues>
 			<ErrorMessage name="password" render={makeLabel.bind(null, "auth-form-password")} />
 		</div>
 		<div>
-			<Field type="checkbox" name="rememberMe" id="auth-form-remember-me" />
+			<input
+				type="checkbox"
+				name="rememberMe"
+				id="auth-form-remember-me"
+				onChange={handleChange}
+				onBlur={handleBlur}
+				checked={values.rememberMe}
+			/>
 			<label htmlFor="auth-form-remember-me">Remember Me</label>
 		</div>
 		<div>{status && status.message}</div>
