@@ -40,11 +40,16 @@ export function makeAuthService(authAPI: AuthAPI, validators: Validators): Reado
 			return Promise.reject({ message: "Authentication state is unknown." })
 		}
 		authStateSub.next({ unknown: true })
-		const authRes = await authAPI.login(username, password, persistSession)
-		accessToken = authRes.token
-		const user = new User(authRes.uid, authRes.username)
-		authStateSub.next({ user })
-		return user
+		try {
+			const authRes = await authAPI.login(username, password, persistSession)
+			accessToken = authRes.token
+			const user = new User(authRes.uid, authRes.username)
+			authStateSub.next({ user })
+			return user
+		} catch (e) {
+			authStateSub.next({})
+			throw e
+		}
 	}
 
 	const register = async (username: string, password: string, persistSession: boolean): Promise<User> => {
@@ -66,11 +71,16 @@ export function makeAuthService(authAPI: AuthAPI, validators: Validators): Reado
 			return Promise.reject({ username: "Usernames must be at least 3 characters long and may not contain white space" })
 		}
 		authStateSub.next({ unknown: true })
-		const authRes = await authAPI.register(username, password, persistSession)
-		accessToken = authRes.token
-		const user = new User(authRes.uid, authRes.username)
-		authStateSub.next({ user })
-		return user
+		try {
+			const authRes = await authAPI.register(username, password, persistSession)
+			accessToken = authRes.token
+			const user = new User(authRes.uid, authRes.username)
+			authStateSub.next({ user })
+			return user
+		} catch (e) {
+			authStateSub.next({})
+			throw e
+		}
 	}
 
 	const getAccessToken = async (): Promise<string> => {

@@ -113,15 +113,29 @@ describe("makeAuthService", () => {
 		it("updates authState", async () => {
 			const user = new User("8", "username")
 			const token = "sometoken"
-			const login = jest.fn(() => Promise.resolve({ ...user, token }))
-			const authService = makeAuthService({ getCurrentAuth, login } as unknown as AuthAPI, {} as unknown as Validators)
+			let login = jest.fn(() => Promise.resolve({ ...user, token }))
+			let authService = makeAuthService({ getCurrentAuth, login } as unknown as AuthAPI, {} as unknown as Validators)
 			await Promise.resolve()
 
-			const observer = jest.fn()
-			authService.authState.subscribe(observer)
+			let observer = jest.fn()
+			const sub = authService.authState.subscribe(observer)
 			await authService.login("username1", "passworkdd", false)
 			expect(observer).toHaveBeenCalledWith({ unknown: true })
 			expect(observer).toHaveBeenLastCalledWith({ user })
+			expect(observer).toHaveBeenCalledTimes(3)
+			sub.unsubscribe()
+
+			login = jest.fn(() => Promise.reject({ message: "whatevs" }))
+			authService = makeAuthService({ getCurrentAuth, login } as unknown as AuthAPI, {} as unknown as Validators)
+			await Promise.resolve()
+			observer = jest.fn()
+			authService.authState.subscribe(observer)
+			try {
+				await authService.login("username1", "passworkdd", false)
+			} catch (e) { }
+			expect(observer).toHaveBeenCalledWith({ unknown: true })
+			expect(observer).toHaveBeenLastCalledWith({})
+			expect(observer).toHaveBeenCalledTimes(3)
 		})
 
 		describe("getAccessToken", () => {
@@ -197,15 +211,29 @@ describe("makeAuthService", () => {
 		it("updates authState", async () => {
 			const user = new User("8", "username")
 			const token = "sometoken"
-			const register = jest.fn(() => Promise.resolve({ ...user, token }))
-			const authService = makeAuthService({ getCurrentAuth, register } as unknown as AuthAPI, { validatePassword, validateUsername } as unknown as Validators)
+			let register = jest.fn(() => Promise.resolve({ ...user, token }))
+			let authService = makeAuthService({ getCurrentAuth, register } as unknown as AuthAPI, { validatePassword, validateUsername } as unknown as Validators)
 			await Promise.resolve()
 
-			const observer = jest.fn()
-			authService.authState.subscribe(observer)
+			let observer = jest.fn()
+			const sub = authService.authState.subscribe(observer)
 			await authService.register("username1", "passworkdd", false)
 			expect(observer).toHaveBeenCalledWith({ unknown: true })
 			expect(observer).toHaveBeenLastCalledWith({ user })
+			expect(observer).toHaveBeenCalledTimes(3)
+			sub.unsubscribe()
+
+			register = jest.fn(() => Promise.reject({ message: "whatevs" }))
+			authService = makeAuthService({ getCurrentAuth, register } as unknown as AuthAPI, { validatePassword, validateUsername } as unknown as Validators)
+			await Promise.resolve()
+			observer = jest.fn()
+			authService.authState.subscribe(observer)
+			try {
+				await authService.register("username1", "passworkdd", false)
+			} catch (e) { }
+			expect(observer).toHaveBeenCalledWith({ unknown: true })
+			expect(observer).toHaveBeenLastCalledWith({})
+			expect(observer).toHaveBeenCalledTimes(3)
 		})
 
 		describe("getAccessToken", () => {
