@@ -411,6 +411,18 @@ describe("makeAuthService", () => {
 			}
 		})
 
+		it("updates authState", async () => {
+			const user = new User("uid", "username")
+			getCurrentAuth = jest.fn()
+				.mockReturnValueOnce(Promise.resolve({ ...user, token: "token" })) as any
+			const changeUsername = jest.fn(() => Promise.resolve())
+
+			const authService = makeAuthService({ getCurrentAuth, changeUsername } as unknown as AuthAPI, { validateUsername, validateToken } as unknown as Validators)
+			await Promise.resolve()
+			await authService.changeUsername("passrd", "newusername")
+			expect(authService.authState.value).toEqual({ user: new User("uid", "newusername") })
+		})
+
 		it("rejects with API call", async () => {
 			const user = new User("uid", "username")
 			const tokens = ["toke1", "token2", "take3"]

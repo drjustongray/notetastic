@@ -120,6 +120,10 @@ export function makeAuthService(authAPI: AuthAPI, validators: Validators): Reado
 		}
 		const token = await getAccessToken()
 		await authAPI.changeUsername(token, password, newUsername)
+		const user = authState.value.user
+		if (user) {
+			authStateSub.next({ user: new User(user.uid, newUsername) })
+		}
 	}
 
 	const logout = async (): Promise<void> => {
