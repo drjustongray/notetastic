@@ -1,6 +1,6 @@
 import React from "react"
 import { Link } from "react-router-dom";
-import { INDEX, LOGIN, REGISTER, LOGOUT } from "../pages/links";
+import { INDEX, LOGIN, REGISTER, LOGOUT, ACCOUNT } from "../pages/links";
 import { AuthContext } from "../auth/context";
 import { Subscription } from "rxjs";
 import { AuthService, AuthState } from "../auth/authService";
@@ -13,7 +13,7 @@ export interface LoggedInBarProps {
 
 export const LoggedInBar = ({ username }: LoggedInBarProps) => (
 	<div>
-		<div>{username}</div>
+		<Link to={ACCOUNT}>{username}</Link>
 		<Link to={LOGOUT}>Log Out</Link>
 	</div>
 )
