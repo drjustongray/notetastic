@@ -1,6 +1,6 @@
 export interface Note {
-	Id: string
-	Archived: boolean
+	Id?: string
+	Archived?: boolean
 	Title: string
 	Type: string
 }

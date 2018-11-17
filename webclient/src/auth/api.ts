@@ -1,4 +1,6 @@
 import AuthResponse from "./AuthResponse"
+import { makeRequestInit } from "../api/makeRequestInit";
+import { networkErrorRejection, makeRejectedPromise, serverErrorRejection, badRequestRejection } from "../api/rejectedPromises";
 
 export interface AuthAPI {
 	login: (username: string, password: string, persistSession: boolean) => Promise<AuthResponse>
@@ -11,29 +13,9 @@ export interface AuthAPI {
 }
 
 const path = "/api/auth"
-const NETWORK_ERROR = "Network Error"
-
-function makeRejectedPromise(message: string) {
-	return Promise.reject({ message })
-}
-
-function makeRequestInit(method: string, body: object, accessToken?: string): RequestInit {
-	const headers: Record<string, string> = {
-		"Content-Type": "application/json; charset=utf-8",
-		credentials: "omit"
-	}
-	if (accessToken) {
-		headers.Authorization = `Bearer ${accessToken}`
-	}
-	return {
-		method,
-		headers,
-		body: JSON.stringify(body)
-	}
-}
 
 function makeAuthRequest(init: RequestInit) {
-	return fetch(path, init).catch(e => makeRejectedPromise(NETWORK_ERROR))
+	return fetch(path, init).catch(e => networkErrorRejection)
 }
 
 function login(username: string, password: string, rememberMe: boolean): Promise<AuthResponse> {
@@ -48,7 +30,7 @@ function login(username: string, password: string, rememberMe: boolean): Promise
 			if (res.status === 400) {
 				return makeRejectedPromise("Username or password missing")
 			}
-			return makeRejectedPromise("Server Error")
+			return serverErrorRejection
 		})
 }
 
@@ -64,7 +46,7 @@ function register(username: string, password: string, rememberMe: boolean): Prom
 			if (res.status === 400) {
 				return makeRejectedPromise("Username or password missing or invalid")
 			}
-			return makeRejectedPromise("Server Error")
+			return serverErrorRejection
 		})
 }
 
@@ -76,7 +58,7 @@ function getCurrentAuth(): Promise<AuthResponse | undefined> {
 		if (res.status === 400 || res.status === 401) {
 			return
 		}
-		return makeRejectedPromise("Server Error")
+		return serverErrorRejection
 	})
 }
 
@@ -89,9 +71,9 @@ async function changePassword(accessToken: string, password: string, newPassword
 		return makeRejectedPromise("Password Incorrect") // making the assumption that the access token hasn't expired
 	}
 	if (res.status === 400) {
-		return makeRejectedPromise("Bad Request")
+		return badRequestRejection
 	}
-	return makeRejectedPromise("Server Error")
+	return serverErrorRejection
 }
 
 async function changeUsername(accessToken: string, password: string, newUsername: string): Promise<AuthResponse> {
@@ -103,16 +85,16 @@ async function changeUsername(accessToken: string, password: string, newUsername
 		return makeRejectedPromise("Password Incorrect") // making the assumption that the access token hasn't expired
 	}
 	if (res.status === 400) {
-		return makeRejectedPromise("Bad Request")
+		return badRequestRejection
 	}
-	return makeRejectedPromise("Server Error")
+	return serverErrorRejection
 }
 
 async function logout(): Promise<void> {
 	try {
 		await fetch(`${path}/logout`, { credentials: "same-origin" })
 	} catch (e) {
-		return makeRejectedPromise(NETWORK_ERROR)
+		return networkErrorRejection
 	}
 }
 
@@ -123,7 +105,7 @@ async function logoutAll(accessToken: string): Promise<void> {
 			return makeRejectedPromise("An error occurred")
 		}
 	} catch (e) {
-		return makeRejectedPromise(NETWORK_ERROR)
+		return networkErrorRejection
 	}
 }
 
