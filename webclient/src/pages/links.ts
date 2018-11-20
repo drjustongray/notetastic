@@ -5,5 +5,6 @@ export const REGISTER = "/register"
 export const LOGOUT = "/logout"
 export const LOGOUT_EVERYWHERE = "/logouteverywhere"
 export const NOTES = "/notes"
+export const NEW_NOTE = "/newnote"
 export const ACCOUNT = "/account"
 export const note = (id: string) => `${NOTES}/${id}`
