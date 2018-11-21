@@ -5,30 +5,32 @@ export enum NoteType {
 	TextNote = "TextNote"
 }
 
-export interface Note {
+export interface BaseNote {
 	id?: string
 	archived: boolean
 	title: string
 	type: NoteType
 }
 
-export interface Bookmark extends Note {
+export interface Bookmark extends BaseNote {
 	type: NoteType.Bookmark
 	url: string
 }
 
-export interface Checklist extends Note {
+export interface Checklist extends BaseNote {
 	type: NoteType.Checklist
 	items: Array<{ Checked: boolean, Text: string }>
 }
 
-export interface Location extends Note {
+export interface Location extends BaseNote {
 	type: NoteType.Location
 	latitude: number
 	longitude: number
 }
 
-export interface TextNote extends Note {
+export interface TextNote extends BaseNote {
 	type: NoteType.TextNote
 	text: string
 }
+
+export type Note = Bookmark | Checklist | Location | TextNote

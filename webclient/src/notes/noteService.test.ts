@@ -6,7 +6,8 @@ describe("makeNoteService", () => {
 		id: "whatev",
 		title: "tiittle",
 		type: NoteType.Bookmark,
-		archived: false
+		archived: false,
+		url: "url"
 	}
 	const NO_TOKEN = { message: "no token:(" }
 	const getTokenRejection = Promise.reject(NO_TOKEN)
@@ -78,9 +79,9 @@ describe("makeNoteService", () => {
 	describe("getNoteList", () => {
 
 		const noteList: Array<Note> = [
-			{ id: "id1", title: "title1", type: NoteType.TextNote, archived: false },
-			{ id: "id2", title: "title2", type: NoteType.Location, archived: false },
-			{ id: "id3", title: "title3", type: NoteType.Checklist, archived: true }
+			{ id: "id1", title: "title1", type: NoteType.TextNote, archived: false, text: "text" },
+			{ id: "id2", title: "title2", type: NoteType.Location, archived: false, longitude: 9, latitude: 89 },
+			{ id: "id3", title: "title3", type: NoteType.Checklist, archived: true, items: [] }
 		]
 
 		it("call api function with proper arguments", async () => {
