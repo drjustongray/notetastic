@@ -6,29 +6,29 @@ export enum NoteType {
 }
 
 export interface Note {
-	Id?: string
-	Archived?: boolean
-	Title: string
-	Type: NoteType
+	id?: string
+	archived: boolean
+	title: string
+	type: NoteType
 }
 
 export interface Bookmark extends Note {
-	Type: NoteType.Bookmark
-	URL: string
+	type: NoteType.Bookmark
+	url: string
 }
 
 export interface Checklist extends Note {
-	Type: NoteType.Checklist
-	Items: Array<{ Checked: boolean, Text: string }>
+	type: NoteType.Checklist
+	items: Array<{ Checked: boolean, Text: string }>
 }
 
 export interface Location extends Note {
-	Type: NoteType.Location
-	Latitude: number
-	Longitude: number
+	type: NoteType.Location
+	latitude: number
+	longitude: number
 }
 
 export interface TextNote extends Note {
-	Type: NoteType.TextNote
-	Text: string
+	type: NoteType.TextNote
+	text: string
 }

@@ -3,9 +3,10 @@ import { Note, NoteType } from "./Note"
 
 describe("makeNoteService", () => {
 	const note: Note = {
-		Id: "whatev",
-		Title: "tiittle",
-		Type: NoteType.Bookmark
+		id: "whatev",
+		title: "tiittle",
+		type: NoteType.Bookmark,
+		archived: false
 	}
 	const NO_TOKEN = { message: "no token:(" }
 	const getTokenRejection = Promise.reject(NO_TOKEN)
@@ -77,9 +78,9 @@ describe("makeNoteService", () => {
 	describe("getNoteList", () => {
 
 		const noteList: Array<Note> = [
-			{ Id: "id1", Title: "title1", Type: NoteType.TextNote },
-			{ Id: "id2", Title: "title2", Type: NoteType.Location },
-			{ Id: "id3", Title: "title3", Type: NoteType.Checklist }
+			{ id: "id1", title: "title1", type: NoteType.TextNote, archived: false },
+			{ id: "id2", title: "title2", type: NoteType.Location, archived: false },
+			{ id: "id3", title: "title3", type: NoteType.Checklist, archived: true }
 		]
 
 		it("call api function with proper arguments", async () => {

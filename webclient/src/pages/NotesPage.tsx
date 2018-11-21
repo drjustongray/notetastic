@@ -15,8 +15,8 @@ interface State {
 }
 
 function mapNoteToNoteSnippet(note: Note) {
-	const { Id, Title, Type } = note
-	return <NoteSnippet id={Id as string} key={Id} title={Title} type={Type} />
+	const { id, title, type } = note
+	return <NoteSnippet id={id as string} key={id} title={title} type={type} />
 }
 
 export class NotesPage extends React.Component<{}, State> {
@@ -43,7 +43,7 @@ export class NotesPage extends React.Component<{}, State> {
 				<div>
 					<h2>All Notes</h2>
 					{notes.map(mapNoteToNoteSnippet)}
-					<Link to={NEW_NOTE} />
+					<Link to={NEW_NOTE}>Create Note</Link>
 				</div>
 			)
 		}

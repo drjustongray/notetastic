@@ -35,14 +35,15 @@ describe("noteAPI", () => {
 
 	describe("when request can reach server", () => {
 		const noteList: Array<Note> = [
-			{ Id: "id1", Title: "title1", Type: NoteType.Bookmark },
-			{ Id: "id2", Title: "title2", Type: NoteType.Checklist },
-			{ Id: "id3", Title: "title3", Type: NoteType.Location }
+			{ id: "id1", title: "title1", type: NoteType.Bookmark, archived: false },
+			{ id: "id2", title: "title2", type: NoteType.Checklist, archived: true },
+			{ id: "id3", title: "title3", type: NoteType.Location, archived: false }
 		]
 		const note: Note = {
-			Id: "id",
-			Title: "title",
-			Type: NoteType.TextNote
+			id: "id",
+			title: "title",
+			type: NoteType.TextNote,
+			archived: true
 		}
 
 		const badRequest = { message: BAD_REQUEST }

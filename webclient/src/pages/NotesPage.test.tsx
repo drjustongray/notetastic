@@ -22,9 +22,9 @@ const AuthServiceProvider = AuthContext.Provider
 let getNoteList: () => Promise<Array<Note>>
 let noteService: NoteService
 const noteList: Array<Note> = [
-	{ Id: "id1", Title: "title1", Type: NoteType.Checklist, Archived: true },
-	{ Id: "id2", Title: "title2", Type: NoteType.Location, Archived: false },
-	{ Id: "id3", Title: "title3", Type: NoteType.TextNote }
+	{ id: "id1", title: "title1", type: NoteType.Checklist, archived: true },
+	{ id: "id2", title: "title2", type: NoteType.Location, archived: false },
+	{ id: "id3", title: "title3", type: NoteType.TextNote, archived: false }
 ]
 
 function makeRoot() {
@@ -57,9 +57,9 @@ describe("NotesPage", () => {
 		const noteSnippets = testRenderer.root.findAllByType(NoteSnippet)
 		expect(noteSnippets).toHaveLength(noteList.length)
 		noteSnippets.forEach((component, i) => {
-			const { Id, Title, Type } = noteList[i]
+			const { id, title, type } = noteList[i]
 
-			expect(component.props).toEqual({ id: Id, title: Title, type: Type })
+			expect(component.props).toEqual({ id: id, title: title, type: type })
 		})
 		expect(testRenderer.root.findAllByType(Link).find(node => node.props.to == NEW_NOTE)).toBeDefined()
 	})
