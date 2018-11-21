@@ -3,7 +3,7 @@ import TestRenderer from "react-test-renderer"
 import { BrowserRouter, Link } from "react-router-dom"
 
 import WrappedNotesPage, { NotesPage } from "./NotesPage"
-import { Note } from "../notes/Note";
+import { Note, NoteType } from "../notes/Note";
 import { NoteService } from "../notes/noteService";
 import { AuthContext } from "../auth/context";
 import { NoteContext } from "../notes/context";
@@ -22,9 +22,9 @@ const AuthServiceProvider = AuthContext.Provider
 let getNoteList: () => Promise<Array<Note>>
 let noteService: NoteService
 const noteList: Array<Note> = [
-	{ Id: "id1", Title: "title1", Type: "type1", Archived: true },
-	{ Id: "id2", Title: "title2", Type: "type2", Archived: false },
-	{ Id: "id3", Title: "title3", Type: "type3" }
+	{ Id: "id1", Title: "title1", Type: NoteType.Checklist, Archived: true },
+	{ Id: "id2", Title: "title2", Type: NoteType.Location, Archived: false },
+	{ Id: "id3", Title: "title3", Type: NoteType.TextNote }
 ]
 
 function makeRoot() {

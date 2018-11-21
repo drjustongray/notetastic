@@ -1,7 +1,7 @@
 import { noteAPI } from "./api"
 import fetchMock from "fetch-mock"
 import { NETWORK_ERROR, BAD_REQUEST, NOT_FOUND, UNAUTHORIZED } from "../api/rejectedPromises";
-import { Note } from "./Note";
+import { Note, NoteType } from "./Note";
 
 describe("noteAPI", () => {
 	describe("when requeset cannot reach server", () => {
@@ -35,14 +35,14 @@ describe("noteAPI", () => {
 
 	describe("when request can reach server", () => {
 		const noteList: Array<Note> = [
-			{ Id: "id1", Title: "title1", Type: "type1" },
-			{ Id: "id2", Title: "title2", Type: "type2" },
-			{ Id: "id3", Title: "title3", Type: "type3" }
+			{ Id: "id1", Title: "title1", Type: NoteType.Bookmark },
+			{ Id: "id2", Title: "title2", Type: NoteType.Checklist },
+			{ Id: "id3", Title: "title3", Type: NoteType.Location }
 		]
 		const note: Note = {
 			Id: "id",
 			Title: "title",
-			Type: "Fun"
+			Type: NoteType.TextNote
 		}
 
 		const badRequest = { message: BAD_REQUEST }

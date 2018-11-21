@@ -1,12 +1,11 @@
 import { makeNoteService } from "./noteService"
-import { NoteAPI } from "./api"
-import { Note } from "./Note"
+import { Note, NoteType } from "./Note"
 
 describe("makeNoteService", () => {
 	const note: Note = {
 		Id: "whatev",
 		Title: "tiittle",
-		Type: "Bookmark"
+		Type: NoteType.Bookmark
 	}
 	const NO_TOKEN = { message: "no token:(" }
 	const getTokenRejection = Promise.reject(NO_TOKEN)
@@ -78,9 +77,9 @@ describe("makeNoteService", () => {
 	describe("getNoteList", () => {
 
 		const noteList: Array<Note> = [
-			{ Id: "id1", Title: "title1", Type: "type1" },
-			{ Id: "id2", Title: "title2", Type: "type2" },
-			{ Id: "id3", Title: "title3", Type: "type3" }
+			{ Id: "id1", Title: "title1", Type: NoteType.TextNote },
+			{ Id: "id2", Title: "title2", Type: NoteType.Location },
+			{ Id: "id3", Title: "title3", Type: NoteType.Checklist }
 		]
 
 		it("call api function with proper arguments", async () => {
