@@ -113,5 +113,49 @@ namespace NotetasticApi.Tests.Notes.NoteTests.JsonConversion
 			var textNote = Assert.IsAssignableFrom<TextNote>(note);
 			Assert.Equal(expected, textNote);
 		}
+
+		[Fact]
+		public void HandlesCamelCase()
+		{
+			var id = "someid";
+			var uid = "someuid";
+			var archived = true;
+			var title = "sometitle";
+			var text = "some text";
+			var expected = new TextNote
+			{
+				Id = id,
+				UID = uid,
+				Archived = archived,
+				Title = title,
+				Text = text
+			};
+			var json = $"{{ 'id': '{id}', 'type': 'TextNote', 'uid': '{uid}', 'archived': {archived.ToString().ToLower()}, 'title': '{title}', 'text': '{text}' }}";
+			var note = JsonConvert.DeserializeObject<Note>(json, converter);
+			var textNote = Assert.IsAssignableFrom<TextNote>(note);
+			Assert.Equal(expected, textNote);
+		}
+
+		[Fact]
+		public void HandlesCamelCaseBookmark()
+		{
+			var id = "someid";
+			var uid = "someuid";
+			var archived = true;
+			var title = "sometitle";
+			var url = "someurl";
+			var expected = new Bookmark
+			{
+				Id = id,
+				UID = uid,
+				Archived = archived,
+				Title = title,
+				URL = url
+			};
+			var json = $"{{ 'id': '{id}', 'type': 'Bookmark', 'uid': '{uid}', 'archived': {archived.ToString().ToLower()}, 'title': '{title}', 'url': '{url}' }}";
+			var note = JsonConvert.DeserializeObject<Note>(json, converter);
+			var bookmark = Assert.IsAssignableFrom<Bookmark>(note);
+			Assert.Equal(expected, bookmark);
+		}
 	}
 }

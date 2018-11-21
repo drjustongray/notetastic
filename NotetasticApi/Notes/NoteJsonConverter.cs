@@ -1,18 +1,29 @@
 using System;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace NotetasticApi.Notes
 {
 	public class NoteJsonConverter : JsonConverter<Note>
 	{
 		public const string TypeKey = "Type";
+		public const string LowerTypeKey = "type";
+		public static readonly JsonSerializer serializer = new JsonSerializer
+		{
+			ContractResolver = new DefaultContractResolver
+			{
+				NamingStrategy = new CamelCaseNamingStrategy()
+			}
+		};
+
 		public override Note ReadJson(JsonReader reader, Type objectType, Note existingValue, bool hasExistingValue, JsonSerializer serializer)
 		{
 
 			var jsonObject = JObject.Load(reader);
-			if (jsonObject.ContainsKey(TypeKey))
-				switch (jsonObject[TypeKey].Value<string>())
+			var type = jsonObject.ContainsKey(TypeKey) ? jsonObject[TypeKey].Value<string>() : jsonObject.ContainsKey(LowerTypeKey) ? jsonObject[LowerTypeKey].Value<string>() : null;
+			if (type != null)
+				switch (type)
 				{
 					case nameof(Bookmark):
 						return jsonObject.ToObject<Bookmark>();
@@ -28,9 +39,9 @@ namespace NotetasticApi.Notes
 
 		public override void WriteJson(JsonWriter writer, Note value, JsonSerializer serializer)
 		{
-			var jsonObject = JObject.FromObject(value);
+			var jsonObject = JObject.FromObject(value, NoteJsonConverter.serializer);
 			jsonObject.Remove(nameof(Note.IsValid));
-			jsonObject[TypeKey] = value.GetType().Name;
+			jsonObject[LowerTypeKey] = value.GetType().Name;
 			jsonObject.WriteTo(writer);
 		}
 	}
