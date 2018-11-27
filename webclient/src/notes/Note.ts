@@ -19,7 +19,12 @@ export interface Bookmark extends BaseNote {
 
 export interface Checklist extends BaseNote {
 	type: NoteType.Checklist
-	items: Array<{ Checked: boolean, Text: string }>
+	items: Array<ChecklistItem>
+}
+
+export interface ChecklistItem {
+	checked: boolean
+	text: string
 }
 
 export interface Location extends BaseNote {

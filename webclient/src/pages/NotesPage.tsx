@@ -1,6 +1,6 @@
 import React from "react"
 import requireAuth from "../auth/components/requireAuth";
-import { Note } from "../notes/Note";
+import { BaseNote } from "../notes/Note";
 import Error from "../components/Error";
 import Loading from "../components/Loading";
 import { NoteService } from "../notes/noteService";
@@ -11,10 +11,10 @@ import { Link } from "react-router-dom";
 
 interface State {
 	error?: string
-	notes?: ReadonlyArray<Note>
+	notes?: ReadonlyArray<BaseNote>
 }
 
-function mapNoteToNoteSnippet(note: Note) {
+function mapNoteToNoteSnippet(note: BaseNote) {
 	const { id, title, type } = note
 	return <NoteSnippet id={id as string} key={id} title={title} type={type} />
 }

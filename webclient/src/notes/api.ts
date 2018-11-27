@@ -1,10 +1,10 @@
-import { Note } from "./Note"
+import { Note, BaseNote } from "./Note"
 import { makeNoBodyRequestInit, makeRequestInit } from "../api/makeRequestInit";
 import { networkErrorRejection, serverErrorRejection, badRequestRejection, unauthorizedRejection, notFoundRejection } from "../api/rejectedPromises";
 
 export type PutNote = <T extends Note>(accessToken: string, note: T) => Promise<T>
 export type GetNote = (accessToken: string, id: string) => Promise<Note>
-export type GetNoteList = (accessToken: string) => Promise<Array<Note>>
+export type GetNoteList = (accessToken: string) => Promise<Array<BaseNote>>
 export type DeleteNote = (accessToken: string, id: string) => Promise<void>
 
 export interface NoteAPI {

@@ -3,7 +3,7 @@ import TestRenderer from "react-test-renderer"
 import { BrowserRouter, Link } from "react-router-dom"
 
 import WrappedNotesPage, { NotesPage } from "./NotesPage"
-import { Note, NoteType } from "../notes/Note";
+import { BaseNote, NoteType } from "../notes/Note";
 import { NoteService } from "../notes/noteService";
 import { AuthContext } from "../auth/context";
 import { NoteContext } from "../notes/context";
@@ -19,9 +19,9 @@ import TabbedAuthForm from "../auth/components/TabbedAuthForm";
 const NoteServiceProvider = NoteContext.Provider
 const AuthServiceProvider = AuthContext.Provider
 
-let getNoteList: () => Promise<Array<Note>>
+let getNoteList: () => Promise<Array<BaseNote>>
 let noteService: NoteService
-const noteList: Array<Note> = [
+const noteList: Array<BaseNote> = [
 	{ id: "id1", title: "title1", type: NoteType.Checklist, archived: true },
 	{ id: "id2", title: "title2", type: NoteType.Location, archived: false },
 	{ id: "id3", title: "title3", type: NoteType.TextNote, archived: false }

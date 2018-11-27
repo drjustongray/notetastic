@@ -1,9 +1,9 @@
 import { NoteAPI } from "./api"
-import { Note } from "./Note";
+import { Note, BaseNote } from "./Note";
 
 export type SaveNote = <T extends Note>(note: T) => Promise<T>
 export type GetNote = (id: string) => Promise<Note>
-export type GetNoteList = () => Promise<Array<Note>>
+export type GetNoteList = () => Promise<Array<BaseNote>>
 export type DeleteNote = (id: string) => Promise<void>
 
 export interface NoteService {
