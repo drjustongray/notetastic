@@ -1,7 +1,4 @@
 import * as React from "react"
-import { AuthService, makeAuthService } from "./authService"
-import { authAPI } from "./api"
-import { validators } from "./validators"
+import { AuthService } from "./authService"
 
-export const authService = makeAuthService(authAPI, validators)
-export const AuthContext = React.createContext<AuthService>(authService)
+export const AuthContext = React.createContext<AuthService>({} as AuthService)
