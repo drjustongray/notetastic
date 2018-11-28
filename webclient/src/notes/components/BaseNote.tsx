@@ -1,17 +1,19 @@
 import React from "react"
 import makeLabel from "../../components/makeLabel";
+import Error from "../../components/Error";
 
 export interface BaseNoteProps {
 	title: string
 	archived: boolean
+	error?: string | null
 	updateTitle: (title: string) => any
 	setArchived: (archived: boolean) => any
 	deleteNote: () => any
 }
 
 export function getBaseNoteProps(props: BaseNoteProps): BaseNoteProps {
-	const { title, archived, updateTitle, setArchived, deleteNote } = props
-	return { title, archived, updateTitle, setArchived, deleteNote }
+	const { title, archived, updateTitle, setArchived, deleteNote, error } = props
+	return { title, archived, updateTitle, setArchived, deleteNote, error }
 }
 
 export default class extends React.Component<BaseNoteProps> {
@@ -31,7 +33,7 @@ export default class extends React.Component<BaseNoteProps> {
 	}
 
 	render() {
-		const { title, archived, deleteNote } = this.props
+		const { title, archived, deleteNote, error } = this.props
 		return (
 			<article>
 				<div>
@@ -44,6 +46,7 @@ export default class extends React.Component<BaseNoteProps> {
 				</div>
 				<button onClick={deleteNote}>Delete</button>
 				{this.props.children}
+				{error && <Error message={error} />}
 			</article>
 		)
 	}
