@@ -11,7 +11,8 @@ import LogoutPage from "./pages/LogoutPage";
 import AboutPage from "./pages/AboutPage";
 import AccountPage from "./pages/AccountPage";
 import LogoutEverywherePage from "./pages/LogoutEverywherePage";
-import { NewNotePage } from "./pages/NewNotePage";
+import NewNotePage from "./pages/NewNotePage";
+import NotePage from "./pages/NotePage";
 
 class App extends React.Component {
 	public render() {
@@ -27,6 +28,7 @@ class App extends React.Component {
 				<Route exact path={LOGOUT_EVERYWHERE} component={LogoutEverywherePage} />
 				<Route exact path={ABOUT} component={AboutPage} />
 				<Route exact path={ACCOUNT} component={AccountPage} />
+				<Route exact path={`${NOTES}/:id`} component={NotePage} />
 			</div>
 		)
 	}

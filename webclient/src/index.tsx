@@ -8,15 +8,22 @@ import { AuthContext } from "./auth/context"
 import { makeAuthService } from "./auth/authService";
 import { authAPI } from "./auth/api";
 import { validators } from "./auth/validators";
-const { Provider } = AuthContext
+import { makeNoteService } from "./notes/noteService";
+import { noteAPI } from "./notes/api";
+import { NoteContext } from "./notes/context";
+const AuthProvider = AuthContext.Provider
+const NoteProvider = NoteContext.Provider
 
 const authService = makeAuthService(authAPI, validators)
+const noteService = makeNoteService(noteAPI, authService.getAccessToken)
 
 ReactDOM.render(
-	<Provider value={authService}>
-		<BrowserRouter>
-			<App />
-		</BrowserRouter>
-	</Provider>,
+	<AuthProvider value={authService}>
+		<NoteProvider value={noteService}>
+			<BrowserRouter>
+				<App />
+			</BrowserRouter>
+		</NoteProvider>
+	</AuthProvider>,
 	document.getElementById("root") as HTMLElement
 )
