@@ -1,5 +1,5 @@
 import React from "react"
-import BaseNote, { BaseNoteProps, getBaseNoteProps } from "./BaseNote"
+import { BaseNoteProps, getBaseNoteProps, BaseNoteView } from "./BaseNote"
 
 export interface TextNoteViewProps extends BaseNoteProps {
 	text: string
@@ -21,9 +21,9 @@ export class TextNoteView extends React.Component<TextNoteViewProps> {
 		const { text } = this.props
 		const baseNoteProps = getBaseNoteProps(this.props)
 		return (
-			<BaseNote {...baseNoteProps} >
+			<BaseNoteView {...baseNoteProps} >
 				<textarea value={text} onChange={this.handleChange} />
-			</BaseNote>
+			</BaseNoteView>
 		)
 	}
 }

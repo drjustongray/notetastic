@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css"
 import markerRetinaUrl from "leaflet/dist/images/marker-icon-2x.png"
 import markerUrl from "leaflet/dist/images/marker-icon.png"
 import markerShadowUrl from "leaflet/dist/images/marker-shadow.png"
-import BaseNote, { BaseNoteProps, getBaseNoteProps } from "./BaseNote"
+import { BaseNoteProps, getBaseNoteProps, BaseNoteView } from "./BaseNote"
 
 const markerIcon = icon({
 	iconAnchor: [12, 41],
@@ -62,12 +62,12 @@ export class LocationView extends React.Component<LocationViewProps> {
 		const { latitude, longitude, setToCurrentLocation } = this.props
 		const baseNoteProps = getBaseNoteProps(this.props)
 		return (
-			<BaseNote {...baseNoteProps} >
+			<BaseNoteView {...baseNoteProps} >
 				<div ref={this.mapRef} style={{ height: "400px", maxWidth: "600px" }} />
 				<div>({latitude}, {longitude})</div>
 				<button onClick={setToCurrentLocation}>Set to current location</button>
 				<div>Click or touch map to set to that location</div>
-			</BaseNote>
+			</BaseNoteView>
 		)
 	}
 }

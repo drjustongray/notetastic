@@ -1,5 +1,5 @@
 import React from "react"
-import BaseNote, { getBaseNoteProps, BaseNoteProps } from "./BaseNote"
+import { getBaseNoteProps, BaseNoteProps, BaseNoteView } from "./BaseNote"
 import { ChecklistItem as Item } from "../Note";
 
 export interface ChecklistViewProps extends BaseNoteProps {
@@ -85,12 +85,12 @@ export class ChecklistView extends React.Component<ChecklistViewProps> {
 		const { items } = this.props
 		const baseNoteProps = getBaseNoteProps(this.props)
 		return (
-			<BaseNote {...baseNoteProps} >
+			<BaseNoteView {...baseNoteProps} >
 				<ul>
 					{items.map(this.mapItemToElement)}
 				</ul>
 				<button onClick={this.handleItemCreate}>New Item</button>
-			</BaseNote>
+			</BaseNoteView>
 		)
 	}
 }

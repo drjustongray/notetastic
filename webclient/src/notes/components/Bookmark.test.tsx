@@ -3,17 +3,12 @@ import TestRenderer from "react-test-renderer"
 
 import { BookmarkController, BookmarkView, BookmarkViewProps } from "./Bookmark"
 import { Bookmark, NoteType } from "../Note"
-import { NoteService } from "../noteService"
 import { NoteContext } from "../context";
-import { NOTES } from "../../pages/links";
-import { Redirect, BrowserRouter } from "react-router-dom";
-import Loading from "../../components/Loading";
-import ErrorView from "../../components/Error";
+import { BrowserRouter } from "react-router-dom";
+import { BaseNoteController } from "./BaseNote";
 
 const NoteServiceProvider = NoteContext.Provider
 
-let saveNote: jest.Mock<Promise<void>>
-let noteService: NoteService
 let note: Bookmark
 
 let root: JSX.Element
@@ -22,7 +17,7 @@ let renderer: TestRenderer.ReactTestRenderer
 function render() {
 	root = (
 		<BrowserRouter>
-			<NoteServiceProvider value={noteService}>
+			<NoteServiceProvider value={{} as any}>
 				<BookmarkController note={note} />
 			</NoteServiceProvider>
 		</BrowserRouter>
@@ -40,8 +35,6 @@ function findByType(type: React.ReactType<any>) {
 
 describe("BookmarkController", () => {
 	beforeEach(() => {
-		saveNote = jest.fn(() => Promise.resolve())
-		noteService = { saveNote } as any
 		note = {
 			id: Date.now() + "",
 			type: NoteType.Bookmark,
@@ -62,100 +55,69 @@ describe("BookmarkController", () => {
 		expect(props.deleteNote).toBeInstanceOf(Function)
 	})
 
-	it("updateURL saves the new version of the note and updates view", async () => {
-		const { title, archived } = note
+	it("updateURL calls super.update correctly", async () => {
+		const updateNote = jest.fn()
+		const _update = BaseNoteController.prototype.update
+		BaseNoteController.prototype.update = updateNote
 		const url = "supercoolnewurl"
 		render()
 		const { updateURL } = findByType(BookmarkView).props as BookmarkViewProps
 		updateURL(url)
-		expect(saveNote).toBeCalledTimes(1)
-		expect(saveNote).toHaveBeenCalledWith({ ...note, url })
-		update()
-		const props = findByType(BookmarkView).props as BookmarkViewProps
-		expect(props).toMatchObject({ url, title, archived })
+		expect(updateNote).toBeCalledTimes(1)
+		expect(updateNote).toHaveBeenCalledWith({ ...note, url })
+		BaseNoteController.prototype.update = _update
 	})
 
-	it("updateTitle saves the new version of the note and updates view", async () => {
-		const { url, archived } = note
+	it("updateTitle calls super.updateTitle correctly", async () => {
+		const mockUpdateTitle = jest.fn()
+		const _updateTitle = BaseNoteController.prototype.updateTitle
+		BaseNoteController.prototype.updateTitle = mockUpdateTitle
 		const title = "supercoolnewtitle"
 		render()
 		const { updateTitle } = findByType(BookmarkView).props as BookmarkViewProps
 		updateTitle(title)
-		expect(saveNote).toBeCalledTimes(1)
-		expect(saveNote).toHaveBeenCalledWith({ ...note, title })
-		update()
-		const props = findByType(BookmarkView).props as BookmarkViewProps
-		expect(props).toMatchObject({ url, title, archived })
+		expect(mockUpdateTitle).toBeCalledTimes(1)
+		expect(mockUpdateTitle).toHaveBeenCalledWith(title)
+		BaseNoteController.prototype.updateTitle = _updateTitle
 	})
 
-	it("setArchived saves the new version of the note and updates view", async () => {
-		const { url, title } = note
+	it("setArchived calls super.setArchived correctly", async () => {
 		const archived = !note.archived
+		const mockSetArchived = jest.fn()
+		const _setArchived = BaseNoteController.prototype.setArchived
+		BaseNoteController.prototype.setArchived = mockSetArchived
 		render()
 		const { setArchived } = findByType(BookmarkView).props as BookmarkViewProps
 		setArchived(archived)
-		expect(saveNote).toBeCalledTimes(1)
-		expect(saveNote).toHaveBeenCalledWith({ ...note, archived })
-		update()
-		const props = findByType(BookmarkView).props as BookmarkViewProps
-		expect(props).toMatchObject({ url, title, archived })
+		expect(mockSetArchived).toBeCalledTimes(1)
+		expect(mockSetArchived).toHaveBeenCalledWith(archived)
+		BaseNoteController.prototype.setArchived = _setArchived
 	})
 
-	it("delete deletes note and renders loading, redirect", async () => {
-		noteService.deleteNote = jest.fn(() => Promise.resolve())
+	it("deleteNote calls super.deleteNote correctly", async () => {
+		const mockDeleteNote = jest.fn()
+		const _deleteNote = BaseNoteController.prototype.deleteNote
+		BaseNoteController.prototype.deleteNote = mockDeleteNote
 		render()
 		const { deleteNote } = findByType(BookmarkView).props as BookmarkViewProps
 		deleteNote()
-		update()
-		expect(noteService.deleteNote).toBeCalledTimes(1)
-		expect(noteService.deleteNote).toHaveBeenCalledWith(note.id)
-		findByType(Loading)
-		await Promise.resolve()
-		update()
-		const props = findByType(Redirect).props
-		expect(props).toMatchObject({ to: NOTES })
+		expect(mockDeleteNote).toBeCalledTimes(1)
+		BaseNoteController.prototype.deleteNote = _deleteNote
 	})
 
-	it("does not save the note while a previous save is pending", async () => {
-		const url = "newurl"
-		const title = "newtitle"
-		const archived = !note.archived
+	it("renders according to current state, using super.render", async () => {
 		render()
-		const { setArchived, updateTitle, updateURL } = findByType(BookmarkView).props as BookmarkViewProps
-		setArchived(archived)
-		updateTitle(title)
-		updateURL(url)
-		expect(saveNote).toBeCalledTimes(1)
-		expect(saveNote).toHaveBeenLastCalledWith({ ...note, archived })
-		await new Promise(resolve => setTimeout(resolve, 1000))
-		expect(saveNote).toBeCalledTimes(2)
-		expect(saveNote).toHaveBeenLastCalledWith({ ...note, url, title, archived })
-	})
-
-	it("displays errors as necessary", async () => {
-		const message = "an error!"
-		noteService.saveNote = jest.fn(() => Promise.reject(new Error(message)))
-		render()
-		const { setArchived, deleteNote } = findByType(BookmarkView).props as BookmarkViewProps
-		setArchived(true)
-		await Promise.resolve()
+		const instance = findByType(BookmarkController).instance as BookmarkController
+		expect(instance.render).toBe(BaseNoteController.prototype.render)
+		const title = Date.now() + "title"
+		const url = Date.now() + "url"
+		const archived = (Date.now() & 1) == 0
+		const error = "::::PPPPPP"
+		instance.setState({
+			note: { ...note, title, url, archived },
+			error
+		})
 		update()
-		expect(findByType(ErrorView).props).toEqual({ message })
-		noteService.saveNote = saveNote
-		setArchived(false)
-		await Promise.resolve()
-		update()
-		expect(renderer.root.findAllByType(ErrorView)).toHaveLength(0)
-
-		noteService.deleteNote = () => Promise.reject(new Error(message))
-		deleteNote()
-		await Promise.resolve()
-		update()
-		expect(findByType(ErrorView).props).toEqual({ message })
-		noteService.deleteNote = () => Promise.resolve()
-		deleteNote()
-		await Promise.resolve()
-		update()
-		expect(renderer.root.findAllByType(ErrorView)).toHaveLength(0)
+		expect(findByType(BookmarkView).props).toMatchObject({ title, url, archived, error })
 	})
 })
