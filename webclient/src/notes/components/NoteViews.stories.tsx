@@ -32,6 +32,7 @@ stories.add(
 		longitude={number("longitude", -97)}
 		setToCurrentLocation={action("setToCurrentLocation")}
 		setLocation={action("setLocation")}
+		geoAvailable={boolean("geoAvailable", true)}
 	/>
 )
 
