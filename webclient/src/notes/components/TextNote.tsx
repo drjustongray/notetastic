@@ -1,5 +1,6 @@
 import React from "react"
-import { BaseNoteProps, getBaseNoteProps, BaseNoteView } from "./BaseNote"
+import { BaseNoteProps, getBaseNoteProps, BaseNoteView, BaseNoteController } from "./BaseNote"
+import { TextNote } from "../Note";
 
 export interface TextNoteViewProps extends BaseNoteProps {
 	text: string
@@ -26,4 +27,26 @@ export class TextNoteView extends React.Component<TextNoteViewProps> {
 			</BaseNoteView>
 		)
 	}
+}
+
+export class TextNoteController extends BaseNoteController<TextNote> {
+
+	constructor(props: { note: TextNote }) {
+		super(props)
+		this.updateText = this.updateText.bind(this)
+	}
+
+	updateText(text: string) {
+		const { note } = this.state
+		this.update({ ...note, text })
+	}
+
+	renderNoteView(): React.ReactNode {
+		const { error } = this.state
+		const { title, archived, text } = this.state.note
+		const { updateTitle, updateText, setArchived, deleteNote } = this
+		const viewProps = { title, archived, text, updateTitle, updateText, setArchived, deleteNote, error }
+		return <TextNoteView {...viewProps} />
+	}
+
 }
