@@ -1,6 +1,6 @@
 import React from "react"
-import { getBaseNoteProps, BaseNoteProps, BaseNoteView } from "./BaseNote"
-import { ChecklistItem as Item } from "../Note";
+import { getBaseNoteProps, BaseNoteProps, BaseNoteView, BaseNoteController } from "./BaseNote"
+import { ChecklistItem as Item, Checklist } from "../Note";
 
 export interface ChecklistViewProps extends BaseNoteProps {
 	items: ReadonlyArray<Item>
@@ -93,4 +93,48 @@ export class ChecklistView extends React.Component<ChecklistViewProps> {
 			</BaseNoteView>
 		)
 	}
+}
+
+export class ChecklistController extends BaseNoteController<Checklist>{
+
+	constructor(props: { note: Checklist }) {
+		super(props)
+		this.addItem = this.addItem.bind(this)
+		this.removeItem = this.removeItem.bind(this)
+		this.setItemChecked = this.setItemChecked.bind(this)
+		this.updateItemText = this.updateItemText.bind(this)
+	}
+
+	addItem() {
+		const { note } = this.state
+		const items = [...note.items, { checked: false, text: "" }]
+		this.update({ ...note, items })
+	}
+
+	removeItem(index: number) {
+		const { note } = this.state
+		const items = note.items.filter((_, i) => i !== index)
+		this.update({ ...note, items })
+	}
+
+	setItemChecked(index: number, checked: boolean) {
+		const { note } = this.state
+		const items = note.items.map((item, i) => i !== index ? item : { ...item, checked })
+		this.update({ ...note, items })
+	}
+
+	updateItemText(index: number, text: string) {
+		const { note } = this.state
+		const items = note.items.map((item, i) => i !== index ? item : { ...item, text })
+		this.update({ ...note, items })
+	}
+
+	renderNoteView(): React.ReactNode {
+		const { error } = this.state
+		const { title, archived, items } = this.state.note
+		const { updateTitle, setArchived, deleteNote, addItem, removeItem, setItemChecked, updateItemText } = this
+		const viewProps = { title, archived, items, updateTitle, setArchived, deleteNote, error, addItem, removeItem, setItemChecked, updateItemText }
+		return <ChecklistView {...viewProps} />
+	}
+
 }
