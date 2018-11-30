@@ -1,5 +1,5 @@
 export default interface AuthResponse {
-	uid: string
-	username: string
-	token?: string
+	uid: string;
+	username: string;
+	token?: string;
 }

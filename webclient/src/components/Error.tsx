@@ -1,9 +1,9 @@
-import React from "react"
+import React from "react";
 
 export interface ErrorProps {
-	message: string
+	message: string;
 }
 
 export default function ({ message }: ErrorProps) {
-	return <div>Error: {message}</div>
+	return <div>Error: {message}</div>;
 }

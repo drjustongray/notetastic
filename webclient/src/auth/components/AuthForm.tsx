@@ -1,31 +1,31 @@
-import * as React from "react"
-import { Formik, Field, Form, FormikActions, FormikProps, ErrorMessage } from "formik"
+import * as React from "react";
+import { Formik, Field, Form, FormikActions, FormikProps, ErrorMessage } from "formik";
 import makeLabel from "../../components/makeLabel";
 
-export type AuthFunction = (username: string, password: string, rememberMe: boolean) => Promise<any>
+export type AuthFunction = (username: string, password: string, rememberMe: boolean) => Promise<any>;
 
 
 export interface AuthFormProps {
-	action: AuthFunction
-	title: string
+	action: AuthFunction;
+	title: string;
 }
 
 interface FormValues {
-	username: string
-	password: string
-	rememberMe: boolean
+	username: string;
+	password: string;
+	rememberMe: boolean;
 }
 
 const onSubmit = async (action: AuthFunction, values: FormValues, actions: FormikActions<FormValues>) => {
 	try {
-		await action(values.username, values.password, values.rememberMe)
-		actions.setSubmitting(false)
+		await action(values.username, values.password, values.rememberMe);
+		actions.setSubmitting(false);
 	} catch (e) {
-		actions.setSubmitting(false)
-		actions.setErrors(e)
-		actions.setStatus(e)
+		actions.setSubmitting(false);
+		actions.setErrors(e);
+		actions.setStatus(e);
 	}
-}
+};
 
 const render = (title: string, { status, isSubmitting, values, handleBlur, handleChange }: FormikProps<FormValues>) => (
 	<Form>
@@ -56,7 +56,7 @@ const render = (title: string, { status, isSubmitting, values, handleBlur, handl
 			Submit
 		</button>
 	</Form>
-)
+);
 
 export default ({ action, title }: AuthFormProps) => (
 	<Formik
@@ -64,4 +64,4 @@ export default ({ action, title }: AuthFormProps) => (
 		onSubmit={onSubmit.bind(null, action)}
 		render={render.bind(null, title)}
 	/>
-)
+);

@@ -24,11 +24,11 @@ const AuthServiceProvider = AuthContext.Provider
 let noteService: NoteService
 
 let root: JSX.Element
-let renderer: TestRenderer.ReactTestRenderer
+let renderer: TestRenderer.ReactTestRenderer;
 
 function createNodeMock(element: React.ReactElement<any>) {
 	if (element.type === "div") {
-		return document.createElement("div")
+		return document.createElement("div");
 	}
 }
 
@@ -37,30 +37,30 @@ function render(id: string) {
 		<NoteServiceProvider value={noteService}>
 			<NotePage id={id} />
 		</NoteServiceProvider>
-	)
-	renderer = TestRenderer.create(root, { createNodeMock })
+	);
+	renderer = TestRenderer.create(root, { createNodeMock });
 }
 
 function update() {
-	renderer.update(root)
+	renderer.update(root);
 }
 
 function findByType(type: React.ReactType<any>) {
-	return renderer.root.findByType(type)
+	return renderer.root.findByType(type);
 }
 
 describe("NotePage", () => {
 	beforeEach(() => {
-		noteService = {} as NoteService
-	})
+		noteService = {} as NoteService;
+	});
 
 	it("renders Loading initially, calls getNote correctly", () => {
-		noteService.getNote = jest.fn(() => Promise.resolve({}))
-		render("someid")
-		findByType(Loading)
-		expect(noteService.getNote).toBeCalledTimes(1)
-		expect(noteService.getNote).toHaveBeenCalledWith("someid")
-	})
+		noteService.getNote = jest.fn(() => Promise.resolve({}));
+		render("someid");
+		findByType(Loading);
+		expect(noteService.getNote).toBeCalledTimes(1);
+		expect(noteService.getNote).toHaveBeenCalledWith("someid");
+	});
 
 	it("renders TextNoteController", async () => {
 		const note: TextNote = {
@@ -68,14 +68,14 @@ describe("NotePage", () => {
 			type: NoteType.TextNote,
 			title: Date.now() + "title",
 			text: Date.now() + "text",
-			archived: (Date.now() & 1) == 0
-		}
-		noteService.getNote = () => Promise.resolve(note)
-		render("asdf")
-		await Promise.resolve()
-		update()
-		expect(findByType(TextNoteController).props).toEqual({ note })
-	})
+			archived: (Date.now() & 1) === 0
+		};
+		noteService.getNote = () => Promise.resolve(note);
+		render("asdf");
+		await Promise.resolve();
+		update();
+		expect(findByType(TextNoteController).props).toEqual({ note });
+	});
 
 	it("renders BookmarkController", async () => {
 		const note: Bookmark = {
@@ -83,14 +83,14 @@ describe("NotePage", () => {
 			type: NoteType.Bookmark,
 			title: Date.now() + "title",
 			url: Date.now() + "url",
-			archived: (Date.now() & 1) == 0
-		}
-		noteService.getNote = () => Promise.resolve(note)
-		render("asdf")
-		await Promise.resolve()
-		update()
-		expect(findByType(BookmarkController).props).toEqual({ note })
-	})
+			archived: (Date.now() & 1) === 0
+		};
+		noteService.getNote = () => Promise.resolve(note);
+		render("asdf");
+		await Promise.resolve();
+		update();
+		expect(findByType(BookmarkController).props).toEqual({ note });
+	});
 
 	it("renders ChecklistController", async () => {
 		const note: Checklist = {
@@ -103,14 +103,14 @@ describe("NotePage", () => {
 				{ checked: false, text: "text3" },
 				{ checked: false, text: "text4" }
 			],
-			archived: (Date.now() & 1) == 0
-		}
-		noteService.getNote = () => Promise.resolve(note)
-		render("asdf")
-		await Promise.resolve()
-		update()
-		expect(findByType(ChecklistController).props).toEqual({ note })
-	})
+			archived: (Date.now() & 1) === 0
+		};
+		noteService.getNote = () => Promise.resolve(note);
+		render("asdf");
+		await Promise.resolve();
+		update();
+		expect(findByType(ChecklistController).props).toEqual({ note });
+	});
 
 	it("renders LocationController", async () => {
 		const note: Location = {
@@ -119,28 +119,28 @@ describe("NotePage", () => {
 			title: Date.now() + "title",
 			longitude: 67,
 			latitude: -34,
-			archived: (Date.now() & 1) == 0
-		}
-		noteService.getNote = () => Promise.resolve(note)
-		render("asdf")
-		await Promise.resolve()
-		update()
-		expect(findByType(LocationController).props).toEqual({ note })
-	})
+			archived: (Date.now() & 1) === 0
+		};
+		noteService.getNote = () => Promise.resolve(note);
+		render("asdf");
+		await Promise.resolve();
+		update();
+		expect(findByType(LocationController).props).toEqual({ note });
+	});
 
 	it("renders errors", async () => {
-		const message = "fasoiudfasodo"
-		noteService.getNote = () => Promise.reject({ message })
-		render("id3")
-		await Promise.resolve()
-		update()
-		expect(findByType(Error).props).toEqual({ message })
-	})
-})
+		const message = "fasoiudfasodo";
+		noteService.getNote = () => Promise.reject({ message });
+		render("id3");
+		await Promise.resolve();
+		update();
+		expect(findByType(Error).props).toEqual({ message });
+	});
+});
 
 describe("WrappedNotePage", () => {
-	const authState = new BehaviorSubject<AuthState>({})
-	const authService: AuthService = { authState } as any
+	const authState = new BehaviorSubject<AuthState>({});
+	const authService: AuthService = { authState } as any;
 
 	const root = (
 		<NoteServiceProvider value={noteService}>
@@ -148,29 +148,29 @@ describe("WrappedNotePage", () => {
 				<WrappedNotePage id={"1234"} />
 			</AuthServiceProvider>
 		</NoteServiceProvider>
-	)
+	);
 
 	it("shows NotesPage when authenticated", () => {
-		noteService = {} as NoteService
-		noteService.getNote = () => Promise.resolve({} as Note)
-		authState.next({ user: new User("", "") })
-		const testRenderer = TestRenderer.create(root)
-		expect(testRenderer.root.findByType(NotePage).props).toEqual({ id: "1234" })
-	})
+		noteService = {} as NoteService;
+		noteService.getNote = () => Promise.resolve({} as Note);
+		authState.next({ user: new User("", "") });
+		const testRenderer = TestRenderer.create(root);
+		expect(testRenderer.root.findByType(NotePage).props).toEqual({ id: "1234" });
+	});
 
 	it("shows auth form if not authenticated", () => {
-		authState.next({})
-		const testRenderer = TestRenderer.create(root)
-		testRenderer.root.findByType(TabbedAuthForm)
-	})
-})
+		authState.next({});
+		const testRenderer = TestRenderer.create(root);
+		testRenderer.root.findByType(TabbedAuthForm);
+	});
+});
 
 describe("NotePageWithRouteParams", () => {
 	it("should render the WrappedNotePage", () => {
-		const authState = new BehaviorSubject<AuthState>({})
-		const authService: AuthService = { authState } as any
+		const authState = new BehaviorSubject<AuthState>({});
+		const authService: AuthService = { authState } as any;
 
-		const props = { match: { params: { id: "1234" } } } as RouteComponentProps<{ id: string }>
+		const props = { match: { params: { id: "1234" } } } as RouteComponentProps<{ id: string }>;
 
 		const root = (
 			<NoteServiceProvider value={noteService}>
@@ -178,9 +178,9 @@ describe("NotePageWithRouteParams", () => {
 					<NotePageWithRouteParams {...props} />
 				</AuthServiceProvider>
 			</NoteServiceProvider>
-		)
+		);
 
-		const testRenderer = TestRenderer.create(root)
-		expect(testRenderer.root.findByType(WrappedNotePage).props).toEqual({ id: "1234" })
-	})
-})
+		const testRenderer = TestRenderer.create(root);
+		expect(testRenderer.root.findByType(WrappedNotePage).props).toEqual({ id: "1234" });
+	});
+});

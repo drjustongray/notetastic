@@ -4,6 +4,13 @@
 		"tslint-react",
 		"tslint-config-prettier"
 	],
+	"rules": {
+		"semicolon": [
+			true,
+			"always",
+			"ignore-bound-class-methods"
+		]
+	},
 	"linterOptions": {
 		"exclude": [
 			"config/**/*.js",

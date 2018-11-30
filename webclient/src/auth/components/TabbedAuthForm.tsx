@@ -1,41 +1,41 @@
-import React from "react"
-import AuthForm, { AuthFunction } from "./AuthForm"
+import React from "react";
+import AuthForm, { AuthFunction } from "./AuthForm";
 
 export interface TabbedAuthFormProps {
-	login: AuthFunction
-	register: AuthFunction
+	login: AuthFunction;
+	register: AuthFunction;
 }
 
 interface TabbedAuthFormState {
-	showRegisterForm: boolean
+	showRegisterForm: boolean;
 }
 
 export default class extends React.Component<TabbedAuthFormProps, TabbedAuthFormState> {
 	constructor(props: TabbedAuthFormProps) {
-		super(props)
-		this.state = { showRegisterForm: false }
-		this.showLogin = this.showLogin.bind(this)
-		this.showRegister = this.showRegister.bind(this)
+		super(props);
+		this.state = { showRegisterForm: false };
+		this.showLogin = this.showLogin.bind(this);
+		this.showRegister = this.showRegister.bind(this);
 	}
 
-	showLogin() {
+	public showLogin() {
 		if (this.state.showRegisterForm) {
-			this.setState({ showRegisterForm: false })
+			this.setState({ showRegisterForm: false });
 		}
 	}
 
-	showRegister() {
+	public showRegister() {
 		if (!this.state.showRegisterForm) {
-			this.setState({ showRegisterForm: true })
+			this.setState({ showRegisterForm: true });
 		}
 	}
 
-	render() {
-		const { showRegisterForm } = this.state
-		const { login, register } = this.props
+	public render() {
+		const { showRegisterForm } = this.state;
+		const { login, register } = this.props;
 		const form = <AuthForm
 			action={showRegisterForm ? register : login}
-			title={showRegisterForm ? "Register" : "Login"} />
+			title={showRegisterForm ? "Register" : "Login"} />;
 		return (
 			<div>
 				<div>
@@ -44,6 +44,6 @@ export default class extends React.Component<TabbedAuthFormProps, TabbedAuthForm
 				</div>
 				{form}
 			</div>
-		)
+		);
 	}
 }

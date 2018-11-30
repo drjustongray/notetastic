@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react"
+import React, { ReactNode } from "react";
 import makeLabel from "../../components/makeLabel";
 import Error from "../../components/Error";
 import { Note } from "../Note";
@@ -9,37 +9,37 @@ import { Redirect } from "react-router-dom";
 import { NOTES } from "../../pages/links";
 
 export interface BaseNoteProps {
-	title: string
-	archived: boolean
-	error?: string | null
-	updateTitle: (title: string) => any
-	setArchived: (archived: boolean) => any
-	deleteNote: () => any
+	title: string;
+	archived: boolean;
+	error?: string | null;
+	updateTitle: (title: string) => any;
+	setArchived: (archived: boolean) => any;
+	deleteNote: () => any;
 }
 
 export function getBaseNoteProps(props: BaseNoteProps): BaseNoteProps {
-	const { title, archived, updateTitle, setArchived, deleteNote, error } = props
-	return { title, archived, updateTitle, setArchived, deleteNote, error }
+	const { title, archived, updateTitle, setArchived, deleteNote, error } = props;
+	return { title, archived, updateTitle, setArchived, deleteNote, error };
 }
 
 export class BaseNoteView extends React.Component<BaseNoteProps> {
 
 	constructor(props: BaseNoteProps) {
-		super(props)
-		this.handleChange = this.handleChange.bind(this)
+		super(props);
+		this.handleChange = this.handleChange.bind(this);
 	}
 
-	handleChange(event: React.ChangeEvent<HTMLInputElement>) {
-		const { name, value, checked } = event.currentTarget
-		if (name == "title") {
-			this.props.updateTitle(value)
-		} else if (name == "archived") {
-			this.props.setArchived(checked)
+	public handleChange(event: React.ChangeEvent<HTMLInputElement>) {
+		const { name, value, checked } = event.currentTarget;
+		if (name === "title") {
+			this.props.updateTitle(value);
+		} else if (name === "archived") {
+			this.props.setArchived(checked);
 		}
 	}
 
-	render() {
-		const { title, archived, deleteNote, error } = this.props
+	public render() {
+		const { title, archived, deleteNote, error } = this.props;
 		return (
 			<article>
 				<div>
@@ -54,87 +54,87 @@ export class BaseNoteView extends React.Component<BaseNoteProps> {
 				{this.props.children}
 				{error && <Error message={error} />}
 			</article>
-		)
+		);
 	}
 }
 
 export interface BaseNoteControllerState<N> {
-	note: N
-	waiting?: boolean
-	deleted?: boolean
-	error?: string | null
+	note: N;
+	waiting?: boolean;
+	deleted?: boolean;
+	error?: string | null;
 }
 
 export abstract class BaseNoteController<T extends Note> extends React.Component<{ note: T }, BaseNoteControllerState<T>> {
-	static contextType = NoteContext
+	public static contextType = NoteContext;
 
-	pendingRequest?: Promise<any>
-	pendingNote?: T
+	public pendingRequest?: Promise<any>;
+	public pendingNote?: T;
 
 	constructor(props: { note: T }) {
-		super(props)
-		const { note } = this.props
-		this.state = { note: Object.assign({}, note) }
-		this.updateTitle = this.updateTitle.bind(this)
-		this.setArchived = this.setArchived.bind(this)
-		this.deleteNote = this.deleteNote.bind(this)
+		super(props);
+		const { note } = this.props;
+		this.state = { note: Object.assign({}, note) };
+		this.updateTitle = this.updateTitle.bind(this);
+		this.setArchived = this.setArchived.bind(this);
+		this.deleteNote = this.deleteNote.bind(this);
 	}
 
-	async update(note: T) {
-		this.setState({ note, error: null })
+	public async update(note: T) {
+		this.setState({ note, error: null });
 		try {
 			if (this.pendingRequest) {
-				this.pendingNote = note
-				await this.pendingRequest
+				this.pendingNote = note;
+				await this.pendingRequest;
 				if (!this.pendingNote) {
-					return
+					return;
 				}
-				note = this.pendingNote
-				this.pendingNote = undefined
+				note = this.pendingNote;
+				this.pendingNote = undefined;
 			}
 
-			const { saveNote } = this.context as NoteService
-			this.pendingRequest = saveNote(note)
-			await this.pendingRequest
+			const { saveNote } = this.context as NoteService;
+			this.pendingRequest = saveNote(note);
+			await this.pendingRequest;
 		} catch (e) {
-			this.setState({ error: e.message })
+			this.setState({ error: e.message });
 		}
-		this.pendingRequest = undefined
+		this.pendingRequest = undefined;
 	}
 
-	updateTitle(title: string) {
-		const { note } = this.state
-		this.update(Object.assign({}, note, { title }))
+	public updateTitle(title: string) {
+		const { note } = this.state;
+		this.update(Object.assign({}, note, { title }));
 	}
 
-	setArchived(archived: boolean) {
-		const { note } = this.state
-		this.update(Object.assign({}, note, { archived }))
+	public setArchived(archived: boolean) {
+		const { note } = this.state;
+		this.update(Object.assign({}, note, { archived }));
 	}
 
-	async deleteNote() {
-		const { deleteNote } = this.context as NoteService
-		const { id } = this.props.note
-		this.setState({ waiting: true, error: null })
+	public async deleteNote() {
+		const { deleteNote } = this.context as NoteService;
+		const { id } = this.props.note;
+		this.setState({ waiting: true, error: null });
 		try {
-			await deleteNote(id!)
-			this.setState({ waiting: false, deleted: true })
+			await deleteNote(id!);
+			this.setState({ waiting: false, deleted: true });
 		} catch (e) {
-			this.setState({ error: e.message, waiting: false })
+			this.setState({ error: e.message, waiting: false });
 		}
 	}
 
-	render() {
-		const { waiting, deleted } = this.state
+	public render() {
+		const { waiting, deleted } = this.state;
 		if (waiting) {
-			return <Loading />
+			return <Loading />;
 		}
 		if (deleted) {
-			return <Redirect to={NOTES} />
+			return <Redirect to={NOTES} />;
 		}
 
-		return this.renderNoteView()
+		return this.renderNoteView();
 	}
 
-	abstract renderNoteView(): ReactNode
+	public abstract renderNoteView(): ReactNode;
 }

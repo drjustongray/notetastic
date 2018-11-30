@@ -1,8 +1,8 @@
-import React from "react"
+import React from "react";
 import { NoteType } from "../Note";
 
 export interface NoteTypeSelectorProps {
-	onSelection: (type: NoteType) => any
+	onSelection: (type: NoteType) => any;
 }
 
 export default function ({ onSelection }: NoteTypeSelectorProps) {
@@ -14,5 +14,5 @@ export default function ({ onSelection }: NoteTypeSelectorProps) {
 			<button onClick={onSelection.bind(null, NoteType.Bookmark)}>Bookmark</button>
 			<button onClick={onSelection.bind(null, NoteType.Location)}>Location</button>
 		</div>
-	)
+	);
 }

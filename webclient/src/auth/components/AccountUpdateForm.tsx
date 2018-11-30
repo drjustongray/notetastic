@@ -1,32 +1,32 @@
-import React from "react"
+import React from "react";
 import { FormikActions, Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
 import makeLabel from "../../components/makeLabel";
 
-export type UpdateFunction = (password: string, change: string) => Promise<any>
+export type UpdateFunction = (password: string, change: string) => Promise<any>;
 
 export interface AccountUpdateFormProps {
-	isOpen: boolean
-	open: () => any
-	close: () => any
-	action: UpdateFunction
-	type: string
-	name: string
-	current?: string
+	isOpen: boolean;
+	open: () => any;
+	close: () => any;
+	action: UpdateFunction;
+	type: string;
+	name: string;
+	current?: string;
 }
 
 interface FormValues {
-	password: string
-	change: string
+	password: string;
+	change: string;
 }
 
 async function onSubmit(action: UpdateFunction, close: () => any, values: FormValues, actions: FormikActions<FormValues>) {
 	try {
-		await action(values.password, values.change)
-		actions.setSubmitting(false)
-		close()
+		await action(values.password, values.change);
+		actions.setSubmitting(false);
+		close();
 	} catch (e) {
-		actions.setSubmitting(false)
-		actions.setStatus(e)
+		actions.setSubmitting(false);
+		actions.setStatus(e);
 	}
 }
 
@@ -52,18 +52,18 @@ function render(title: string, type: string, label: string, close: () => any, { 
 				Cancel
 			</button>
 		</Form>
-	)
+	);
 }
 
 export default function ({ isOpen, open, close, action, type, current, name }: AccountUpdateFormProps) {
-	const title = "Change " + name
-	const label = "New " + name
+	const title = "Change " + name;
+	const label = "New " + name;
 	if (isOpen) {
 		return <Formik
 			initialValues={{ password: "", change: "" }}
 			onSubmit={onSubmit.bind(null, action, close)}
 			render={render.bind(null, title, type, label, close)}
-		/>
+		/>;
 	}
-	return <div>{name}{current && ": " + current}<button onClick={open}>{title}</button></div>
+	return <div>{name}{current && ": " + current}<button onClick={open}>{title}</button></div>;
 }
