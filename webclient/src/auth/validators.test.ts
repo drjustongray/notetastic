@@ -75,13 +75,13 @@ describe("validateToken", () => {
 
 	it("returns false if token expired", () => {
 		const exp = Math.floor(Date.now() / 1000) - 10;
-		const token = btoa(JSON.stringify({ exp })).replace(/\+/g, "-").replace(/\//g, "_");
+		const token = "blargyblargblarg." + btoa(JSON.stringify({ exp })).replace(/\+/g, "-").replace(/\//g, "_") + ".blargyasdlkujfd";
 		expect(validators.validateToken(token)).toBe(false);
 	});
 
 	it("returns true if unexpired token", () => {
 		const exp = Math.floor(Date.now() / 1000) + 10;
-		const token = btoa(JSON.stringify({ exp })).replace(/\+/g, "-").replace(/\//g, "_");
+		const token = "blargyblargblarg." + btoa(JSON.stringify({ exp })).replace(/\+/g, "-").replace(/\//g, "_") + ".blargyasdlkujfd";
 		expect(validators.validateToken(token)).toBe(true);
 	});
 });

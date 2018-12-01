@@ -38,7 +38,7 @@ describe("AppBarButtons", () => {
 		authState.next({ user: new User("uid", username) });
 		const root = <BrowserRouter><Provider value={authService}><AppBarButtons /></Provider></BrowserRouter>;
 		const testRenderer = TestRenderer.create(root);
-		expect(testRenderer.root.findByType(LoggedInBar).props).toEqual({ username });
+		expect(testRenderer.root.findByType(LoggedInBar));
 		expect(testRenderer.root.findAllByType(LoggedOutBar)).toHaveLength(0);
 	});
 

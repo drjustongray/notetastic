@@ -29,7 +29,7 @@ function validatePassword(password: string): boolean {
 function validateToken(token: string | undefined): boolean {
 	if (token) {
 		try {
-			const exp = JSON.parse(atob(token.replace(/-/g, "+").replace(/_/g, "/"))).exp;
+			const exp = JSON.parse(atob(token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/"))).exp;
 			if (exp >= Date.now() / 1000) {
 				return true;
 			}
