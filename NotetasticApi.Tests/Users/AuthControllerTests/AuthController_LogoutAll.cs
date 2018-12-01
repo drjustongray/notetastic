@@ -30,7 +30,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		{
 			Setup(uid);
 			await authController.LogoutAll();
-			cookies.Verify(x => x.Delete(AuthController.REFRESH_TOKEN));
+			cookies.Verify(x => x.Delete(AuthController.REFRESH_TOKEN, It.Is<CookieOptions>(_ => _.Path == AuthController.COOKIE_PATH)));
 		}
 
 		[Theory]

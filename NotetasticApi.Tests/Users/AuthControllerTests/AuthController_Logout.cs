@@ -1,5 +1,7 @@
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Moq;
 using NotetasticApi.Users;
 using Xunit;
 
@@ -51,7 +53,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 			SetupContext(cookies.Object, SetupRequestCookies(token));
 			userService.Setup(x => x.RevokeRefreshToken(token)).Returns(Task.CompletedTask);
 			await authController.Logout();
-			cookies.Verify(x => x.Delete(AuthController.REFRESH_TOKEN));
+			cookies.Verify(x => x.Delete(AuthController.REFRESH_TOKEN, It.Is<CookieOptions>(_ => _.Path == AuthController.COOKIE_PATH)));
 		}
 	}
 }

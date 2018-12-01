@@ -244,7 +244,7 @@ namespace NotetasticApi.Users
 
 		private void RemoveRefreshToken()
 		{
-			Response.Cookies.Delete(REFRESH_TOKEN);
+			Response.Cookies.Delete(REFRESH_TOKEN, new CookieOptions { Path = COOKIE_PATH });
 		}
 
 	}

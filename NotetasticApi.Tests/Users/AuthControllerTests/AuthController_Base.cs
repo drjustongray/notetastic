@@ -52,7 +52,7 @@ namespace NotetasticApi.Tests.Users.UserControllerTests
 		{
 			var cookies = new Mock<IResponseCookies>(MockBehavior.Strict);
 			cookies.Setup(x => x.Append(AuthController.REFRESH_TOKEN, It.IsAny<string>(), It.IsAny<CookieOptions>()));
-			cookies.Setup(x => x.Delete(AuthController.REFRESH_TOKEN));
+			cookies.Setup(x => x.Delete(AuthController.REFRESH_TOKEN, It.IsAny<CookieOptions>()));
 			return cookies;
 		}
 
