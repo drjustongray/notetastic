@@ -2,8 +2,10 @@ import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import Form, { UpdateFunction } from "./AccountUpdateForm";
+import { withKnobs, text } from "@storybook/addon-knobs";
 
 const stories = storiesOf("AccountUpdateForm", module);
+stories.addDecorator(withKnobs);
 
 const changePasswordSuccess: UpdateFunction = (password, change) => {
 	action("changePassword")(password, change);
@@ -12,7 +14,7 @@ const changePasswordSuccess: UpdateFunction = (password, change) => {
 
 const changePasswordFail: UpdateFunction = (password, change) => {
 	action("changePassword")(password, change);
-	return Promise.reject({ message: "something went wrong!" });
+	return Promise.reject({ message: text("Error Message", ":(") });
 };
 
 const changeUsernameSuccess: UpdateFunction = (password, change) => {
@@ -22,7 +24,7 @@ const changeUsernameSuccess: UpdateFunction = (password, change) => {
 
 const changeUsernameFail: UpdateFunction = (password, change) => {
 	action("changeUsername")(password, change);
-	return Promise.reject({ message: "something went wrong!" });
+	return Promise.reject({ message: text("Error Message", ":(") });
 };
 
 interface ExampleProps {

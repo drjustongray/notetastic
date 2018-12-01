@@ -60,7 +60,7 @@ const render = (title: string, { status, isSubmitting, values, handleBlur, handl
 			</div>
 		</div>
 		<div className={styles.formGroup}>
-			{status && <Error message={status.message} />}
+			{status && status.message && <Error message={status.message} />}
 		</div>
 		<button className={styles.button} type="submit" disabled={isSubmitting}>
 			Submit

@@ -2,8 +2,10 @@ import * as React from "react";
 import { storiesOf } from "@storybook/react";
 import { action } from "@storybook/addon-actions";
 import Form, { AuthFunction } from "./AuthForm";
+import { withKnobs, text } from "@storybook/addon-knobs";
 
 const stories = storiesOf("AuthForm", module);
+stories.addDecorator(withKnobs);
 
 const successfulLogin: AuthFunction = (username, password, rememberMe) => {
 	action("login")(username, password, rememberMe);
@@ -20,24 +22,9 @@ const successfulRegister: AuthFunction = (username, password, rememberMe) => {
 	return Promise.resolve();
 };
 
-const failedRegister1: AuthFunction = (username, password, rememberMe) => {
+const failedRegister: AuthFunction = (username, password, rememberMe) => {
 	action("register")(username, password, rememberMe);
-	return Promise.reject({ message: "Sad" });
-};
-
-const failedRegister2: AuthFunction = (username, password, rememberMe) => {
-	action("register")(username, password, rememberMe);
-	return Promise.reject({ username: "bad username! bad!" });
-};
-
-const failedRegister3: AuthFunction = (username, password, rememberMe) => {
-	action("register")(username, password, rememberMe);
-	return Promise.reject({ password: "Bad password" });
-};
-
-const failedRegister4: AuthFunction = (username, password, rememberMe) => {
-	action("register")(username, password, rememberMe);
-	return Promise.reject({ message: "Sad", username: "bad username! bad!", password: "Bad password" });
+	return Promise.reject({ message: text("Error Message", ""), username: text("Username Error", ""), password: text("Password Error", "") });
 };
 
 stories.add(
@@ -55,21 +42,6 @@ stories.add(
 );
 
 stories.add(
-	"With Failed Register (message)",
-	() => <Form action={failedRegister1} title="Register" />
-);
-
-stories.add(
-	"With Failed Register (username)",
-	() => <Form action={failedRegister2} title="Register" />
-);
-
-stories.add(
-	"With Failed Register (password)",
-	() => <Form action={failedRegister3} title="Register" />
-);
-
-stories.add(
-	"With Failed Register (all)",
-	() => <Form action={failedRegister4} title="Register" />
+	"With Failed Register",
+	() => <Form action={failedRegister} title="Register" />
 );
