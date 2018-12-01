@@ -1,0 +1,21 @@
+.button {
+ display: block;
+ margin: .5em auto;
+}
+
+.formGroup {
+ margin: .5em auto;
+}
+
+.title {
+	text-align: center;
+}
+
+.formGroup > * {
+	display: block;
+}
+
+.form {
+ max-width: 500px;
+ margin: .5em auto;
+}

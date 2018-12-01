@@ -1,6 +1,7 @@
 import React from "react";
 import { BaseNoteProps, getBaseNoteProps, BaseNoteView, BaseNoteController } from "./BaseNote";
 import { Bookmark } from "../Note";
+import styles from "./Bookmark.module.css";
 
 export interface BookmarkViewProps extends BaseNoteProps {
 	url: string;
@@ -23,7 +24,7 @@ export class BookmarkView extends React.Component<BookmarkViewProps> {
 		const baseNoteProps = getBaseNoteProps(this.props);
 		return (
 			<BaseNoteView {...baseNoteProps} >
-				<input type="text" value={url} onChange={this.handleChange} />
+				<input className={styles.url} type="text" value={url} onChange={this.handleChange} />
 			</BaseNoteView>
 		);
 	}

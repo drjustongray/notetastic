@@ -1,0 +1,19 @@
+.item {
+	list-style: none;
+	display: flex;
+	margin: .5em 0;
+}
+
+.itemText {
+	flex-grow: 1;
+	margin: 0 .5em;
+}
+
+.list {
+	padding: 0;
+	margin: 0;
+}
+
+.itemTextChecked {
+	text-decoration: line-through;
+}

@@ -1,0 +1,17 @@
+.tabs {
+	max-width: 500px;
+ margin: .5em auto;
+ display: flex;
+}
+
+.tab {
+color: white;
+background: #58a5f0;
+border-width: 0;
+flex: 1;
+padding: .5em;
+}
+
+.selected {
+ border-bottom: solid 3px #ffccbc;
+}

@@ -7,7 +7,8 @@ import { NoteService } from "../notes/noteService";
 import { NoteContext } from "../notes/context";
 import NoteSnippet from "../notes/components/NoteSnippet";
 import { NEW_NOTE } from "./links";
-import { Link } from "react-router-dom";
+import LinkCard from "../components/LinkCard";
+import styles from "./NotesPage.module.css";
 
 interface State {
 	error?: string;
@@ -42,8 +43,10 @@ export class NotesPage extends React.Component<{}, State> {
 			return (
 				<div>
 					<h2>All Notes</h2>
-					{notes.map(mapNoteToNoteSnippet)}
-					<Link to={NEW_NOTE}>Create Note</Link>
+					<div className={styles.container}>
+						{notes.map(mapNoteToNoteSnippet)}
+						<LinkCard to={NEW_NOTE}><h3>New Note</h3></LinkCard>
+					</div>
 				</div>
 			);
 		}

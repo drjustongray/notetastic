@@ -1,0 +1,28 @@
+.mapContainer {
+	max-width: 600px;
+	margin: auto;
+}
+
+.infoControls {
+	display: flex;
+	align-items: center;
+	margin: .5em 0;
+}
+
+.coords {
+	flex-grow: 1;
+}
+
+.helpThing {
+	width: 1em;
+	height: 1em;
+	padding: .5em;
+	background: #cb9b8c;
+	border-radius: 1em;
+	text-align: center;
+	margin-left: .5em;
+}
+
+.map {
+	height: 400px;
+}

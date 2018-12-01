@@ -1,5 +1,6 @@
 import React from "react";
 import AuthForm, { AuthFunction } from "./AuthForm";
+import styles from "./TabbedAuthForm.module.css";
 
 export interface TabbedAuthFormProps {
 	login: AuthFunction;
@@ -33,14 +34,15 @@ export default class extends React.Component<TabbedAuthFormProps, TabbedAuthForm
 	public render() {
 		const { showRegisterForm } = this.state;
 		const { login, register } = this.props;
+		const selectedTabStyle = `${styles.tab} ${styles.selected}`;
 		const form = <AuthForm
 			action={showRegisterForm ? register : login}
 			title={showRegisterForm ? "Register" : "Login"} />;
 		return (
 			<div>
-				<div>
-					<button onClick={this.showLogin}>Login</button>
-					<button onClick={this.showRegister}>Register</button>
+				<div className={styles.tabs}>
+					<button className={showRegisterForm ? styles.tab : selectedTabStyle} onClick={this.showLogin}>Login</button>
+					<button className={showRegisterForm ? selectedTabStyle : styles.tab} onClick={this.showRegister}>Register</button>
 				</div>
 				{form}
 			</div>

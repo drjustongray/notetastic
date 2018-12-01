@@ -1,6 +1,8 @@
 import React from "react";
 import { FormikActions, Formik, Form, Field, ErrorMessage, FormikProps } from "formik";
 import makeLabel from "../../components/makeLabel";
+import styles from "./AccountUpdateForm.module.css";
+import Error from "../../components/Error";
 
 export type UpdateFunction = (password: string, change: string) => Promise<any>;
 
@@ -32,25 +34,27 @@ async function onSubmit(action: UpdateFunction, close: () => any, values: FormVa
 
 function render(title: string, type: string, label: string, close: () => any, { status, isSubmitting }: FormikProps<FormValues>) {
 	return (
-		<Form>
-			<h2>{title}</h2>
-			<div>
+		<Form className={styles.form}>
+			<h2 className={styles.title}>{title}</h2>
+			<div className={styles.formGroup}>
 				{makeLabel("update-form-change", label)}
 				<Field type={type} name="change" id="update-form-change" placeholder={label} />
 				<ErrorMessage name="change" render={makeLabel.bind(null, "update-form-change")} />
 			</div>
-			<div>
+			<div className={styles.formGroup}>
 				{makeLabel("update-form-password", "Current Password")}
 				<Field type="password" name="password" id="update-form-password" placeholder="Password" />
 				<ErrorMessage name="password" render={makeLabel.bind(null, "update-form-password")} />
 			</div>
-			<div>{status && status.message}</div>
-			<button type="submit" disabled={isSubmitting}>
-				Submit
-			</button>
-			<button type="button" onClick={close}>
-				Cancel
-			</button>
+			<div>{status && <Error message={status.message} />}</div>
+			<div className={styles.buttons}>
+				<button type="submit" disabled={isSubmitting}>
+					Submit
+				</button>
+				<button type="button" onClick={close}>
+					Cancel
+				</button>
+			</div>
 		</Form>
 	);
 }
@@ -65,5 +69,5 @@ export default function ({ isOpen, open, close, action, type, current, name }: A
 			render={render.bind(null, title, type, label, close)}
 		/>;
 	}
-	return <div>{name}{current && ": " + current}<button onClick={open}>{title}</button></div>;
+	return <div className={styles.entryPoint}>{name}{current && ": " + current}<button onClick={open}>{title}</button></div>;
 }

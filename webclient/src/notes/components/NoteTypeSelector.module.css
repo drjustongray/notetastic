@@ -1,0 +1,9 @@
+.selection {
+	display: block;
+	width: 80%;
+	margin: .5em auto;
+}
+
+.title {
+	text-align: center;
+}

@@ -1,6 +1,6 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import { note } from "../../pages/links";
+import LinkCard from "../../components/LinkCard";
 
 interface NoteSnippetProps {
 	id: string;
@@ -9,5 +9,5 @@ interface NoteSnippetProps {
 }
 
 export default function (props: NoteSnippetProps) {
-	return <Link to={note(props.id)}><h3>{props.title} ({props.type})</h3></Link>;
+	return <LinkCard to={note(props.id)}><h3>{props.title}</h3><h4>{props.type}</h4></LinkCard>;
 }

@@ -1,0 +1,13 @@
+.noteHeader {
+	display: flex;
+	align-items: center;
+	margin-bottom: .5em;
+}
+
+.title {
+	flex-grow: 1;
+}
+
+.note {
+	margin: .5em;
+}

@@ -7,6 +7,7 @@ import { NoteService } from "../noteService";
 import Loading from "../../components/Loading";
 import { Redirect } from "react-router-dom";
 import { NOTES } from "../../pages/links";
+import styles from "./BaseNote.module.css";
 
 export interface BaseNoteProps {
 	title: string;
@@ -41,16 +42,13 @@ export class BaseNoteView extends React.Component<BaseNoteProps> {
 	public render() {
 		const { title, archived, deleteNote, error } = this.props;
 		return (
-			<article>
-				<div>
-					{makeLabel("title", "Title")}
-					<input value={title} type="text" id="title" name="title" placeholder="Title" onChange={this.handleChange} />
-				</div>
-				<div>
+			<article className={styles.note}>
+				<div className={styles.noteHeader}>
+					<input className={styles.title} value={title} type="text" id="title" name="title" placeholder="Title" onChange={this.handleChange} />
 					<input checked={archived} type="checkbox" id="archived" name="archived" onChange={this.handleChange} />
 					{makeLabel("archived", "Archived")}
+					<button onClick={deleteNote}>Delete</button>
 				</div>
-				<button onClick={deleteNote}>Delete</button>
 				{this.props.children}
 				{error && <Error message={error} />}
 			</article>

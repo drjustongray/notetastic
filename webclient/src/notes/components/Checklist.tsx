@@ -1,6 +1,7 @@
 import React from "react";
 import { getBaseNoteProps, BaseNoteProps, BaseNoteView, BaseNoteController } from "./BaseNote";
 import { ChecklistItem as Item, Checklist } from "../Note";
+import styles from "./Checklist.module.css";
 
 export interface ChecklistViewProps extends BaseNoteProps {
 	items: ReadonlyArray<Item>;
@@ -34,10 +35,11 @@ class ChecklistItem extends React.Component<ChecklistItemProps> {
 
 	public render() {
 		const { checked, text, remove } = this.props;
+		const textClass = checked ? `${styles.itemText} ${styles.itemTextChecked}` : styles.itemText;
 		return (
-			<li>
+			<li className={styles.item}>
 				<input type="checkbox" checked={checked} onChange={this.handleChange} />
-				<input type="text" value={text} onChange={this.handleChange} />
+				<input className={textClass} disabled={checked} type="text" value={text} onChange={this.handleChange} />
 				<button onClick={remove}>Delete</button>
 			</li>
 		);
@@ -86,7 +88,7 @@ export class ChecklistView extends React.Component<ChecklistViewProps> {
 		const baseNoteProps = getBaseNoteProps(this.props);
 		return (
 			<BaseNoteView {...baseNoteProps} >
-				<ul>
+				<ul className={styles.list}>
 					{items.map(this.mapItemToElement)}
 				</ul>
 				<button onClick={this.handleItemCreate}>New Item</button>

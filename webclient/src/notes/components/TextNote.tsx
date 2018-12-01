@@ -1,6 +1,7 @@
 import React from "react";
 import { BaseNoteProps, getBaseNoteProps, BaseNoteView, BaseNoteController } from "./BaseNote";
 import { TextNote } from "../Note";
+import styles from "./TextNote.module.css";
 
 export interface TextNoteViewProps extends BaseNoteProps {
 	text: string;
@@ -23,7 +24,7 @@ export class TextNoteView extends React.Component<TextNoteViewProps> {
 		const baseNoteProps = getBaseNoteProps(this.props);
 		return (
 			<BaseNoteView {...baseNoteProps} >
-				<textarea value={text} onChange={this.handleChange} />
+				<textarea className={styles.textarea} value={text} onChange={this.handleChange} />
 			</BaseNoteView>
 		);
 	}

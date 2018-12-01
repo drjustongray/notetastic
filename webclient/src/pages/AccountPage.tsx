@@ -5,6 +5,7 @@ import { AuthService } from "../auth/authService";
 import { Link } from "react-router-dom";
 import { LOGOUT_EVERYWHERE } from "./links";
 import AccountUpdateForm from "../auth/components/AccountUpdateForm";
+import styles from "./AccountPage.module.css";
 
 class AccountPage extends React.Component<{}, { usernameOpen: boolean, passwordOpen: boolean }> {
 	public static contextType = AuthContext;
@@ -42,7 +43,9 @@ class AccountPage extends React.Component<{}, { usernameOpen: boolean, passwordO
 			<div>
 				<AccountUpdateForm isOpen={usernameOpen} open={this.openUsername} close={this.closeUsername} action={changeUsername} type="text" name="Username" current={username} />
 				<AccountUpdateForm isOpen={passwordOpen} open={this.openPassword} close={this.closePassword} action={changePassword} type="password" name="Password" />
-				<Link to={LOGOUT_EVERYWHERE}>Logout Everywhere</Link>
+				<div className={styles.logoutLinkContainer}>
+					<Link to={LOGOUT_EVERYWHERE}>Logout Everywhere</Link>
+				</div>
 			</div>
 		);
 	}

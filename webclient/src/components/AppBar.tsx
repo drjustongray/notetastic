@@ -3,38 +3,45 @@ import { Link } from "react-router-dom";
 import { INDEX, LOGIN, REGISTER, LOGOUT, ACCOUNT } from "../pages/links";
 import { AuthState } from "../auth/authService";
 import authConnect from "../auth/components/authConnect";
+import styles from "./AppBar.module.css";
 
 export interface LoggedInBarProps {
 	username: string;
 }
 
-export const LoggedInBar = ({ username }: LoggedInBarProps) => (
-	<div>
-		<Link to={ACCOUNT}>{username}</Link>
-		<Link to={LOGOUT}>Log Out</Link>
-	</div>
+export const LoggedInBar = () => (
+	<React.Fragment>
+		<Link className={styles.link} to={INDEX}>My Notes</Link>
+		<div>
+			<Link className={styles.link} to={ACCOUNT}>My Account</Link>
+			<Link className={styles.link} to={LOGOUT}>Log Out</Link>
+		</div>
+	</React.Fragment>
 );
 
 export const LoggedOutBar = () => (
-	<div>
-		<Link to={LOGIN}>Log In</Link>
-		<Link to={REGISTER}>Register</Link>
-	</div>
+	<React.Fragment>
+		<Link className={styles.link} to={INDEX}>Notetastic!</Link>
+		<div>
+			<Link className={styles.link} to={LOGIN}>Log In</Link>
+			<Link className={styles.link} to={REGISTER}>Register</Link>
+		</div>
+	</React.Fragment>
 );
 
 interface AppBarButtonsProps {
-	username?: string;
+	loggedIn?: boolean;
 }
 
 function mapAuthStateToProps(authState: AuthState) {
 	return {
-		username: authState.user && authState.user.username
+		loggedIn: !!authState.user
 	};
 }
 
-function renderAppBarButtons({ username }: AppBarButtonsProps) {
-	if (username) {
-		return <LoggedInBar username={username} />;
+function renderAppBarButtons({ loggedIn }: AppBarButtonsProps) {
+	if (loggedIn) {
+		return <LoggedInBar />;
 	}
 	return <LoggedOutBar />;
 }
@@ -42,8 +49,7 @@ function renderAppBarButtons({ username }: AppBarButtonsProps) {
 export const AppBarButtons = authConnect(mapAuthStateToProps)<{}>(renderAppBarButtons);
 
 export default () => (
-	<nav>
-		<Link to={INDEX}>Notetastic!</Link>
+	<nav className={styles.bar}>
 		<AppBarButtons />
 	</nav>
 );
