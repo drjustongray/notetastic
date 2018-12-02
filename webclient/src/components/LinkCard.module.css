@@ -5,13 +5,28 @@
 	transition: 0.3s;
 	text-decoration: none;
 	color: black;
-	width: 150px;
+	width: 46%;
 	height: 200px;
 	overflow: hidden;
 	overflow-wrap: break-word;
-	margin: 10px;
+	margin: 2%;
+	box-sizing: border-box;
+	
 }
 
 .linkCard:hover {
     box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+
+@media only screen and (min-width: 450px) {
+	.linkCard{
+	width: 30.333333333%;
+	margin: 1.5%;
+	}
+}
+@media only screen and (min-width: 600px) {
+	.linkCard{
+	width: 23%;
+	margin: 1%;
+	}
 }

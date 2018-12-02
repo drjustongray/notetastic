@@ -11,10 +11,10 @@ export interface LoggedInBarProps {
 
 export const LoggedInBar = () => (
 	<React.Fragment>
-		<Link className={styles.link} to={INDEX}>My Notes</Link>
+		<Link className={styles.link} to={INDEX}>My&nbsp;Notes</Link>
 		<div>
-			<Link className={styles.link} to={ACCOUNT}>My Account</Link>
-			<Link className={styles.link} to={LOGOUT}>Log Out</Link>
+			<Link className={styles.link} to={ACCOUNT}>My&nbsp;Account</Link>
+			<Link className={styles.link} to={LOGOUT}>Log&nbsp;Out</Link>
 		</div>
 	</React.Fragment>
 );
@@ -23,7 +23,7 @@ export const LoggedOutBar = () => (
 	<React.Fragment>
 		<Link className={styles.link} to={INDEX}>Notetastic!</Link>
 		<div>
-			<Link className={styles.link} to={LOGIN}>Log In</Link>
+			<Link className={styles.link} to={LOGIN}>Log&nbsp;In</Link>
 			<Link className={styles.link} to={REGISTER}>Register</Link>
 		</div>
 	</React.Fragment>

@@ -9,5 +9,5 @@ interface NoteSnippetProps {
 }
 
 export default function (props: NoteSnippetProps) {
-	return <LinkCard to={note(props.id)}><h3>{props.title}</h3><h4>{props.type}</h4></LinkCard>;
+	return <LinkCard to={note(props.id)}><h3>{props.title || "Untitled"}</h3><h4>{props.type}</h4></LinkCard>;
 }

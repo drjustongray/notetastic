@@ -68,7 +68,7 @@ export class LocationView extends React.Component<LocationViewProps> {
 			<BaseNoteView {...baseNoteProps} >
 				<div className={styles.mapContainer} >
 					<div className={styles.infoControls}>
-						<div className={styles.coords}>Coordinates: ({latitude}, {longitude})</div>
+						<div className={styles.coords}>Coordinates: ({latitude.toFixed(3)},&nbsp;{longitude.toFixed(3)})</div>
 						{geoAvailable && <button onClick={setToCurrentLocation}>Use Current Location</button>}
 						<span className={styles.helpThing} title="Click or touch map to use that location">?</span>
 					</div>

@@ -28,6 +28,7 @@ export class BaseNoteView extends React.Component<BaseNoteProps> {
 	constructor(props: BaseNoteProps) {
 		super(props);
 		this.handleChange = this.handleChange.bind(this);
+		this.toggleArchive = this.toggleArchive.bind(this);
 	}
 
 	public handleChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -39,15 +40,22 @@ export class BaseNoteView extends React.Component<BaseNoteProps> {
 		}
 	}
 
+	public toggleArchive() {
+		this.props.setArchived(!this.props.archived);
+	}
+
 	public render() {
 		const { title, archived, deleteNote, error } = this.props;
 		return (
 			<article className={styles.note}>
 				<div className={styles.noteHeader}>
 					<input className={styles.title} value={title} type="text" id="title" name="title" placeholder="Title" onChange={this.handleChange} />
-					<input checked={archived} type="checkbox" id="archived" name="archived" onChange={this.handleChange} />
-					{makeLabel("archived", "Archived")}
-					<button onClick={deleteNote}>Delete</button>
+					<div className={styles.noteActions}>
+						{/* <input checked={archived} type="checkbox" id="archived" name="archived" onChange={this.handleChange} />
+						{makeLabel("archived", "Archived")} */}
+						<button onClick={this.toggleArchive}>{archived ? "Unarchive" : "Archive"}</button>
+						<button onClick={deleteNote}>Delete</button>
+					</div>
 				</div>
 				{this.props.children}
 				{error && <Error message={error} />}

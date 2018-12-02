@@ -8,7 +8,6 @@ import { NoteContext } from "../notes/context";
 import NoteSnippet from "../notes/components/NoteSnippet";
 import { NEW_NOTE } from "./links";
 import LinkCard from "../components/LinkCard";
-import styles from "./NotesPage.module.css";
 
 interface State {
 	error?: string;
@@ -43,7 +42,7 @@ export class NotesPage extends React.Component<{}, State> {
 			return (
 				<div>
 					<h2>All Notes</h2>
-					<div className={styles.container}>
+					<div>
 						{notes.map(mapNoteToNoteSnippet)}
 						<LinkCard to={NEW_NOTE}><h3>New Note</h3></LinkCard>
 					</div>
