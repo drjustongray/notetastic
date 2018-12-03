@@ -75,6 +75,11 @@ namespace NotetasticApi
 			services.AddSingleton<ITimeService>(timeService);
 
 			services.AddSingleton<IUserService, UserService>();
+
+			services.AddSpaStaticFiles(configuration =>
+			{
+				configuration.RootPath = "client";
+			});
 		}
 
 		// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -90,6 +95,7 @@ namespace NotetasticApi
 			}
 
 			app.UseHttpsRedirection();
+			app.UseSpaStaticFiles();
 			app.UseAuthentication();
 			app.UseMvc();
 
